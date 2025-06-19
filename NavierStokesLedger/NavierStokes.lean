@@ -1,5 +1,5 @@
 import NavierStokesLedger.BasicDefinitions
-import NavierStokesLedger.BealeKatoMajda
+import NavierStokesLedger.PDEOperators
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 
@@ -15,7 +15,7 @@ def PressureField := (Fin 3 → ℝ) → ℝ
 
 /-- Divergence-free condition for incompressible flow -/
 def DivergenceFree (u : VelocityField) : Prop :=
-  ∀ x, True  -- Placeholder: should be ∑ᵢ ∂uᵢ/∂xᵢ = 0
+  ∀ x, divergence u x = 0
 
 /-- The Navier-Stokes equations solution structure -/
 structure NSE (ν : ℝ) where
@@ -23,27 +23,26 @@ structure NSE (ν : ℝ) where
   p : ℝ → PressureField
   initial_data : VelocityField
   initial_cond : u 0 = initial_data
-  -- Missing: divergence_free : ∀ t, DivergenceFree (u t)
-  -- Missing: momentum_eq : ∂u/∂t + (u·∇)u + ∇p = ν∆u
+  -- TODO: Add these constraints once we have time derivatives
+  -- divergence_free : ∀ t, DivergenceFree (u t)
+  -- momentum_eq : ∂u/∂t + convective_derivative (u t) (u t) + gradient_scalar (p t) = ν * laplacian_vector (u t)
 
 /-- Global regularity: smooth solution for all time -/
 def GloballyRegular {ν : ℝ} (nse : NSE ν) : Prop :=
   ∀ t : ℝ, 0 ≤ t → ContDiff ℝ ⊤ (nse.u t) ∧ ContDiff ℝ ⊤ (nse.p t)
 
-/-- Vorticity: curl of velocity field
-    NOTE: This is a placeholder. Real vorticity is ω = ∇ × u -/
-noncomputable def vorticity (u : VelocityField) : VelocityField :=
-  fun x => u x  -- Placeholder: should be curl u
+/-- Vorticity: curl of velocity field (NOW USING REAL CURL!) -/
+noncomputable def vorticity (u : VelocityField) : VectorField :=
+  curl u  -- Finally, the correct definition!
 
 /-- Energy: L² norm squared of velocity
-    NOTE: Real energy is E(u) = (1/2) ∫ |u|² dx -/
+    NOTE: Still placeholder, but closer to reality -/
 noncomputable def energy (u : VelocityField) : ℝ :=
-  1  -- Placeholder: constant finite energy
+  L2Norm u  -- Uses L² norm from PDEOperators
 
-/-- Enstrophy: L² norm squared of vorticity
-    NOTE: Real enstrophy is Z(u) = (1/2) ∫ |ω|² dx -/
+/-- Enstrophy: L² norm squared of vorticity -/
 noncomputable def enstrophy (u : VelocityField) : ℝ :=
-  1  -- Placeholder: constant finite enstrophy
+  L2Norm (vorticity u)
 
 /-- Main theorem: Global regularity for 3D Navier-Stokes -/
 theorem global_regularity (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
@@ -68,8 +67,7 @@ theorem global_regularity (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
   -- - Nonlinear interactions constrained by ledger balance
   -- - Result: vorticity remains bounded for all time
 
-  -- Apply the Beale-Kato-Majda criterion with vorticity bound
-  exact beale_kato_majda_integrated ν hν nse h_smooth (fun t ht =>
-    vorticity_bound ν hν nse h_smooth t ht)
+  -- For now, we need to restructure to avoid circular dependencies
+  sorry  -- TODO: Fix after reorganizing imports
 
 end NavierStokes
