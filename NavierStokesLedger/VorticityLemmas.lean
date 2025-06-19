@@ -20,15 +20,17 @@ theorem div_vorticity_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- This is just div_curl_zero from PDEOperators
   exact div_curl_zero u h
 
-/-- Vorticity evolution equation: ∂ω/∂t + (u·∇)ω = (ω·∇)u + ν∆ω
-    This is the same as vorticity_equation but stated for standalone vorticity -/
-theorem vorticity_evolution {ν : ℝ} (sys : NSSystem ν) :
-    ∀ t x, let ω := curl (sys.u t)
-           timeDerivative (fun s => curl (sys.u s)) t x +
-           convectiveDerivative (sys.u t) ω x =
-           convectiveDerivative ω (sys.u t) x +
-           ν • laplacianVector ω x := by
-  exact vorticity_equation ν sys
+/-- Vorticity evolution equation -/
+theorem vorticity_evolution_equation {ν : ℝ} (sys : NSSystem ν)
+    (h_smooth : ∀ t, ContDiff ℝ ⊤ (sys.u t)) :
+    ∀ t, deriv (fun s => L2NormSquared (curl (sys.u s))) t ≤
+         2 * ν * dissipationFunctional (curl (sys.u t)) +
+         C_stretch * (L2NormSquared (curl (sys.u t)))^(3/2) := by
+  -- This is a simplified version of the vorticity evolution
+  -- The actual equation involves taking curl of momentum equation
+  -- For now we just state the energy-type estimate
+  intro t
+  sorry  -- TODO: Derive from momentum equation
 
 /-- Vorticity stretching term: (ω·∇)u represents vortex stretching/tilting -/
 noncomputable def vorticityStretching (ω u : VectorField) : VectorField :=
@@ -82,8 +84,8 @@ noncomputable def eight_beat_modulation (t : ℝ) : ℝ :=
   1 + (1/8) * Real.sin (8 * 2 * Real.pi * t / τ_recog)
 
 theorem eight_beat_vorticity_damping (ω : ℝ → VectorField) :
-    ∀ t x, ‖timeDerivative ω t x‖ ≤
-           eight_beat_modulation t * C_star * ‖ω t x‖^2 := by
+    ∀ t, deriv (fun s => L2NormSquared (ω s)) t ≤
+         eight_beat_modulation t * C_star * (L2NormSquared (ω t))^2 := by
   -- Recognition Science: The 8-beat cycle modulates vorticity growth
   -- preventing unbounded amplification
   sorry  -- TODO: Model the phase-locked dynamics

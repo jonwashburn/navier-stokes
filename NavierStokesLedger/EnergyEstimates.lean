@@ -88,4 +88,15 @@ theorem recognition_energy_bound {ν : ℝ} (hν : 0 < ν) (sys : NSSystem ν)
   intro t ht
   exact energy_nonincreasing hν sys (fun t => sorry) t ht
 
+/-- L2 norm is homogeneous of degree 2 -/
+theorem L2_norm_homogeneous (c : ℝ) (u : VectorField) :
+    L2NormSquared (fun x => c • u x) = c^2 * L2NormSquared u := by
+  -- This follows from the definition of L2 norm
+  -- ‖cu‖² = ∫|cu|² = ∫c²|u|² = c²∫|u|² = c²‖u‖²
+  sorry  -- Axiomatized for now
+
+/-- Zero vector has zero L2 norm -/
+theorem L2_norm_zero : L2NormSquared (fun _ _ => (0 : ℝ)) = 0 := by
+  exact (L2_norm_zero_iff _).mpr (fun x => rfl)
+
 end NavierStokes
