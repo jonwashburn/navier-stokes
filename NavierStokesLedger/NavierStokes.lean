@@ -7,27 +7,45 @@ open Real NavierStokes
 
 namespace NavierStokes
 
+/-- Velocity field: a vector field on ℝ³ -/
 def VelocityField := (Fin 3 → ℝ) → (Fin 3 → ℝ)
+
+/-- Pressure field: a scalar field on ℝ³ -/
 def PressureField := (Fin 3 → ℝ) → ℝ
 
+/-- Divergence-free condition for incompressible flow -/
+def DivergenceFree (u : VelocityField) : Prop :=
+  ∀ x, True  -- Placeholder: should be ∑ᵢ ∂uᵢ/∂xᵢ = 0
+
+/-- The Navier-Stokes equations solution structure -/
 structure NSE (ν : ℝ) where
   u : ℝ → VelocityField
   p : ℝ → PressureField
   initial_data : VelocityField
   initial_cond : u 0 = initial_data
+  -- Missing: divergence_free : ∀ t, DivergenceFree (u t)
+  -- Missing: momentum_eq : ∂u/∂t + (u·∇)u + ∇p = ν∆u
 
+/-- Global regularity: smooth solution for all time -/
 def GloballyRegular {ν : ℝ} (nse : NSE ν) : Prop :=
   ∀ t : ℝ, 0 ≤ t → ContDiff ℝ ⊤ (nse.u t) ∧ ContDiff ℝ ⊤ (nse.p t)
 
+/-- Vorticity: curl of velocity field
+    NOTE: This is a placeholder. Real vorticity is ω = ∇ × u -/
 noncomputable def vorticity (u : VelocityField) : VelocityField :=
-  fun x => u x  -- Placeholder: identity map
+  fun x => u x  -- Placeholder: should be curl u
 
+/-- Energy: L² norm squared of velocity
+    NOTE: Real energy is E(u) = (1/2) ∫ |u|² dx -/
 noncomputable def energy (u : VelocityField) : ℝ :=
   1  -- Placeholder: constant finite energy
 
+/-- Enstrophy: L² norm squared of vorticity
+    NOTE: Real enstrophy is Z(u) = (1/2) ∫ |ω|² dx -/
 noncomputable def enstrophy (u : VelocityField) : ℝ :=
   1  -- Placeholder: constant finite enstrophy
 
+/-- Main theorem: Global regularity for 3D Navier-Stokes -/
 theorem global_regularity (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
     (h_smooth : ContDiff ℝ ⊤ nse.initial_data)
     (h_finite_energy : ∃ M, energy nse.initial_data ≤ M) :
