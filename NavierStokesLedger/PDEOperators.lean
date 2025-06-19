@@ -114,14 +114,23 @@ noncomputable def dissipationFunctional (u : VectorField) : ℝ :=
 /-- Divergence of curl is zero -/
 theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
     divergence (curl u) = fun _ => 0 := by
-  -- This is a fundamental vector calculus identity
-  -- Proof requires expanding definitions and using Schwarz's theorem
-  sorry  -- TODO: prove using symmetry of mixed partials
+  -- We need to show that ∇·(∇×u) = 0
+  -- This follows from the symmetry of mixed partial derivatives
+  funext x
+  simp only [divergence, curl]
+  -- The key insight: each second-order mixed partial appears twice with opposite signs
+  -- and they cancel by Schwarz's theorem (symmetry of mixed partials)
+  sorry  -- TODO: Complete proof using fderiv_comm
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
     curl (gradientScalar p) = fun _ _ => 0 := by
-  -- Another fundamental identity
-  sorry  -- TODO: prove using symmetry of mixed partials
+  -- We need to show that ∇×(∇p) = 0
+  -- This follows from the symmetry of mixed partial derivatives
+  funext x i
+  simp only [curl, gradientScalar]
+  -- Each component is of the form ∂²p/∂xᵢ∂xⱼ - ∂²p/∂xⱼ∂xᵢ = 0
+  -- by Schwarz's theorem (symmetry of mixed partials for C² functions)
+  sorry  -- TODO: Complete proof using fderiv_comm
 
 end NavierStokes

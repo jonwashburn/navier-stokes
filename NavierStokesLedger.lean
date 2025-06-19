@@ -4,6 +4,7 @@ import NavierStokesLedger.BasicDefinitions
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.TimeDependent
 import NavierStokesLedger.VorticityLemmas
+import NavierStokesLedger.EnergyEstimates
 import NavierStokesLedger.NavierStokes
 import NavierStokesLedger.VorticityBound
 import NavierStokesLedger.BealeKatoMajda
