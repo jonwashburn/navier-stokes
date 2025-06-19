@@ -293,7 +293,6 @@ structure BootstrapConstants where
 theorem beale_kato_majda {u : NavierStokesLedger.NSolution} {T : ℝ} (hT : 0 < T) :
   (∀ t ∈ Set.Icc 0 T, ContDiff ℝ ⊤ (u t)) ↔
   ∃ C : ℝ, ∫ t in Set.Icc 0 T, NavierStokesLedger.NSolution.maxVorticity u t ≤ C := by
-<<<<<<< HEAD
   constructor
   · -- If solution is smooth, then vorticity is bounded
     intro h_smooth
@@ -321,10 +320,6 @@ theorem beale_kato_majda {u : NavierStokesLedger.NSolution} {T : ℝ} (hT : 0 < 
     -- bounded twist cost (which includes vorticity) implies smoothness
     -- This is a fundamental principle of the RS approach
     sorry -- Technical: requires detailed Beale-Kato-Majda analysis
-=======
-  -- This is the Beale-Kato-Majda criterion: solution stays smooth iff vorticity integral is finite
-  sorry -- This is a deep theorem requiring substantial PDE theory
->>>>>>> 8b90d9f0bb0aff1ee97229762e1f25d89d6bb539
 
 -- === Recognition-Science twist cost =====================
 

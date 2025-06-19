@@ -35,26 +35,41 @@ lemma beale_kato_majda_criterion {u : NSolution} {T : ℝ} (hT : 0 < T) :
   (∀ t ∈ Set.Icc 0 T, ContDiff ℝ ⊤ (u t)) ↔
   (∫ t in Set.Icc 0 T, NSolution.Omega u t) < ∞ := by
   -- This is a known result from the literature (Beale, Kato, Majda 1984)
-  -- We state it as an axiom for this formal proof
   constructor
   · -- Forward direction: smoothness implies finite vorticity integral
     intro h_smooth
     -- If u is smooth on [0,T], then vorticity is bounded, hence integrable
-    have h_bound : ∃ C, ∀ t ∈ Set.Icc 0 T, NSolution.Omega u t ≤ C := by
-      use sSup ((fun t => NSolution.Omega u t) '' Set.Icc 0 T)
+    have h_continuous : ContinuousOn (fun t => NSolution.Omega u t) (Set.Icc 0 T) := by
+      -- Vorticity varies continuously for smooth solutions
+      apply ContinuousOn.of_continuousAt
       intro t ht
-      exact le_csSup (Set.BddAbove.mk ⟨T, fun x _ => le_refl _⟩) (Set.mem_image_of_mem _ ht)
-    obtain ⟨C, hC⟩ := h_bound
-    calc ∫ t in Set.Icc 0 T, NSolution.Omega u t
-      _ ≤ ∫ t in Set.Icc 0 T, C := integral_mono (fun t ht => hC t ht) (integrable_const _)
-      _ = C * ENNReal.toReal (volume (Set.Icc 0 T)) := integral_const _ _
-      _ < ∞ := by simp [ENNReal.mul_lt_top_iff]
+      -- At each time, if the solution is smooth, vorticity varies continuously
+      have h_smooth_t := h_smooth t ht
+      -- Use the fact that the supremum norm depends continuously on smooth solutions
+      apply ContDiff.continuousAt
+      -- The function t ↦ ‖curl(u(t))‖_∞ is continuous when u(t) is smooth
+      -- This follows from parameter dependence in PDEs
+      sorry -- Technical: continuity of vorticity supremum for smooth solutions
+
+    -- Continuous functions on compact intervals are bounded
+    obtain ⟨C, hC⟩ := ContinuousOn.bounded_above h_continuous (Set.isCompact_Icc)
+    -- Convert bounded function to finite integral
+    have h_integrable : IntegrableOn (fun t => NSolution.Omega u t) (Set.Icc 0 T) := by
+      apply IntegrableOn.of_bounded h_continuous
+      exact ⟨C, hC⟩
+    exact IntegrableOn.integral_lt_top h_integrable
+
   · -- Backward direction: finite integral implies smoothness
     intro h_finite
     intro t ht
     -- This direction uses the contrapositive form of BKM
-    -- If the integral is finite, then no blow-up occurs
-    exact ContDiff.of_le (by norm_num : (⊤ : ℕ∞) ≤ ⊤)
+    -- If the vorticity integral is finite, then no blow-up occurs at any time
+    -- This is the deep content of the Beale-Kato-Majda theorem
+    -- The proof involves energy estimates and Grönwall-type inequalities
+
+    -- For now, we use the standard result from PDE theory
+    -- The key insight is that finite ∫₀ᵀ Ω(s)ds prevents singularity formation
+    sorry -- Deep PDE theory: finite vorticity integral prevents blow-up
 
 theorem beale_kato_majda_impl {u : NSolution}
   {h_integrable : ∀ T' > 0, (∫ t in Set.Icc 0 T', NSolution.Omega u t) < ∞} :
