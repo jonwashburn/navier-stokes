@@ -71,7 +71,76 @@ lemma gagliardo_nirenberg_L4_L2_grad
   -- This gives the interpolation ‖f‖₄ ≤ ‖f‖₂^{1/2} ‖f‖₆^{1/2}
   -- Combined with Sobolev embedding ‖f‖₆ ≤ C‖∇f‖₂, we get the result
 
-  sorry -- Apply mathlib's MeasureTheory.eLpNorm_le_eLpNorm_fderiv_of_eq
+  -- Step 1: Convert to mathlib's eLpNorm notation
+  have h_L2_eq : (∫ x, ‖f x‖^2)^(1/2) = eLpNorm f 2 volume := by
+    rw [eLpNorm_eq_lintegral_rpow_nnnorm (by norm_num : (0 : ℝ) < 2)]
+    simp only [ENNReal.one_div]
+    congr 2
+    ext x
+    simp [enorm_norm]
+
+  have h_L4_eq : (∫ x, ‖f x‖^4)^(1/4) = eLpNorm f 4 volume := by
+    rw [eLpNorm_eq_lintegral_rpow_nnnorm (by norm_num : (0 : ℝ) < 4)]
+    simp only [ENNReal.one_div]
+    congr 2
+    ext x
+    simp [enorm_norm]
+
+  -- Step 2: Apply mathlib's Gagliardo-Nirenberg
+  -- For 3D, we have the embedding with p' = 4, p = 2, n = 3
+  -- The condition p'⁻¹ = p⁻¹ - n⁻¹ gives: 1/4 = 1/2 - 1/3 = 1/6 ≠ 1/4
+  -- So we need the interpolation version instead
+
+  -- Use Hölder interpolation: ‖f‖₄ ≤ ‖f‖₂^α ‖f‖₆^β where 1/4 = α/2 + β/6
+  -- This gives α = 1/2, β = 1/2, so ‖f‖₄ ≤ ‖f‖₂^{1/2} ‖f‖₆^{1/2}
+  have h_interpolation : eLpNorm f 4 volume ≤
+    (eLpNorm f 2 volume)^(1/2) * (eLpNorm f 6 volume)^(1/2) := by
+    -- Apply Hölder interpolation inequality
+    have h_holder : Real.HolderConjugate 2 (2 : ENNReal) := by
+      simp [Real.HolderConjugate]; norm_num
+    -- The interpolation 1/4 = (1/2)·(1/2) + (1/2)·(1/6) holds
+    -- This gives the bound by Hölder's inequality
+    apply eLpNorm_le_eLpNorm_mul_rpow_of_ne_zero_of_ne_top
+    · norm_num
+    · norm_num
+    · norm_num
+    · norm_num
+
+  -- Step 3: Apply Sobolev embedding ‖f‖₆ ≤ C ‖∇f‖₂ in 3D
+  have h_sobolev_6 : eLpNorm f 6 volume ≤
+    2.5 * eLpNorm (VectorField.gradient f) 2 volume := by
+    -- This is the critical Sobolev embedding H¹(ℝ³) ↪ L⁶(ℝ³)
+    -- Apply mathlib's eLpNorm_le_eLpNorm_fderiv_of_eq for the case p' = 6, p = 2, n = 3
+    -- We have p'⁻¹ = p⁻¹ - n⁻¹: 1/6 = 1/2 - 1/3 = 1/6 ✓
+    -- This is exactly the critical case for the Sobolev embedding
+    have h_3d : finrank ℝ (EuclideanSpace ℝ (Fin 3)) = 3 := by
+      simp [finrank_euclideanSpace]
+    -- Apply the embedding with the appropriate parameters
+    sorry -- Apply MeasureTheory.eLpNorm_le_eLpNorm_fderiv_of_eq with 3D parameters
+
+  -- Step 4: Combine the estimates
+  calc eLpNorm f 4 volume
+    _ ≤ (eLpNorm f 2 volume)^(1/2) * (eLpNorm f 6 volume)^(1/2) := h_interpolation
+    _ ≤ (eLpNorm f 2 volume)^(1/2) * (2.5 * eLpNorm (VectorField.gradient f) 2 volume)^(1/2) := by
+      apply mul_le_mul_of_nonneg_left
+      · apply Real.rpow_le_rpow_of_exponent_le_one h_sobolev_6
+        · apply eLpNorm_nonneg
+        · norm_num
+      · apply Real.rpow_nonneg; apply eLpNorm_nonneg
+    _ = (eLpNorm f 2 volume)^(1/2) * 2.5^(1/2) * (eLpNorm (VectorField.gradient f) 2 volume)^(1/2) := by
+      rw [Real.mul_rpow]
+      · norm_num
+      · apply eLpNorm_nonneg
+      · apply eLpNorm_nonneg
+    _ ≤ 2.5 * (eLpNorm f 2 volume)^(1/2) * (eLpNorm (VectorField.gradient f) 2 volume)^(1/2) := by
+      apply mul_le_mul_of_nonneg_right
+      · apply mul_le_mul_of_nonneg_right
+        · -- 2.5^(1/2) ≤ 2.5 since 2.5 ≥ 1
+          apply Real.rpow_le_self_of_one_le
+          · norm_num
+          · norm_num
+        · apply Real.rpow_nonneg; apply eLpNorm_nonneg
+      · apply Real.rpow_nonneg; apply eLpNorm_nonneg
 
 /-- 3-D Sobolev embedding (Morrey–Gagliardo).  `H¹(ℝ³)` embeds into
 `L^∞(ℝ³)` with universal constant `≤ 2.5`.  Written here in a form
@@ -87,6 +156,27 @@ lemma sobolev_embedding_Linfty
   -- combined with Hölder's inequality to control the L∞ norm
   -- by the H¹ norm = L² norm + gradient L² norm
 
-  sorry -- Apply mathlib's Sobolev embedding with appropriate constants
+  -- Step 1: Use the fundamental theorem of calculus in each direction
+  -- For any point x and direction eᵢ, |f(x)| ≤ ∫_{-∞}^∞ |∂f/∂xᵢ(x + teᵢ)| dt
+  -- Taking the product over all three directions gives the 3D bound
+
+  -- Step 2: Apply Hölder's inequality to each line integral
+  -- ∫_{-∞}^∞ |∂f/∂xᵢ| dt ≤ (∫ |∂f/∂xᵢ|² dt)^{1/2} (∫ 1 dt)^{1/2}
+  -- But the second factor diverges, so we need a more sophisticated approach
+
+  -- Step 3: Use the representation formula with Green's function
+  -- |f(x)| ≤ C ∫ |∇f(y)| |x-y|^{-2} dy for functions with compact support
+  -- This leads to the Sobolev embedding with L^p norms
+
+  -- Step 4: Convert to the desired form using Hölder interpolation
+  -- The L^∞ norm is controlled by a combination of L² and H¹ norms
+  -- For 3D: ‖f‖_∞ ≤ C ‖f‖₂^α ‖∇f‖₂^β with appropriate exponents
+
+  have h_3d : finrank ℝ (EuclideanSpace ℝ (Fin 3)) = 3 := by
+    simp [finrank_euclideanSpace]
+
+  -- The exact constant and proof requires the full machinery of Sobolev spaces
+  -- For now, we establish the structure and defer to mathlib
+  sorry -- Apply mathlib's Sobolev embedding H¹ ↪ L^∞ in 3D
 
 end NavierStokesLedger
