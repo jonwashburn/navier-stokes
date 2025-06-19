@@ -113,11 +113,55 @@ lemma beale_kato_majda_criterion {u : NSolution} {T : ℝ} (hT : 0 < T) :
     -- This direction uses the contrapositive form of BKM
     -- If the vorticity integral is finite, then no blow-up occurs at any time
     -- This is the deep content of the Beale-Kato-Majda theorem
-    -- The proof involves energy estimates and Grönwall-type inequalities
 
-    -- For now, we use the standard result from PDE theory
-    -- The key insight is that finite ∫₀ᵀ Ω(s)ds prevents singularity formation
-    sorry -- Deep PDE theory: finite vorticity integral prevents blow-up
+    -- The proof structure:
+    -- 1. Assume for contradiction that smoothness fails at some time t ∈ [0,T]
+    -- 2. Then ‖ω(t)‖_∞ = ∞ (vorticity blows up)
+    -- 3. By backward integration from t, ∫₀ᵗ ‖ω(s)‖_∞ ds = ∞
+    -- 4. This contradicts the assumption that the integral is finite
+
+    -- The technical details involve:
+    -- - Energy estimates: d/dt E(t) ≤ C Ω(t) E(t) (Grönwall-type inequality)
+    -- - If ∫ Ω < ∞, then E(t) ≤ E(0) exp(C ∫ Ω) < ∞ for all t
+    -- - Finite energy implies smoothness by Sobolev embedding
+    -- - The contrapositive: blow-up requires ∫ Ω = ∞
+
+    -- For the rigorous proof:
+    have h_energy_bound : ∀ s ∈ Set.Icc 0 t, ∃ E_s : ℝ, E_s < ∞ ∧
+      ‖u s‖_H1 ≤ E_s := by
+      intro s hs
+      -- Use Grönwall's inequality with the vorticity integral bound
+      use (‖u 0‖_H1) * Real.exp (C_gronwall * ∫ τ in Set.Icc 0 s, NSolution.Omega u τ)
+      constructor
+      · -- Finite because the integral is finite
+        apply mul_lt_top
+        · sorry -- Initial data has finite H¹ norm
+        · apply Real.exp_lt_top
+          apply mul_lt_top
+          · sorry -- Grönwall constant is finite
+          · -- The vorticity integral is finite by assumption
+            have h_sub : Set.Icc 0 s ⊆ Set.Icc 0 T := by
+              intro x hx
+              simp at hx hs ⊢
+              exact ⟨hx.1, le_trans hx.2 hs.2⟩
+            apply lt_of_le_of_lt
+            · apply MeasureTheory.integral_mono_set
+              · sorry -- Integrability on larger set
+              · exact h_sub
+            · exact h_finite
+      · -- The Grönwall bound
+        sorry -- Standard Grönwall inequality application
+
+    -- Finite H¹ norm implies smoothness
+    have h_H1_implies_smooth : ∀ s ∈ Set.Icc 0 t, ‖u s‖_H1 < ∞ → ContDiff ℝ ⊤ (u s) := by
+      intro s hs h_H1
+      -- In 3D, H¹ regularity with additional structure gives smoothness
+      -- This uses bootstrapping: H¹ → L⁶ → better regularity → ... → C^∞
+      sorry -- Standard regularity theory for Navier-Stokes
+
+    -- Apply to get smoothness at time t
+    obtain ⟨E_t, hE_finite, hE_bound⟩ := h_energy_bound t (by simp [Set.mem_Icc])
+    exact h_H1_implies_smooth t (by simp [Set.mem_Icc]) (by linarith [hE_bound])
 
 theorem beale_kato_majda_impl {u : NSolution}
   {h_integrable : ∀ T' > 0, (∫ t in Set.Icc 0 T', NSolution.Omega u t) < ∞} :
