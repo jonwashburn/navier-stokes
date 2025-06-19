@@ -7,6 +7,8 @@ import NavierStokesLedger.VorticityLemmas
 import NavierStokesLedger.EnergyEstimates
 import NavierStokesLedger.RecognitionLemmas
 import NavierStokesLedger.EnergyVorticityConnection
+import NavierStokesLedger.SimplifiedProofs
+import NavierStokesLedger.VectorCalculus
 import NavierStokesLedger.NavierStokes
 import NavierStokesLedger.VorticityBound
 import NavierStokesLedger.BealeKatoMajda
