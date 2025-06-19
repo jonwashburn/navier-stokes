@@ -1,6 +1,7 @@
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.TimeDependent
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 open Real NavierStokes
 
@@ -78,7 +79,7 @@ theorem vorticity_stretching_bound (u : VectorField) (ω : VectorField)
 
 /-- Recognition Science: 8-beat cycle limits vorticity amplification -/
 noncomputable def eight_beat_modulation (t : ℝ) : ℝ :=
-  1 + (1/8) * Real.sin (8 * 2 * π * t / τ_recog)
+  1 + (1/8) * Real.sin (8 * 2 * Real.pi * t / τ_recog)
 
 theorem eight_beat_vorticity_damping (ω : ℝ → VectorField) :
     ∀ t x, ‖timeDerivative ω t x‖ ≤

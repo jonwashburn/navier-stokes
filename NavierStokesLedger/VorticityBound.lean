@@ -6,10 +6,9 @@ open Real NavierStokes
 
 namespace NavierStokes
 
-/-- L∞ norm of a vector field - NOW USING REAL L∞ NORM!
-    This computes the actual essential supremum over space -/
+/-- L∞ norm of a vector field (using supremum) -/
 noncomputable def supNorm (u : VectorField) : ℝ :=
-  LinftyNorm u  -- From PDEOperators - actual supremum!
+  LinftyNorm u  -- From PDEOperators - supremum over all points
 
 /-- The fundamental vorticity bound for Navier-Stokes
 

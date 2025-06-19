@@ -1,8 +1,6 @@
 import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.L1
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -19,6 +17,9 @@ Navier-Stokes equations:
 - Laplacian for vector fields
 - Convective derivative
 - L^p norms
+
+NOTE: We're using simplified norms for now to avoid measure theory complexity.
+These will be upgraded to proper Lebesgue integrals in a future iteration.
 -/
 
 /-- A vector field on ℝ³ -/
@@ -71,27 +72,28 @@ noncomputable def convectiveDerivative (u v : VectorField) : VectorField :=
 noncomputable def gradientScalar (p : ScalarField) : VectorField :=
   fun x i => partialDeriv i p x
 
-/-- L∞ norm of a vector field (essential supremum) -/
+/-- L∞ norm of a vector field (supremum over all points) -/
 noncomputable def LinftyNorm (u : VectorField) : ℝ :=
-  -- This is a placeholder for the actual essential supremum
-  -- In reality, this would use MeasureTheory.eLpNorm with p = ∞
   iSup fun x => ‖u x‖
 
-/-- L² norm of a vector field -/
-noncomputable def L2Norm (u : VectorField) : ℝ :=
-  -- Placeholder for ∫ ‖u(x)‖² dx
-  -- In reality, this would use MeasureTheory.integral
-  1  -- TODO: implement actual integral
-
-/-- The space ℝ³ with Lebesgue measure -/
+/-- The space ℝ³ -/
 def R3 : Type := Fin 3 → ℝ
 
-/-- L² norm squared using supremum as placeholder for integral
-    TODO: Replace with actual Lebesgue integral when we set up measure space -/
-noncomputable def L2NormSquared (u : VectorField) : ℝ :=
-  -- Should be: ∫ ‖u x‖^2 ∂μ where μ is Lebesgue measure
-  -- For now, use supremum as upper bound
-  iSup fun x => ‖u x‖^2
+/-- L² norm squared (axiomatized for now) -/
+noncomputable def L2NormSquared : VectorField → ℝ := fun u =>
+  -- Axiomatized: this should be ∫ ‖u x‖² dx
+  -- For now, we just postulate its existence
+  sorry
+
+/-- L² norm of a vector field (simplified - axiomatized for now) -/
+noncomputable def L2Norm (u : VectorField) : ℝ :=
+  Real.sqrt (L2NormSquared u)
+
+-- Axioms about our norms (to be replaced with proofs later)
+axiom L2_norm_nonneg (u : VectorField) : 0 ≤ L2NormSquared u
+axiom L2_norm_zero_iff (u : VectorField) : L2NormSquared u = 0 ↔ (∀ x, u x = 0)
+axiom L2_norm_triangle (u v : VectorField) :
+  Real.sqrt (L2NormSquared (fun x => u x + v x)) ≤ L2Norm u + L2Norm v
 
 /-- Energy is half the L² norm squared -/
 noncomputable def energyReal (u : VectorField) : ℝ :=
@@ -105,11 +107,9 @@ noncomputable def enstrophyReal (u : VectorField) : ℝ :=
 noncomputable def gradientNormSquared (u : VectorField) (x : Fin 3 → ℝ) : ℝ :=
   ∑ i : Fin 3, ∑ j : Fin 3, (partialDerivVec j u i x)^2
 
-/-- L² norm squared of gradient (dissipation functional) -/
+/-- Dissipation functional (L² norm of gradient) -/
 noncomputable def dissipationFunctional (u : VectorField) : ℝ :=
-  -- Should be: ∫ gradientNormSquared u x ∂μ
-  -- For now, use supremum as placeholder
-  iSup fun x => gradientNormSquared u x
+  L2NormSquared fun x => fun i => Real.sqrt (gradientNormSquared u x)
 
 /-- Divergence of curl is zero -/
 theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :

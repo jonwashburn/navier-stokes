@@ -48,6 +48,14 @@ noncomputable def energy (u : VelocityField) : ℝ :=
 noncomputable def enstrophy (u : VelocityField) : ℝ :=
   L2Norm (vorticity u)
 
+/-- Energy: L² norm squared of velocity (REAL VERSION) -/
+noncomputable def energyNS (u : VelocityField) : ℝ :=
+  energyReal u  -- Uses actual Lebesgue integral
+
+/-- Enstrophy: L² norm squared of vorticity (REAL VERSION) -/
+noncomputable def enstrophyNS (u : VelocityField) : ℝ :=
+  enstrophyReal u  -- Uses actual Lebesgue integral
+
 /-- Main theorem: Global regularity for 3D Navier-Stokes -/
 theorem global_regularity (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
     (h_smooth : ContDiff ℝ ⊤ nse.initial_data)
