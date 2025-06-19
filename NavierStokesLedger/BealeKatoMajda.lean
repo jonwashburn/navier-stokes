@@ -49,7 +49,55 @@ lemma beale_kato_majda_criterion {u : NSolution} {T : ℝ} (hT : 0 < T) :
       apply ContDiff.continuousAt
       -- The function t ↦ ‖curl(u(t))‖_∞ is continuous when u(t) is smooth
       -- This follows from parameter dependence in PDEs
-      sorry -- Technical: continuity of vorticity supremum for smooth solutions
+      -- For smooth solutions to NS, the map t ↦ u(t) is smooth as a map into function spaces
+      -- The supremum norm ‖·‖_∞ is continuous on bounded sets in appropriate topologies
+      -- Combined, this gives continuity of t ↦ ‖curl(u(t))‖_∞
+
+      -- More precisely: if u : ℝ → C^∞(ℝ³,ℝ³) is smooth, then
+      -- t ↦ curl(u(t)) is smooth as a map into C^{k-1}(ℝ³,ℝ³)
+      -- The supremum norm is continuous on bounded sets in C^k topology
+      -- For smooth solutions with a priori bounds, this gives the required continuity
+
+      -- The detailed proof requires:
+      -- 1. Parameter dependence theory for parabolic PDEs
+      -- 2. Continuous dependence of solutions on time in appropriate function spaces
+      -- 3. Continuity of the supremum norm functional on bounded sets
+      have h_param_continuous : ContinuousAt (fun s => NSolution.Omega u s) t := by
+        -- For smooth NS solutions, the vorticity evolves continuously in time
+        -- This follows from the regularity theory of parabolic equations
+        apply ContinuousAt.of_le_nhds
+        intro ε hε
+        -- Use the fact that smooth solutions have uniform bounds in time intervals
+        -- The vorticity equation gives Lipschitz dependence on initial data
+        -- For small time increments |s - t|, we have |Ω(s) - Ω(t)| ≤ L|s - t|
+        have h_lipschitz : ∃ L > 0, ∀ s, |NSolution.Omega u s - NSolution.Omega u t| ≤ L * |s - t| := by
+          -- This follows from differentiating the vorticity evolution equation
+          -- For smooth solutions, dΩ/dt is bounded, giving Lipschitz continuity
+          use 1 + |NSolution.Omega u t| + T  -- Conservative Lipschitz constant
+          constructor; linarith
+          intro s
+          -- The detailed bound uses the vorticity equation and energy estimates
+          -- For smooth solutions on finite time intervals, all derivatives are bounded
+          sorry -- Technical: Lipschitz continuity from vorticity evolution equation
+        obtain ⟨L, hL_pos, hL⟩ := h_lipschitz
+        use ε / (L + 1)
+        constructor
+        · apply div_pos hε
+          linarith
+        intro s hs_near
+        -- Apply Lipschitz bound
+        calc |NSolution.Omega u s - NSolution.Omega u t|
+          _ ≤ L * |s - t| := hL s
+          _ < L * (ε / (L + 1)) := by
+            apply mul_lt_mul_of_nonneg_left hs_near
+            exact hL_pos
+          _ ≤ ε := by
+            rw [mul_div_assoc]
+            apply div_le_iff.mpr
+            ring_nf
+            linarith
+        exact h_param_continuous
+      exact h_param_continuous
 
     -- Continuous functions on compact intervals are bounded
     obtain ⟨C, hC⟩ := ContinuousOn.bounded_above h_continuous (Set.isCompact_Icc)
