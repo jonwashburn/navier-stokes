@@ -33,7 +33,7 @@ theorem beale_kato_majda_integrated (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
     -- The key insight: vorticity bound prevents recognition cascade
     -- This maintains coherence across all scales
     -- Smoothness follows from ledger balance at each point
-    exact ContDiff.of_le le_top  -- Placeholder for full proof
+    sorry  -- Placeholder for full proof
   · -- Pressure is smooth
     -- Recognition Science argument for pressure regularity:
     -- 1. Pressure = Lagrange multiplier enforcing incompressibility
@@ -44,6 +44,6 @@ theorem beale_kato_majda_integrated (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
 
     -- Pressure solves: Δp = -div(u·∇u)
     -- With bounded u and ∇u, pressure inherits regularity
-    exact ContDiff.of_le le_top  -- Placeholder for full proof
+    sorry  -- Placeholder for full proof
 
 end NavierStokes

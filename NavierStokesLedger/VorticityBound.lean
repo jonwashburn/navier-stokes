@@ -33,7 +33,7 @@ theorem vorticity_bound (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
 
   -- For now with placeholder definitions, the theorem is vacuously true
   -- when interpreted correctly
-  norm_num
+  sorry
 
 /-- Bootstrap improvement: bound with smaller constant -/
 theorem vorticity_bootstrap (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
@@ -60,7 +60,7 @@ theorem vorticity_bootstrap (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
   -- With placeholder definitions (supNorm = 1, C_star = 0.05):
   -- We need: 1 ≤ 0.025 / √ν, or ν ≤ 0.000625
   -- This is more restrictive than original bound, as expected
-  norm_num
+  sorry
 
 /-- Biot-Savart kernel in 3D -/
 noncomputable def biotSavartKernel (x y : Fin 3 → ℝ) : Fin 3 → Fin 3 → ℝ :=

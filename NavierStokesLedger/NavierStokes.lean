@@ -50,14 +50,16 @@ theorem global_regularity (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
   -- - Result: vorticity remains bounded for all time
 
   -- Apply the Beale-Kato-Majda criterion
-  apply beale_kato_majda_integrated ν hν nse h_smooth
+  -- TODO: Import BealeKatoMajda is causing circular dependency
+  -- apply beale_kato_majda_integrated ν hν nse h_smooth
   -- Provide the vorticity bound
-  intro t ht
+  -- intro t ht
   -- This uses the fundamental vorticity bound theorem
   -- which shows ||ω||_∞ ≤ C*/√ν from Recognition Science principles
-  apply vorticity_bound ν hν nse
+  -- apply vorticity_bound ν hν nse
   -- Need to show we already have global regularity - circular!
   -- In full proof, would use energy methods and bootstrap
-  assumption
+  -- assumption
+  sorry
 
 end NavierStokes
