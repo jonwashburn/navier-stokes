@@ -1,0 +1,21 @@
+{"log":
+ [{"message":
+   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true /Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/NavierStokesLedger.lean -R /Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal -o /Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/build/lib/lean/NavierStokesLedger.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/build/lib/lean/NavierStokesLedger.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/.lake/build/ir/NavierStokesLedger.c --json",
+   "level": "trace"}],
+ "inputs":
+ [["NavierStokesLedger:deps",
+   [["deps",
+     [["navier_stokes_ledger/NavierStokesLedger:extraDep",
+       [["@navier_stokes_ledger:extraDep", "1723"]]],
+      ["import oleans", "1723"]]],
+    ["libs",
+     [["import dynlibs", "1723"],
+      ["package external libraries", "1723"],
+      ["module dynlibs", "1723"],
+      ["module plugins", "1723"]]]]],
+  ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
+   "11123825329739276520"],
+  ["Module.leanArgs: #[-Dpp.unicode.fun=true]", "16183078925686905371"],
+  ["/Users/jonathanwashburn/Desktop/navier-stokes/navier-stokes-minimal/NavierStokesLedger.lean",
+   "2433114807351286261"]],
+ "depHash": "12221514606661425117"}
