@@ -80,9 +80,6 @@ theorem vorticity_stretching_bound (u : VectorField) (ω : VectorField)
   sorry  -- TODO: Complete using previous lemma
 
 /-- Recognition Science: 8-beat cycle limits vorticity amplification -/
-noncomputable def eight_beat_modulation (t : ℝ) : ℝ :=
-  1 + (1/8) * Real.sin (8 * 2 * Real.pi * t / τ_recog)
-
 theorem eight_beat_vorticity_damping (ω : ℝ → VectorField) :
     ∀ t, deriv (fun s => L2NormSquared (ω s)) t ≤
          eight_beat_modulation t * C_star * (L2NormSquared (ω t))^2 := by

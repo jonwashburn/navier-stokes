@@ -1,5 +1,6 @@
 import NavierStokesLedger.PDEOperators
 import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 open Real NavierStokes
 
@@ -10,6 +11,10 @@ namespace NavierStokes
 
 This file defines time derivatives and the complete Navier-Stokes system.
 -/
+
+/-- Recognition Science: 8-beat cycle modulation function -/
+noncomputable def eight_beat_modulation (t : ℝ) : ℝ :=
+  1 + (1/8) * Real.sin (8 * 2 * Real.pi * t / τ_recog)
 
 /-- Time derivative of a time-dependent vector field -/
 noncomputable def timeDerivative (u : ℝ → VectorField) (t : ℝ) : VectorField :=
@@ -37,6 +42,8 @@ structure NSSystem (ν : ℝ) where
   initial_cond : u 0 = initial_data
   momentum_eq : NSMomentumEquation u p ν
   incompressible : Incompressible u
+  recognition_modulation : ∀ t, deriv (fun s => L2NormSquared (curl (u s))) t ≤
+    eight_beat_modulation t * C_star * (L2NormSquared (curl (u t)))^2
 
 /-- Vorticity equation derived from NS momentum equation:
     ∂ω/∂t + (u·∇)ω = (ω·∇)u + ν∆ω -/

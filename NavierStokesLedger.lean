@@ -5,6 +5,8 @@ import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.TimeDependent
 import NavierStokesLedger.VorticityLemmas
 import NavierStokesLedger.EnergyEstimates
+import NavierStokesLedger.RecognitionLemmas
+import NavierStokesLedger.EnergyVorticityConnection
 import NavierStokesLedger.NavierStokes
 import NavierStokesLedger.VorticityBound
 import NavierStokesLedger.BealeKatoMajda

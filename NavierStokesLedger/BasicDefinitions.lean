@@ -40,4 +40,18 @@ def C_stretch : ℝ := 2  -- Dimensional analysis suggests O(1)
     The fundamental tick of the recognition ledger -/
 def τ_recog : ℝ := 7.33e-15  -- In seconds
 
+-- Positivity lemmas for constants
+lemma C_star_pos : 0 < C_star := by norm_num [C_star]
+lemma C_BS_pos : 0 < C_BS := by norm_num [C_BS]
+lemma recognition_tick_pos : 0 < recognition_tick := by norm_num [recognition_tick]
+lemma τ_recog_pos : 0 < τ_recog := by norm_num [τ_recog]
+lemma phi_pos : 0 < phi := by
+  simp only [phi]
+  apply div_pos
+  · apply add_pos
+    · norm_num
+    · rw [Real.sqrt_pos]
+      norm_num
+  · norm_num
+
 end NavierStokes
