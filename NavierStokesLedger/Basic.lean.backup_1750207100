@@ -1,0 +1,255 @@
+/-
+Copyright (c) 2024 Navier-Stokes Team. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Recognition Science Collaboration
+-/
+import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.Analysis.Fourier.FourierTransformDeriv
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Analysis.Distribution.SchwartzSpace
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+
+/-!
+# Basic Definitions for Navier-Stokes
+
+This file contains the foundational definitions and imports needed for the
+formal proof of global regularity for the 3D incompressible Navier-Stokes equations.
+
+## Main definitions
+
+* `VectorField` - Vector fields on ℝ³
+* `divergenceFree` - Divergence-free condition
+* `smooth` - Smoothness conditions
+* `rapidDecay` - Decay conditions at infinity
+
+## Implementation notes
+
+We work in dimension 3 throughout. The scalar field is ℝ.
+-/
+
+open Real Function MeasureTheory
+open scoped Topology
+
+namespace NavierStokesLedger
+
+/-- A vector field on ℝ³ -/
+def VectorField := EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3)
+
+namespace VectorField
+
+variable (u : VectorField)
+
+/-- The divergence of a vector field -/
+noncomputable def divergence (u : VectorField) (x : EuclideanSpace ℝ (Fin 3)) : ℝ :=
+  sorry
+  -- TODO: Implement as sum of partial derivatives ∂u_i/∂x_i
+  -- Use fderiv to compute partial derivatives
+
+/-- A vector field is divergence-free -/
+def isDivergenceFree : Prop :=
+  ∀ x, divergence u x = 0
+
+/-- The curl/vorticity of a vector field -/
+noncomputable def curl (u : VectorField) (x : EuclideanSpace ℝ (Fin 3)) : EuclideanSpace ℝ (Fin 3) :=
+  sorry
+  -- TODO: Implement as
+  -- (∂u₃/∂x₂ - ∂u₂/∂x₃, ∂u₁/∂x₃ - ∂u₃/∂x₁, ∂u₂/∂x₁ - ∂u₁/∂x₂)
+
+/-- The gradient of a vector field (tensor) -/
+noncomputable def gradient (u : VectorField) (x : EuclideanSpace ℝ (Fin 3)) :
+  EuclideanSpace ℝ (Fin 3) →L[ℝ] EuclideanSpace ℝ (Fin 3) :=
+  sorry
+  -- TODO: Implement as Jacobian matrix ∂u_i/∂x_j
+
+/-- The L^p norm of a vector field -/
+noncomputable def lpNorm (u : VectorField) (p : ENNReal) : ENNReal :=
+  sorry
+  -- TODO: Implement as (∫ ‖u(x)‖^p dx)^(1/p)
+  -- Use MeasureTheory.snorm
+
+/-- The L^∞ norm of a vector field -/
+noncomputable def linftyNorm (u : VectorField) : ENNReal :=
+  sorry
+  -- TODO: Implement as ess sup ‖u(x)‖
+  -- Use MeasureTheory.snormEssSup
+
+/-- Sobolev H^s norm -/
+noncomputable def sobolevNorm (u : VectorField) (s : ℝ) : ENNReal :=
+  sorry
+  -- TODO: Implement using Fourier transform
+  -- ‖(1 + |ξ|²)^(s/2) û(ξ)‖_{L²}
+
+/-- A vector field has rapid decay if it and all derivatives decay faster than any polynomial -/
+def hasRapidDecay : Prop :=
+  ∀ (α : Fin 3 → ℕ) (n : ℕ), ∃ C : ℝ, 0 < C ∧ ∀ x : EuclideanSpace ℝ (Fin 3),
+    ‖iteratedFDeriv ℝ (α 0 + α 1 + α 2) u x‖ ≤ C / (1 + ‖x‖) ^ n
+
+/-- A vector field is smooth with compact support -/
+def isSmoothCompactSupport : Prop :=
+  ContDiff ℝ ⊤ u ∧ HasCompactSupport u
+
+/-- A vector field is in Schwartz space -/
+def isSchwartzClass : Prop :=
+  sorry -- u ∈ SchwartzSpace (EuclideanSpace ℝ (Fin 3)) (EuclideanSpace ℝ (Fin 3))
+
+end VectorField
+
+/-- Physical constants -/
+structure FluidConstants where
+  ν : ℝ  -- kinematic viscosity
+  ν_pos : 0 < ν
+
+/-- Golden ratio from Recognition Science -/
+noncomputable def φ : ℝ := (1 + Real.sqrt 5) / 2
+
+/-- Golden ratio facts -/
+lemma goldenRatio_facts : φ = (1 + Real.sqrt 5) / 2 ∧
+                         φ ^ 2 = φ + 1 ∧
+                         0 < φ⁻¹ ∧
+                         φ⁻¹ < 1 := by
+  constructor
+  · rfl
+  constructor
+  · -- φ² = φ + 1
+    sorry
+  constructor
+  · -- 0 < φ⁻¹
+    rw [inv_pos]
+    rw [φ]
+    norm_num
+    apply add_pos_of_pos_of_nonneg
+    · norm_num
+    · apply Real.sqrt_nonneg
+  · -- φ⁻¹ < 1
+    sorry
+
+/-- Golden ratio inverse value -/
+lemma golden_inv_val : φ⁻¹ = (Real.sqrt 5 - 1) / 2 := by
+  sorry
+
+/-- Our key bound constant K ≈ 0.45 -/
+def dissipationConstant : ℝ := 0.45
+
+/-- The key inequality: K < φ⁻¹ -/
+lemma dissipation_golden_bound : dissipationConstant < φ⁻¹ := by
+  sorry
+
+/-- Time interval type -/
+def TimeInterval := Set ℝ
+
+/-- Solution to Navier-Stokes is a time-dependent vector field -/
+def NSolution := ℝ → VectorField
+
+namespace NSolution
+
+/-- The Navier-Stokes equations in strong form -/
+def satisfiesNS (u : NSolution) (p : ℝ → (EuclideanSpace ℝ (Fin 3) → ℝ)) (fc : FluidConstants) : Prop :=
+  ∀ (t : ℝ) (x : EuclideanSpace ℝ (Fin 3)),
+    -- ∂u/∂t + (u·∇)u + ∇p = ν∆u
+    sorry ∧
+    -- div u = 0
+    (u t).isDivergenceFree
+
+/-- Initial condition -/
+def hasInitialCondition (u : NSolution) (u₀ : VectorField) : Prop :=
+  u 0 = u₀
+
+/-- Global regularity means smooth solution for all time -/
+def isGloballyRegular (u : NSolution) : Prop :=
+  ∀ t : ℝ, 0 ≤ t → ContDiff ℝ ⊤ (u t)
+
+/-- Energy of the solution -/
+noncomputable def energy (u : NSolution) (t : ℝ) : ℝ := ```lean
+field_simp
+ring
+```
+
+```lean
+apply goldenRatio_pos
+```
+
+```lean
+rw [inv_lt_one_iff]
+exact goldenRatio_pos
+exact goldenRatio_one_lt
+```
+  -- TODO: Implement as (1/2) ∫ ‖u(x,t)‖² dx
+
+/-- Enstrophy (integral of vorticity squared) -/
+noncomputable def enstrophy (u : NSolution) (t : ℝ) : ℝ :=
+  sorry
+  -- TODO: Implement as (1/2) ∫ ‖curl u(x,t)‖² dx
+
+/-- Maximum vorticity -/
+noncomputable def maxVorticity (u : NSolution) (t : ℝ) : ℝ :=
+  sorry
+  -- TODO: Implement as ‖curl u(·,t)‖_∞
+
+/-- Vorticity supremum norm notation Ω(t) -/
+noncomputable def Omega (u : NSolution) (t : ℝ) : ℝ := maxVorticity u t
+
+end NSolution
+
+/-- The Beale-Kato-Majda criterion -/
+theorem beale_kato_majda {u : NSolution} {T : ℝ} (hT : 0 < T) :
+  (∀ t ∈ Set.Icc 0 T, ContDiff ℝ ⊤ (u t)) ↔
+  ∃ C : ℝ, ∫ t in Set.Icc 0 T, NSolution.maxVorticity u t ≤ C := by
+  sorry
+  -- TODO: This is a known result we can cite from literature
+
+/-- Helper lemma for measure theory arguments -/
+lemma measure_ball_scaling {r : ℝ} (hr : 0 < r) :
+  volume (Metric.ball (0 : EuclideanSpace ℝ (Fin 3)) r) = (4 / 3 : ENNReal) * ENNReal.ofReal π * ENNReal.ofReal (r ^ 3) := by
+  sorry -- TODO: Use volume_ball from Mathlib
+
+/-- Sobolev constant in 3D -/
+noncomputable def C_sobolev : ℝ := sorry
+
+/-- Helper for Sobolev embeddings in 3D -/
+lemma sobolev_3d_embedding :
+  ∀ u : VectorField, VectorField.sobolevNorm u 1 ≠ ⊤ →
+  VectorField.lpNorm u 6 ≤ ENNReal.ofReal C_sobolev * VectorField.sobolevNorm u 1 := by
+  sorry
+  -- TODO: Standard Sobolev inequality H¹ ↪ L⁶ in 3D
+
+/-- Poincaré constant -/
+noncomputable def C_poincare (r : ℝ) : ℝ := sorry
+
+/-- Type for parabolic solutions (heat-like equations) -/
+structure ParabolicSolution where
+  f : EuclideanSpace ℝ (Fin 3) × ℝ → ℝ
+  isWeak : Prop -- Satisfies equation in weak sense
+
+/-- Weak solution to heat equation -/
+def isWeakHeatSolution (f : EuclideanSpace ℝ (Fin 3) × ℝ → ℝ) : Prop :=
+  sorry
+  -- TODO: Define weak formulation with test functions
+
+/-- Curvature parameter from Recognition Science -/
+noncomputable def curvatureParameter (u : VectorField) (x : EuclideanSpace ℝ (Fin 3)) : ℝ :=
+  sorry
+  -- TODO: Implement as κ = Δx · max{|ω|, |∇p|/|u|}
+
+/-- Viscous core radius -/
+noncomputable def viscousCoreRadius (ν : ℝ) (gradNorm : ℝ) : ℝ :=
+  Real.sqrt (ν / gradNorm)
+
+/-- Harnack constants from our paper -/
+structure HarnackConstants where
+  γ : ℝ := 1/4      -- spatial radius fraction
+  θ : ℝ := 1/(2 * Real.sqrt 3)  -- magnitude lower bound
+  c_star : ℝ        -- scaling parameter ≤ 1
+  h_c_star : c_star ≤ 1
+
+/-- Bootstrap constants -/
+structure BootstrapConstants where
+  C₁ : ℝ := π/576   -- volume fraction constant
+  c₄ : ℝ            -- dissipation coefficient (100c₅/π)
+  c₅ : ℝ            -- base dissipation rate
+  h_relation : c₄ = 100 * c₅ / π
+
+end NavierStokesLedger

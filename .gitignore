@@ -1,0 +1,41 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Lean build artifacts
+.lake/
+build/
+lake-packages/
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Backups directory (we'll commit specific backups if needed)
+backups/
+
+# JSON data files that may contain sensitive info
+solver_progress.json
+claude4_proofs.json
+focused_solver_results.json
