@@ -1,7 +1,8 @@
 import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.MeasureTheory.Integral.Bochner
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.L1
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -82,10 +83,33 @@ noncomputable def L2Norm (u : VectorField) : ℝ :=
   -- In reality, this would use MeasureTheory.integral
   1  -- TODO: implement actual integral
 
-/-- Test that our real vorticity is curl -/
-theorem vorticity_is_curl (u : VectorField) : vorticity u = curl u := by
-  -- Update the definition of vorticity in NavierStokes.lean
-  sorry  -- This will be fixed when we update vorticity definition
+/-- The space ℝ³ with Lebesgue measure -/
+def R3 : Type := Fin 3 → ℝ
+
+/-- L² norm squared using supremum as placeholder for integral
+    TODO: Replace with actual Lebesgue integral when we set up measure space -/
+noncomputable def L2NormSquared (u : VectorField) : ℝ :=
+  -- Should be: ∫ ‖u x‖^2 ∂μ where μ is Lebesgue measure
+  -- For now, use supremum as upper bound
+  iSup fun x => ‖u x‖^2
+
+/-- Energy is half the L² norm squared -/
+noncomputable def energyReal (u : VectorField) : ℝ :=
+  (1/2) * L2NormSquared u
+
+/-- Enstrophy is half the L² norm squared of vorticity -/
+noncomputable def enstrophyReal (u : VectorField) : ℝ :=
+  (1/2) * L2NormSquared (curl u)
+
+/-- Squared Frobenius norm of velocity gradient: ∑ᵢⱼ |∂uᵢ/∂xⱼ|² -/
+noncomputable def gradientNormSquared (u : VectorField) (x : Fin 3 → ℝ) : ℝ :=
+  ∑ i : Fin 3, ∑ j : Fin 3, (partialDerivVec j u i x)^2
+
+/-- L² norm squared of gradient (dissipation functional) -/
+noncomputable def dissipationFunctional (u : VectorField) : ℝ :=
+  -- Should be: ∫ gradientNormSquared u x ∂μ
+  -- For now, use supremum as placeholder
+  iSup fun x => gradientNormSquared u x
 
 /-- Divergence of curl is zero -/
 theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :

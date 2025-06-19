@@ -1,5 +1,6 @@
 import NavierStokesLedger.BasicDefinitions
 import NavierStokesLedger.PDEOperators
+import NavierStokesLedger.TimeDependent
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 
@@ -7,25 +8,28 @@ open Real NavierStokes
 
 namespace NavierStokes
 
-/-- Velocity field: a vector field on ℝ³ -/
-def VelocityField := (Fin 3 → ℝ) → (Fin 3 → ℝ)
-
-/-- Pressure field: a scalar field on ℝ³ -/
-def PressureField := (Fin 3 → ℝ) → ℝ
-
 /-- Divergence-free condition for incompressible flow -/
 def DivergenceFree (u : VelocityField) : Prop :=
   ∀ x, divergence u x = 0
 
-/-- The Navier-Stokes equations solution structure -/
+/-- The Navier-Stokes equations solution structure
+    NOTE: This is the simplified version. See NSSystem in TimeDependent.lean
+    for the complete system with momentum equation. -/
 structure NSE (ν : ℝ) where
   u : ℝ → VelocityField
   p : ℝ → PressureField
   initial_data : VelocityField
   initial_cond : u 0 = initial_data
-  -- TODO: Add these constraints once we have time derivatives
-  -- divergence_free : ∀ t, DivergenceFree (u t)
-  -- momentum_eq : ∂u/∂t + convective_derivative (u t) (u t) + gradient_scalar (p t) = ν * laplacian_vector (u t)
+  -- TODO: Migrate to NSSystem which includes:
+  -- momentum_eq : NSMomentumEquation u p ν
+  -- incompressible : Incompressible u
+
+/-- Convert NSSystem to NSE (for compatibility) -/
+def NSSystem.toNSE {ν : ℝ} (sys : NSSystem ν) : NSE ν :=
+  { u := sys.u
+    p := sys.p
+    initial_data := sys.initial_data
+    initial_cond := sys.initial_cond }
 
 /-- Global regularity: smooth solution for all time -/
 def GloballyRegular {ν : ℝ} (nse : NSE ν) : Prop :=

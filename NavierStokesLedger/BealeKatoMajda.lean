@@ -44,7 +44,7 @@ theorem beale_kato_majda_integrated (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
     -- Since vorticity is just the identity map (vorticity u = u),
     -- and we have bounded vorticity, the velocity itself is bounded.
     -- We assume this preserves the initial smoothness.
-    exact h_initial  -- Placeholder: velocity inherits initial smoothness
+    sorry  -- TODO: Prove smoothness propagation from initial data + vorticity bound
 
   · -- Pressure is smooth
     -- Recognition Science argument for pressure regularity:
@@ -65,6 +65,6 @@ theorem beale_kato_majda_integrated (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
 
     -- For our simplified framework:
     -- Pressure is defined as constant zero, which is C∞
-    exact contDiff_const  -- Pressure is constant, hence smooth
+    sorry  -- TODO: Prove pressure smoothness from velocity smoothness
 
 end NavierStokes

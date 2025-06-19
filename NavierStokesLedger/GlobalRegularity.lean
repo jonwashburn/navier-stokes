@@ -27,7 +27,6 @@ theorem local_existence (ν : ℝ) (hν : 0 < ν) (u₀ : VelocityField)
     initial_cond := rfl  -- u(0) = u₀ by definition
   }
   -- The initial condition is satisfied by construction
-  rfl
 
 /-- The main theorem: 3D Navier-Stokes has global smooth solutions -/
 theorem navier_stokes_global_regularity (ν : ℝ) (hν : 0 < ν) :

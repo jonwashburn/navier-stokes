@@ -13,10 +13,9 @@ def C_star : ℝ := 0.05
     In real theory, this would be derived from the kernel integral -/
 def C_BS : ℝ := 0.05
 
-/-- Bootstrap constant K* = 0.040
-    This is approximately C*/φ where φ is the golden ratio
-    Represents the improved bound after phase-locking -/
-def K_star : ℝ := 0.040
+/-- Bootstrap constant: K* = C*/2 = 0.025
+    Represents improved bound after phase-locking -/
+noncomputable def K_star : ℝ := C_star / 2
 
 /-- Golden ratio φ = (1 + √5)/2 ≈ 1.618
     Central to Recognition Science vortex dynamics -/
@@ -28,5 +27,17 @@ noncomputable def phi_inv : ℝ := (Real.sqrt 5 - 1) / 2
 /-- Recognition tick duration τ = 7.33 femtoseconds
     The fundamental time scale in Recognition Science -/
 def recognition_tick : ℝ := 7.33e-15
+
+/-- Calderón-Zygmund constant for singular integrals
+    Controls how vorticity bounds velocity gradients -/
+def C_CZ : ℝ := 4  -- Typical value for 3D
+
+/-- Vorticity stretching constant
+    Bounds the quadratic nonlinearity in vorticity equation -/
+def C_stretch : ℝ := 2  -- Dimensional analysis suggests O(1)
+
+/-- Recognition time scale: τ = 7.33 femtoseconds
+    The fundamental tick of the recognition ledger -/
+def τ_recog : ℝ := 7.33e-15  -- In seconds
 
 end NavierStokes
