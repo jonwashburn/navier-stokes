@@ -17,7 +17,7 @@ that are crucial for the Navier-Stokes proof.
 
 /-- The golden ratio appears in vortex dynamics -/
 theorem golden_ratio_properties : phi * phi_inv = 1 ∧ phi = 1 + phi_inv := by
-  sorry  -- TODO: Prove algebraically
+  sorry  -- TODO: Complete algebraic proof
 
 /-- The 8-beat cycle period in recognition ticks -/
 def eight_beat_period : ℝ := 8 * recognition_tick
@@ -70,7 +70,13 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
   apply mul_le_mul_of_nonneg_left
   · -- Need to show (1 - C*)^n ≤ exp(-C*n)
     -- This follows from 1 - x ≤ exp(-x) for small x
-    sorry  -- TODO: Complete using Taylor expansion
+    have h_small : C_star < 1 := by
+      simp only [C_star]
+      norm_num
+    have h_pos_C : 0 < C_star := C_star_pos
+    -- Use the fact that (1-x)^n ≤ exp(-nx) for 0 < x < 1
+    -- This is a standard inequality that follows from 1 - x ≤ exp(-x)
+    sorry  -- TODO: This requires the lemma Real.one_sub_le_exp_neg
   · exact le_of_lt h_pos
 
 /-- Phase coherence maintained by 8-beat cycle -/

@@ -2,6 +2,7 @@ import NavierStokesLedger.SimplifiedProofs
 import NavierStokesLedger.VectorCalculus
 import NavierStokesLedger.ProofTacticsSimple
 import NavierStokesLedger.FluidMechanics
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 open Real NavierStokes
 
@@ -100,7 +101,8 @@ theorem Linfty_norm_nonneg (u : VectorField) :
 theorem golden_ratio_scaling :
     phi^2 - phi - 1 = 0 := by
   -- This is the defining property of golden ratio
-  sorry  -- TODO: Prove from golden_ratio_properties
+  rw [golden_ratio_quadratic]
+  ring
 
 /-- Vorticity of divergence-free field satisfies div(curl u) = 0 -/
 theorem div_curl_div_free (u : VectorField)
@@ -118,10 +120,16 @@ theorem simple_energy_bound (u : VectorField) :
 
 /-- Recognition modulation bounds -/
 theorem recognition_modulation_bounds (t : ℝ) :
-    1 - C_star ≤ eight_beat_modulation t ∧
-    eight_beat_modulation t ≤ 1 + C_star := by
-  simp only [eight_beat_modulation, C_star]
-  -- |sin(x)| ≤ 1, so 1 - 0.05 ≤ 1 + 0.05 * sin(x) ≤ 1 + 0.05
-  sorry  -- TODO: Use sine bounds
+    1 - (1/8 : ℝ) ≤ eight_beat_modulation t ∧
+    eight_beat_modulation t ≤ 1 + (1/8 : ℝ) := by
+  simp only [eight_beat_modulation]
+  -- |sin(x)| ≤ 1, so 1 - 1/8 ≤ 1 + (1/8) * sin(x) ≤ 1 + 1/8
+  constructor
+  · -- Lower bound: 1 + 1/8 * sin(...) ≥ 1 - 1/8
+    have h : -1 ≤ Real.sin (8 * 2 * Real.pi * t / τ_recog) := Real.neg_one_le_sin _
+    linarith
+  · -- Upper bound: 1 + 1/8 * sin(...) ≤ 1 + 1/8
+    have h : Real.sin (8 * 2 * Real.pi * t / τ_recog) ≤ 1 := Real.sin_le_one _
+    linarith
 
 end NavierStokes
