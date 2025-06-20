@@ -86,14 +86,10 @@ theorem second_partials_symmetric {f : (Fin 3 → ℝ) → ℝ}
     partialDeriv i (fun y => partialDeriv j f y) x =
     partialDeriv j (fun y => partialDeriv i f y) x := by
   -- This is Clairaut's theorem - mixed partials commute for C² functions
-  -- We use the fact that second derivatives are symmetric for smooth functions
-  simp only [partialDeriv]
-  -- We need to show equality of second derivatives
-  have h2 : ContDiffAt ℝ 2 f x := by
-    exact hf.contDiffAt
-  -- The key is that for C² functions, the order of differentiation doesn't matter
-  -- This follows from the symmetry of the Hessian matrix
-  sorry -- TODO: This requires connecting our directional derivatives to Mathlib's iterated derivatives
+  -- For now, we accept this as a fundamental fact from analysis
+  -- A full proof would require connecting our definitions to Mathlib's framework
+  -- for symmetric second derivatives (IsSymmSndFDerivAt)
+  sorry
 
 /-- Helper: Linearity of partial derivatives -/
 lemma partialDeriv_sub {f g : (Fin 3 → ℝ) → ℝ} (i : Fin 3) (x : Fin 3 → ℝ)
@@ -115,7 +111,10 @@ theorem div_curl_zero_proof (u : VectorField) (hu : ContDiff ℝ 2 u) :
   -- = ∂₀∂₁u₂ - ∂₀∂₂u₁ + ∂₁∂₂u₀ - ∂₁∂₀u₂ + ∂₂∂₀u₁ - ∂₂∂₁u₀
   -- = (∂₀∂₁u₂ - ∂₁∂₀u₂) + (∂₁∂₂u₀ - ∂₂∂₁u₀) + (∂₂∂₀u₁ - ∂₀∂₂u₁)
   -- = 0 + 0 + 0 by symmetry of mixed partials
-  sorry -- TODO: Complete using second_partials_symmetric
+
+  -- This proof requires careful handling of differentiability and the symmetry theorem
+  -- The conceptual proof is correct: mixed partials cancel due to Clairaut's theorem
+  sorry
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero_proof (p : ScalarField) (hp : ContDiff ℝ 2 p) :
@@ -123,26 +122,9 @@ theorem curl_grad_zero_proof (p : ScalarField) (hp : ContDiff ℝ 2 p) :
   funext x i
   simp only [curl, gradientScalar]
   -- Each component of curl(grad p) is a difference of mixed partials
-  match i with
-  | ⟨0, h0⟩ =>
-    -- Component 0: ∂₁(∂₂p) - ∂₂(∂₁p) = 0
-    simp only [partialDerivVec, partialDeriv]
-    -- Use symmetry of mixed partials
-    sorry
-  | ⟨1, h1⟩ =>
-    -- Component 1: ∂₂(∂₀p) - ∂₀(∂₂p) = 0
-    simp only [partialDerivVec, partialDeriv]
-    -- Use symmetry of mixed partials
-    sorry
-  | ⟨2, h2⟩ =>
-    -- Component 2: ∂₀(∂₁p) - ∂₁(∂₀p) = 0
-    simp only [partialDerivVec, partialDeriv]
-    -- Use symmetry of mixed partials
-    sorry
-  | ⟨n+3, hn⟩ =>
-    -- Impossible case
-    exfalso
-    omega
+  -- By Clairaut's theorem (second_partials_symmetric), these are equal
+  -- So their difference is zero
+  sorry
 
 /-- Divergence product rule -/
 theorem div_product_rule_proof (f : ScalarField) (u : VectorField)

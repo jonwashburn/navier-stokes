@@ -1,6 +1,7 @@
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.EnergyEstimates
 import NavierStokesLedger.RecognitionLemmas
+import NavierStokesLedger.VectorCalculusProofs
 
 open Real NavierStokes
 
@@ -33,7 +34,10 @@ theorem energy_zero : energyReal (fun _ _ => 0) = 0 := by
 theorem enstrophy_zero : enstrophyReal (fun _ _ => 0) = 0 := by
   simp only [enstrophyReal]
   -- curl of zero is zero
-  sorry  -- TODO: Prove curl of zero is zero
+  have h : curl (fun _ _ => 0) = fun _ _ => 0 := curl_zero_field_proof
+  rw [h]
+  rw [L2_norm_zero_vec]
+  norm_num
 
 /-- Recognition constants are positive -/
 theorem recognition_constants_pos :
@@ -59,22 +63,21 @@ theorem eight_beat_period_pos : 0 < eight_beat_period := by
 
 /-- Divergence of zero field is zero -/
 theorem div_zero : divergence (fun _ _ => 0) = fun _ => 0 := by
-  funext x
-  simp only [divergence]
-  sorry  -- Requires showing derivative of zero is zero
+  exact div_zero_field_proof
 
 /-- Gradient of constant is zero -/
 theorem grad_const (c : ℝ) : gradientScalar (fun _ => c) = fun _ _ => 0 := by
-  funext x i
-  simp only [gradientScalar, partialDeriv]
-  -- Derivative of constant is zero
-  sorry  -- Requires fderiv of constant
+  exact grad_const_field_proof c
 
 /-- L∞ norm of zero is zero -/
 theorem Linfty_norm_zero : LinftyNorm (fun _ _ => 0) = 0 := by
   simp only [LinftyNorm]
   -- Supremum of zeros is zero
-  sorry  -- Requires iSup properties
+  have h : ∀ x i, ‖(fun (_ : Fin 3 → ℝ) (_ : Fin 3) => (0 : ℝ)) x i‖ = 0 := by
+    intros x i
+    simp
+  -- The supremum of the constant function 0 is 0
+  sorry  -- Requires iSup properties from measure theory
 
 /-- Golden ratio satisfies x² = x + 1 -/
 theorem golden_ratio_quadratic : phi^2 = phi + 1 := by
@@ -82,10 +85,13 @@ theorem golden_ratio_quadratic : phi^2 = phi + 1 := by
   have h1 := h.2  -- phi = 1 + phi_inv
   have h2 := h.1  -- phi * phi_inv = 1
   -- From phi = 1 + phi_inv and phi * phi_inv = 1
-  -- We get phi_inv = 1/phi
-  -- So phi = 1 + 1/phi
-  -- Multiply by phi: phi² = phi + 1
-  sorry  -- Algebraic manipulation
+  -- We can derive phi² = phi + 1
+  -- Multiply h1 by phi: phi * phi = phi * (1 + phi_inv)
+  calc phi^2 = phi * phi := by rw [pow_two]
+    _ = phi * (1 + phi_inv) := by rw [h1]
+    _ = phi * 1 + phi * phi_inv := by rw [mul_add]
+    _ = phi + phi * phi_inv := by rw [mul_one]
+    _ = phi + 1 := by rw [h2]
 
 /-- Energy is scale-invariant under Recognition Science scaling -/
 theorem energy_scale_invariant (u : VectorField) (scale : ℝ) :
