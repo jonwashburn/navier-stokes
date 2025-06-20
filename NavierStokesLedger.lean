@@ -9,6 +9,7 @@ import NavierStokesLedger.RecognitionLemmas
 import NavierStokesLedger.EnergyVorticityConnection
 import NavierStokesLedger.SimplifiedProofs
 import NavierStokesLedger.VectorCalculus
+import NavierStokesLedger.VectorCalculusProofs
 import NavierStokesLedger.ProofTacticsSimple
 import NavierStokesLedger.FluidMechanics
 import NavierStokesLedger.ConcreteProofs
