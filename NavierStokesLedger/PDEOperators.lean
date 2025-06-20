@@ -120,7 +120,11 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   simp only [divergence, curl]
   -- The key insight: each second-order mixed partial appears twice with opposite signs
   -- and they cancel by Schwarz's theorem (symmetry of mixed partials)
-  sorry  -- TODO: Complete proof using fderiv_comm
+  -- Expanding: div(curl u) = ∂/∂x₀(∂u₂/∂x₁ - ∂u₁/∂x₂) + ∂/∂x₁(∂u₀/∂x₂ - ∂u₂/∂x₀) + ∂/∂x₂(∂u₁/∂x₀ - ∂u₀/∂x₁)
+  -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
+  -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
+  -- So the sum becomes: 0 + 0 + 0 = 0
+  sorry  -- TODO: Formalize using second_partials_symmetric from VectorCalculus
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :

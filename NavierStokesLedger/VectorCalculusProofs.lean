@@ -80,15 +80,13 @@ theorem laplacian_const_proof (c : ℝ) :
     simp
   simp [h, partialDeriv_zero_proof]
 
-/-- Helper: Symmetry of second partial derivatives -/
-theorem second_partials_symmetric {f : (Fin 3 → ℝ) → ℝ}
-    (hf : ContDiff ℝ 2 f) (i j : Fin 3) (x : Fin 3 → ℝ) :
+/-- Clairaut's theorem: Mixed partial derivatives commute for C² functions -/
+theorem second_partials_symmetric {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
+    (hf : ContDiff ℝ 2 f) (i j : Fin 3) :
     partialDeriv i (fun y => partialDeriv j f y) x =
     partialDeriv j (fun y => partialDeriv i f y) x := by
-  -- This is Clairaut's theorem - mixed partials commute for C² functions
-  -- For now, we accept this as a fundamental fact from analysis
-  -- A full proof would require connecting our definitions to Mathlib's framework
-  -- for symmetric second derivatives (IsSymmSndFDerivAt)
+  -- This is a fundamental theorem that requires the full machinery of
+  -- symmetric second derivatives from Mathlib
   sorry
 
 /-- Helper: Linearity of partial derivatives -/
@@ -101,29 +99,28 @@ lemma partialDeriv_sub {f g : (Fin 3 → ℝ) → ℝ} (i : Fin 3) (x : Fin 3 �
   rw [h]
   rfl
 
-/-- Divergence of curl is zero -/
-theorem div_curl_zero_proof (u : VectorField) (hu : ContDiff ℝ 2 u) :
+/-- Divergence of curl is always zero -/
+theorem div_curl_zero_proof (u : VectorField) (h : ContDiff ℝ 2 u) :
     divergence (curl u) = fun _ => 0 := by
+  -- div(curl u) = 0 is a fundamental vector calculus identity
+  -- It follows from the fact that mixed partials commute
   funext x
   simp only [divergence, curl]
-  -- The key is that mixed partials cancel due to symmetry
-  -- ∂₀(∂₁u₂ - ∂₂u₁) + ∂₁(∂₂u₀ - ∂₀u₂) + ∂₂(∂₀u₁ - ∂₁u₀)
-  -- = ∂₀∂₁u₂ - ∂₀∂₂u₁ + ∂₁∂₂u₀ - ∂₁∂₀u₂ + ∂₂∂₀u₁ - ∂₂∂₁u₀
-  -- = (∂₀∂₁u₂ - ∂₁∂₀u₂) + (∂₁∂₂u₀ - ∂₂∂₁u₀) + (∂₂∂₀u₁ - ∂₀∂₂u₁)
-  -- = 0 + 0 + 0 by symmetry of mixed partials
-
-  -- This proof requires careful handling of differentiability and the symmetry theorem
-  -- The conceptual proof is correct: mixed partials cancel due to Clairaut's theorem
+  -- Expand the definitions
+  simp only [partialDerivVec]
+  -- The sum telescopes to zero by Clairaut's theorem
   sorry
 
-/-- Curl of gradient is zero -/
-theorem curl_grad_zero_proof (p : ScalarField) (hp : ContDiff ℝ 2 p) :
+/-- Curl of gradient is always zero -/
+theorem curl_grad_zero_proof (p : ScalarField) (h : ContDiff ℝ 2 p) :
     curl (gradientScalar p) = fun _ _ => 0 := by
+  -- curl(grad p) = 0 is another fundamental identity
+  -- It also follows from the symmetry of mixed partials
   funext x i
   simp only [curl, gradientScalar]
-  -- Each component of curl(grad p) is a difference of mixed partials
-  -- By Clairaut's theorem (second_partials_symmetric), these are equal
-  -- So their difference is zero
+  -- Expand the definitions
+  simp only [partialDerivVec, partialDeriv]
+  -- The difference is zero by Clairaut's theorem
   sorry
 
 /-- Divergence product rule -/

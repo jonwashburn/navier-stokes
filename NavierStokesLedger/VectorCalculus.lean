@@ -1,6 +1,7 @@
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.VectorCalculusProofs
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Calculus.ContDiff.Basic
 
 open Real NavierStokes
 
@@ -54,8 +55,8 @@ theorem fderiv_symmetric {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
     fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = j then 1 else 0)) x
       (fun k => if k = i then 1 else 0) := by
   -- This is Schwarz's theorem / Clairaut's theorem
-  -- Requires ContDiff ℝ 2 to ensure continuous second partials
-  sorry  -- TODO: Use fderiv.symmetric from Mathlib
+  -- For now we use sorry, as the exact formulation in Mathlib4 is complex
+  sorry
 
 /-- Mixed partials commute for C² functions -/
 theorem partialDeriv_comm {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}

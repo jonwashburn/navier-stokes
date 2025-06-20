@@ -3,6 +3,7 @@ import NavierStokesLedger.VectorCalculus
 import NavierStokesLedger.ProofTacticsSimple
 import NavierStokesLedger.FluidMechanics
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Basic
 
 open Real NavierStokes
 
@@ -20,19 +21,23 @@ def zero_solution (ν : ℝ) : NSESolution ν where
   pressure := fun _ => fun _ => 0
   smooth_velocity := fun t => by
     -- Zero function is infinitely differentiable
-    sorry  -- TODO: Use ContDiff.const
+    exact contDiff_const
   smooth_pressure := fun t => by
     -- Zero function is infinitely differentiable
-    sorry  -- TODO: Use ContDiff.const
+    exact contDiff_const
   momentum_balance := fun t x i => by
     simp only [momentum_equation]
     -- All terms are zero for zero velocity and pressure
     simp [partialDeriv_zero, partialDerivVec_zero, laplacianVector]
-    sorry
+    -- convectiveDerivative of zero is zero
+    simp only [convectiveDerivative, gradientScalar]
+    -- All partial derivatives of zero are zero
+    simp [partialDerivVec_zero_proof, partialDeriv_zero_proof]
+    ring
   incompressible := fun t x => by
     simp only [incompressibility_constraint, divergence]
     -- Divergence of zero is zero
-    sorry
+    simp [partialDerivVec_zero_proof]
 
 /-- Energy of zero solution is zero -/
 theorem zero_solution_energy (ν : ℝ) :
@@ -53,9 +58,13 @@ theorem eight_beat_periodic :
     ∀ t, eight_beat_modulation (t + eight_beat_period) =
          eight_beat_modulation t := by
   intro t
-  simp only [eight_beat_modulation, eight_beat_period]
+  simp only [eight_beat_modulation, eight_beat_period, recognition_tick]
   -- sin(2π(t + T)/T) = sin(2πt/T + 2π) = sin(2πt/T)
-  sorry  -- TODO: Use periodicity of sine
+  -- We have T = 8 * τ_recog
+  -- So sin(8 * 2π * (t + 8 * τ_recog) / τ_recog) = sin(8 * 2π * t / τ_recog + 8 * 2π * 8)
+  rw [add_div, mul_div_assoc, mul_div_assoc]
+  simp only [mul_comm 8 τ_recog, div_self (ne_of_gt recognition_tick_pos)]
+  rw [mul_one, ← add_mul, Real.sin_add_int_mul_two_pi]
 
 /-- Recognition tick is in femtoseconds -/
 theorem recognition_tick_scale :
@@ -95,7 +104,9 @@ theorem Linfty_norm_nonneg (u : VectorField) :
     0 ≤ LinftyNorm u := by
   simp only [LinftyNorm]
   -- Supremum of non-negative values is non-negative
-  sorry  -- TODO: Use iSup properties
+  apply iSup_nonneg
+  intro x
+  exact norm_nonneg _
 
 /-- Recognition Science: Golden ratio appears in scaling -/
 theorem golden_ratio_scaling :

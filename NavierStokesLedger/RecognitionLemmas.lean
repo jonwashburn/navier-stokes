@@ -17,7 +17,22 @@ that are crucial for the Navier-Stokes proof.
 
 /-- The golden ratio appears in vortex dynamics -/
 theorem golden_ratio_properties : phi * phi_inv = 1 ∧ phi = 1 + phi_inv := by
-  sorry  -- TODO: Complete algebraic proof
+  constructor
+  · -- phi * phi_inv = 1
+    simp only [phi, phi_inv]
+    -- We need to show: ((1 + √5) / 2) * ((√5 - 1) / 2) = 1
+    field_simp
+    -- After clearing denominators: (1 + √5) * (√5 - 1) = 4
+    -- Expand: √5 - 1 + 5 - √5 = 4
+    -- Which simplifies to: 4 = 4
+    ring_nf
+    -- Use the fact that √5 * √5 = 5
+    rw [← sq_sqrt (by norm_num : (0 : ℝ) ≤ 5)]
+    norm_num
+  · -- phi = 1 + phi_inv
+    simp only [phi, phi_inv]
+    field_simp
+    ring
 
 /-- The 8-beat cycle period in recognition ticks -/
 def eight_beat_period : ℝ := 8 * recognition_tick

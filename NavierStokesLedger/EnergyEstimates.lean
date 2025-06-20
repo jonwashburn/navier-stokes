@@ -93,7 +93,10 @@ theorem L2_norm_homogeneous (c : ℝ) (u : VectorField) :
     L2NormSquared (fun x => c • u x) = c^2 * L2NormSquared u := by
   -- This follows from the definition of L2 norm
   -- ‖cu‖² = ∫|cu|² = ∫c²|u|² = c²∫|u|² = c²‖u‖²
-  sorry  -- Axiomatized for now
+  simp only [L2NormSquared]
+  -- We need to show: ∫ ‖c • u x‖² = c² * ∫ ‖u x‖²
+  -- Since we're using placeholders, we postulate this property
+  sorry  -- TODO: Prove once we have proper integral definitions
 
 /-- Zero vector has zero L2 norm -/
 theorem L2_norm_zero : L2NormSquared (fun _ _ => (0 : ℝ)) = 0 := by
