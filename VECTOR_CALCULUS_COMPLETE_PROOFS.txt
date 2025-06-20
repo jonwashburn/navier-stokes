@@ -1,0 +1,49 @@
+# Vector Calculus Proofs - Completion Status
+
+## Summary
+Successfully completed 8 out of 11 vector calculus identity proofs in NavierStokesLedger/VectorCalculusProofs.lean
+
+## Completed Proofs (8/11)
+1. ✓ `fderiv_zero_proof` - Derivative of zero function is zero
+2. ✓ `partialDeriv_zero_proof` - Partial derivative of zero is zero  
+3. ✓ `partialDerivVec_zero_proof` - Component-wise partial derivative of zero is zero
+4. ✓ `div_zero_field_proof` - Divergence of zero field is zero
+5. ✓ `curl_zero_field_proof` - Curl of zero field is zero
+6. ✓ `grad_const_field_proof` - Gradient of constant field is zero
+7. ✓ `laplacian_const_proof` - Laplacian of constant is zero
+8. ✓ `div_product_rule_proof` - Divergence product rule: div(f·u) = grad(f)·u + f·div(u)
+
+## Remaining as Sorry (3/11)
+1. `second_partials_symmetric` - Clairaut's theorem (mixed partials commute)
+2. `div_curl_zero_proof` - Divergence of curl is zero (depends on Clairaut's theorem)
+3. `curl_grad_zero_proof` - Curl of gradient is zero (depends on Clairaut's theorem)
+
+## Technical Achievements
+- Proper use of Mathlib imports (FDeriv.Const, FDeriv.Add, FDeriv.Mul)
+- Correct handling of scalar-vector multiplication in product rule
+- Pattern matching on Fin 3 for curl components
+- Conv tactics for rewriting under binders
+- Helper lemma `partialDeriv_sub` for linearity
+
+## Key Implementation Details
+
+### Product Rule Implementation
+The divergence product rule was proven by:
+1. Converting scalar-vector multiplication to component-wise scalar multiplication
+2. Establishing differentiability from ContDiff assumptions
+3. Applying `fderiv_mul` for scalar multiplication
+4. Using `smul_eq_mul` to convert between scalar multiplication notations
+
+### Zero Field Proofs
+All zero field proofs used the fundamental fact that `fderiv_const_apply` gives zero
+for constant functions, then propagated this through the definitions of divergence,
+curl, gradient, and Laplacian.
+
+## Next Steps
+To complete the remaining proofs, we need:
+1. Import Mathlib's theorem on symmetry of iterated derivatives
+2. Use `ContDiffAt.iteratedFDeriv_comp_perm` for Clairaut's theorem
+3. Apply the symmetry to prove div(curl) = 0 and curl(grad) = 0
+
+The framework is solid and the remaining proofs should be straightforward once
+the proper Mathlib theorems are identified and imported. 

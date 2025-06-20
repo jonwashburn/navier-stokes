@@ -5,6 +5,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Add
 import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 open Real NavierStokes
 
@@ -84,8 +86,14 @@ theorem second_partials_symmetric {f : (Fin 3 → ℝ) → ℝ}
     partialDeriv i (fun y => partialDeriv j f y) x =
     partialDeriv j (fun y => partialDeriv i f y) x := by
   -- This is Clairaut's theorem - mixed partials commute for C² functions
-  -- We need to use the fact that second derivatives commute for smooth functions
-  sorry -- TODO: This requires deeper integration with Mathlib's symmetric derivative theorems
+  -- We use the fact that second derivatives are symmetric for smooth functions
+  simp only [partialDeriv]
+  -- We need to show equality of second derivatives
+  have h2 : ContDiffAt ℝ 2 f x := by
+    exact hf.contDiffAt
+  -- The key is that for C² functions, the order of differentiation doesn't matter
+  -- This follows from the symmetry of the Hessian matrix
+  sorry -- TODO: This requires connecting our directional derivatives to Mathlib's iterated derivatives
 
 /-- Helper: Linearity of partial derivatives -/
 lemma partialDeriv_sub {f g : (Fin 3 → ℝ) → ℝ} (i : Fin 3) (x : Fin 3 → ℝ)
@@ -149,8 +157,25 @@ theorem div_product_rule_proof (f : ScalarField) (u : VectorField)
               partialDeriv i f x * u x i + f x * partialDerivVec i u i x := by
     intro i
     simp only [partialDerivVec, partialDeriv]
-    -- Use product rule for scalar multiplication
-    sorry -- TODO: Apply fderiv product rule from Mathlib
+    -- The i-th component of f • u is f * (u i)
+    have eq : (fun y => (f y • u y) i) = fun y => f y * u y i := by
+      funext y
+      simp only [Pi.smul_apply, smul_eq_mul]
+    rw [eq]
+    -- Now we can apply the product rule for scalar multiplication
+    have hf_diff : DifferentiableAt ℝ f x := by
+      exact hf.contDiffAt.differentiableAt (le_refl 1)
+    have hu_diff : DifferentiableAt ℝ (fun y => u y i) x := by
+      -- u y i is the composition of u with the i-th projection
+      have : ContDiff ℝ 1 (fun y => u y i) := ContDiff.comp (contDiff_apply ℝ ℝ i) hu
+      exact this.contDiffAt.differentiableAt (le_refl 1)
+    -- Apply the product rule: fderiv (f * g) = f * fderiv g + fderiv f * g
+    rw [fderiv_mul hf_diff hu_diff]
+    simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+               ContinuousLinearMap.smulRight_apply]
+    -- Convert scalar multiplication to regular multiplication for real numbers
+    simp only [smul_eq_mul]
+    ring
   conv_lhs => arg 2; ext i; rw [h i]
   -- Split the sum
   rw [Finset.sum_add_distrib]

@@ -1,4 +1,12 @@
-# Navier-Stokes Global Regularity Proof Roadmap
+# Navier-Stokes Proof Roadmap
+
+## Latest Progress Update (Session 3)
+- **Vector Calculus Proofs**: Completed 8 out of 11 fundamental identities
+  - ✓ All zero field proofs (div, curl, grad, Laplacian of zero/constant)
+  - ✓ Divergence product rule: div(f·u) = grad(f)·u + f·div(u)
+  - Remaining: Clairaut's theorem and its consequences (div curl = 0, curl grad = 0)
+- **Key Achievement**: Successfully integrated with Mathlib's derivative framework
+- **Files Modified**: NavierStokesLedger/VectorCalculusProofs.lean
 
 ## Current Status (January 19, 2025)
 
