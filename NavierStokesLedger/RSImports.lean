@@ -168,7 +168,10 @@ theorem C_star_pos : 0 < C_star := by norm_num [C_star]
 
 -- φ ≈ 1.618033988749895
 lemma φ_approx : abs (φ - 1.618033988749895) < 1e-14 := by
-  sorry  -- Numerical approximation
+  -- This is a numerical approximation of φ = (1 + √5)/2
+  -- The exact value requires high-precision arithmetic
+  -- For now we assert this well-known numerical fact
+  sorry -- Requires numerical computation with interval arithmetic
 
 -- Helper: cascade_cutoff is positive
 lemma cascade_cutoff_pos : 0 < cascade_cutoff := by

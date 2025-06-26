@@ -36,9 +36,25 @@ theorem simple_vorticity_bound (ω_max : ℝ → ℝ) (h_nonneg : ∀ t, 0 ≤ �
     -- So the exponential term is bounded
     calc ω_max t ≤ C₀ * (1 + t / recognition_tick) * exp (cascade_cutoff * t / recognition_tick) := h
          _ ≤ C₀ * (1 + 1 / recognition_tick) * exp (cascade_cutoff / recognition_tick) := by
-           sorry  -- Monotonicity in t ∈ [0,1]
-         _ ≤ C₀ * 2 * exp cascade_cutoff := by
-           sorry  -- Using recognition_tick ≈ 7.33e-15 << 1
+           gcongr
+           · exact ht.2  -- t ≤ 1
+           · apply div_le_div_of_nonneg_left ht.2
+             · exact recognition_tick_pos
+             · exact recognition_tick_pos
+           · apply mul_le_mul_of_nonneg_right _ (exp_nonneg _)
+             apply div_le_div_of_nonneg_left ht.2
+             · exact cascade_cutoff_pos
+             · exact recognition_tick_pos
+                    _ ≤ C₀ * 2 * exp cascade_cutoff := by
+             -- Since recognition_tick ≈ 7.33e-15 is very small:
+             -- 1 + 1/recognition_tick ≈ 1/recognition_tick < 2/recognition_tick
+             -- cascade_cutoff/recognition_tick >> cascade_cutoff
+             -- But we need a simpler bound
+             gcongr
+             · -- Show 1 + 1/recognition_tick ≤ 2
+               -- This is false! 1/recognition_tick >> 1
+               -- We need a different approach
+               sorry -- This bound is too tight, need larger constant
 
 /-- Helper: cascade_cutoff is positive -/
 lemma cascade_cutoff_pos : 0 < cascade_cutoff := by
