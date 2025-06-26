@@ -120,7 +120,18 @@ lemma angle_bound_norm_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0) (hw : w ≠ 0)
     exact cos_le_cos_of_le_of_le_pi (by linarith : 0 ≤ angle v w) h_angle (by linarith : π/6 ≤ π)
 
   -- Continue with bound...
-  sorry -- Complete calculation using h_cos_bound
+  rw [h_norm_sq, h_inner]
+
+  -- We have ‖v - w‖² = ‖v‖² + ‖w‖² - 2‖v‖‖w‖cos(θ)
+  -- Since cos(θ) ≥ cos(π/6) = √3/2, we get:
+  -- ‖v - w‖² ≤ ‖v‖² + ‖w‖² - 2‖v‖‖w‖(√3/2)
+
+  -- For the bound 2sin(π/12)max(‖v‖,‖w‖), we use:
+  -- sin²(π/12) = (1 - cos(π/6))/2 = (1 - √3/2)/2
+  -- This gives us the desired inequality through algebraic manipulation
+
+  -- The detailed calculation is technical but standard
+  sorry -- I need more Lean-specific tactics for this algebraic manipulation
 
 -- Specific case we need: bound by sin(π/6) = 1/2
 lemma angle_bound_half_norm (v w : Fin 3 → ℝ) (hv : v ≠ 0)
@@ -128,8 +139,40 @@ lemma angle_bound_half_norm (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     ‖w - v‖ ≤ sin(π/6) * ‖v‖ := by
   have : sin (π/6) = 1/2 := by norm_num
   rw [this]
-  -- This is a simplified version for our specific case
-  sorry
+
+  -- Special case: if w = 0, then ‖w - v‖ = ‖v‖ ≤ (1/2)‖v‖ is false unless v = 0
+  -- But we know v ≠ 0, so w ≠ 0 when angle is defined
+  by_cases hw : w = 0
+  · -- If w = 0, then angle is not well-defined, contradiction
+    simp [hw] at h_angle
+    -- angle 0 v requires both vectors to be nonzero for arccos to be defined
+    sorry -- Need to handle this edge case properly
+
+  -- Now we know both v and w are nonzero
+  -- From angle(w,v) ≤ π/6, we want ‖w - v‖ ≤ (1/2)‖v‖
+
+  -- Using the identity: ‖w - v‖² = ‖w‖² + ‖v‖² - 2⟨w,v⟩
+  have h_norm_sq : ‖w - v‖^2 = ‖w‖^2 + ‖v‖^2 - 2 * inner w v := by
+    rw [norm_sub_sq_real]
+    ring
+
+  -- We have ⟨w,v⟩ = ‖w‖‖v‖cos(angle(w,v))
+  have h_inner : inner w v = ‖w‖ * ‖v‖ * cos (angle w v) := by
+    rw [angle, cos_arccos]
+    · ring
+    · rw [div_le_one_iff]
+      · exact inner_le_norm _ _
+      · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
+    · rw [le_div_iff]
+      · rw [mul_comm, ← neg_le_neg_iff]
+        simp only [neg_mul, neg_neg]
+        exact neg_inner_le_norm _ _
+      · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
+
+  -- Key insight: For aligned vectors with small angle, ‖w‖ ≈ ‖v‖
+  -- and the difference ‖w - v‖ is controlled by the angle
+
+  sorry -- Still need the final algebraic step
 
 -- Key lemma: Symmetric kernel integrates to zero against constant vector
 lemma symmetric_kernel_zero_integral
@@ -159,6 +202,42 @@ lemma antisymmetric_quadratic_zero
 lemma BS_kernel_bound (x y : Fin 3 → ℝ) (hxy : x ≠ y) :
     ‖BS_kernel x y‖ ≤ (3/(4*π)) / ‖x - y‖^2 := by
   sorry -- Standard bound for Biot-Savart kernel
+
+-- Helper: Operator norm bound
+lemma operator_norm_bound {n : Type*} [Fintype n] [DecidableEq n]
+    (A : Matrix n n ℝ) (v : n → ℝ) :
+    ‖A.mulVec v‖ ≤ ‖A‖ * ‖v‖ := by
+  -- This is the definition of operator norm
+  sorry -- Standard result from matrix analysis
+
+-- Helper: Divergence-free property of Biot-Savart kernel
+lemma BS_kernel_divergence_free (x : Fin 3 → ℝ) :
+    ∀ y ≠ x, divergence (fun y => BS_kernel x y) y = 0 := by
+  intro y hyx
+  -- The Biot-Savart kernel K(x,y) as a function of y satisfies div_y K = 0
+  -- This is because K is the curl of another vector field
+  -- Specifically, K = ∇_y × G where G is related to the Green's function
+  -- Since div(curl F) = 0 for any smooth F, we have div K = 0
+  sorry -- This requires the explicit formula for the kernel and vector calculus identities
+
+-- Key lemma: Integral of BS kernel against constant vector is zero
+lemma BS_kernel_constant_integral_zero (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r) (v : Fin 3 → ℝ) :
+    ∫ y in Metric.ball x r, BS_kernel x y v ∂volume = 0 := by
+  -- This is the crucial cancellation: ∫_{B(x,r)} K(x,y) dy = 0
+  -- Proof strategy:
+  -- 1. For ε > 0, consider B(x,r) \ B(x,ε)
+  -- 2. Apply divergence theorem on this annular region
+  -- 3. Since div_y(K(x,y)v) = 0 for y ≠ x (by BS_kernel_divergence_free)
+  -- 4. The volume integral is 0, so surface integrals on |y-x|=r and |y-x|=ε cancel
+  -- 5. As ε → 0, the inner sphere integral → 0 by symmetry
+  -- 6. Therefore the outer sphere integral = 0
+  -- 7. By radial homogeneity, this implies the ball integral = 0
+
+  -- Alternative proof using spherical coordinates directly:
+  -- K has zero mean on each sphere, so ∫_{|y-x|=ρ} K dy = 0 for all ρ
+  -- Therefore ∫_{B(x,r)} K dy = ∫_0^r (∫_{|y-x|=ρ} K dy) dρ = 0
+
+  sorry -- This requires measure theory and the divergence theorem
 
 -- Helper: Integration in spherical coordinates
 lemma spherical_integral_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r)
@@ -190,25 +269,20 @@ lemma nearField_cancellation
     · congr 1
       ext y
       simp [sub_eq_iff_eq_add]
-    · sorry -- integrability of BS_kernel x y (ω x)
-    · sorry -- integrability of BS_kernel x y (δω y)
+    · -- Integrability of BS_kernel x y (ω x)
+      -- The kernel has singularity 1/|y-x|^2, which is integrable in 3D
+      -- over bounded domains when integrated against a constant vector
+      sorry
+    · -- Integrability of BS_kernel x y (δω y)
+      -- Similar argument: kernel singularity is integrable in 3D
+      -- and δω is bounded on the ball
+      sorry
 
   -- Step 3: First integral vanishes due to symmetry
   have h_first_zero : ‖∫ y in Metric.ball x r, BS_kernel x y (ω x) ∂volume‖ = 0 := by
-    -- Key insight: For divergence-free kernel K with K(x,y) ~ (x-y)/|x-y|³,
-    -- the integral ∫_{B(x,r)} K(x,y) dy = 0 by Gauss's theorem
-    -- This is because div_y K(x,y) = 0 for y ≠ x
-    -- Details:
-    -- 1. BS_kernel satisfies div_y (BS_kernel x y) = 0 for y ≠ x
-    -- 2. By divergence theorem: ∫_{B(x,r)} div_y (BS_kernel x y · v) dy = ∫_{∂B(x,r)} (BS_kernel x y · v) · n dS
-    -- 3. On the boundary ∂B(x,r), the kernel has uniform magnitude O(1/r²)
-    -- 4. The surface integral cancels due to symmetry when v is constant
-    -- 5. Therefore ∫_{B(x,r)} BS_kernel x y v dy = 0 for constant v
-    have h_div_free : ∀ y ≠ x, divergence_y (fun y => BS_kernel x y) = 0 := by
-      sorry -- Biot-Savart kernel is divergence-free
-    have h_gauss : ∫ y in Metric.ball x r, BS_kernel x y (ω x) ∂volume = 0 := by
-      sorry -- Apply divergence theorem with constant vector field
-    simp [h_gauss, norm_zero]
+    -- Apply our key cancellation lemma
+    have h_zero := BS_kernel_constant_integral_zero x r hr (ω x)
+    simp [h_zero, norm_zero]
 
   -- Step 4: Bound the perturbation term
   have h_delta_bound : ∀ y ∈ Metric.ball x r, ‖δω y‖ ≤ sin (π/6) * ‖ω x‖ := by
@@ -226,7 +300,7 @@ lemma nearField_cancellation
         ‖BS_kernel x y (δω y)‖ ≤ (3/(4*π)) * (1/2) * ‖ω x‖ / ‖x - y‖^2 := by
       intro y hy hyx
       calc ‖BS_kernel x y (δω y)‖
-          ≤ ‖BS_kernel x y‖ * ‖δω y‖ := by sorry -- operator norm bound
+          ≤ ‖BS_kernel x y‖ * ‖δω y‖ := operator_norm_bound (BS_kernel x y) (δω y)
         _ ≤ (3/(4*π)) / ‖x - y‖^2 * (sin(π/6) * ‖ω x‖) := by
             apply mul_le_mul (BS_kernel_bound x y (ne_comm.mp hyx)) (h_delta_bound y hy)
                 (norm_nonneg _) (div_nonneg (by norm_num : (0:ℝ) ≤ 3/(4*π)) (sq_nonneg _))
@@ -243,14 +317,22 @@ lemma nearField_cancellation
 
     -- The key insight: when vorticity is aligned, the effective constant is much smaller
     -- than the naive bound due to cancellation effects
-    -- The rigorous calculation involves:
-    -- 1. More careful kernel estimates using the specific structure of Biot-Savart
-    -- 2. Exploiting the alignment condition more precisely
-    -- 3. Using the fact that δω is nearly orthogonal to ω(x) when aligned
 
-    -- For now, we state the result that can be proven with detailed harmonic analysis:
-    -- When angle ≤ π/6, the integral is bounded by (C_star/2)/r with C_star = 0.05
-    sorry -- This requires detailed harmonic analysis calculation
+    -- What's needed for the sharp bound:
+    -- 1. Decompose δω = δω_∥ + δω_⊥ (parallel and perpendicular to ω₀)
+    -- 2. The parallel part δω_∥ is O(|y-x|²) by the alignment condition
+    -- 3. The perpendicular part requires the anisotropic kernel estimate:
+    --    ∫ K(z) f_⊥(z) dz has extra cancellation when f_⊥ ⊥ ω₀ everywhere
+    -- 4. This uses that K preferentially amplifies radial components
+    -- 5. The Calderón-Zygmund theory gives the precise constant
+
+    -- This is where the Constantin-Fefferman (1993) analysis is essential
+    -- The proof requires:
+    -- - Littlewood-Paley decomposition
+    -- - Anisotropic function spaces
+    -- - Precise estimates of oscillatory integrals
+
+    sorry -- This requires the full Constantin-Fefferman harmonic analysis machinery
 
   -- Combine results
   rw [hsplit]
