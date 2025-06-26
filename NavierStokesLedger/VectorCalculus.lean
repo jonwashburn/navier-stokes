@@ -68,7 +68,9 @@ theorem partialDeriv_comm {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
     (hf : ContDiff ℝ 2 f) (i j : Fin 3) :
     partialDeriv i (fun y => partialDeriv j f y) x =
     partialDeriv j (fun y => partialDeriv i f y) x :=
-  sorry  -- Uses second_partials_symmetric from VectorCalculusProofs
+  -- This follows from the symmetry of second derivatives
+  -- ∂_i ∂_j f = ∂_j ∂_i f for C² functions
+  second_partials_symmetric hf i j x
 
 /-- Divergence of curl is always zero (simplified proof structure) -/
 theorem div_curl_zero' (u : VectorField) (h : ContDiff ℝ 2 u) :
@@ -96,7 +98,14 @@ theorem curl_curl (u : VectorField) (h : ContDiff ℝ 2 u) :
     curl (curl u) = fun x => gradientScalar (divergence u) x - laplacianVector u x := by
   -- Vector identity: ∇×(∇×u) = ∇(∇·u) - Δu
   -- This is a key identity for vorticity dynamics
-  sorry  -- TODO: Prove by expanding definitions
+  funext x i
+  -- Expand curl(curl u)_i = ε_{ijk} ∂_j (curl u)_k
+  --                       = ε_{ijk} ∂_j (ε_{klm} ∂_l u_m)
+  --                       = ε_{ijk} ε_{klm} ∂_j ∂_l u_m
+  -- Using ε_{ijk} ε_{klm} = δ_{il}δ_{jm} - δ_{im}δ_{jl}:
+  --                       = ∂_i ∂_m u_m - ∂_j ∂_j u_i
+  --                       = ∂_i (div u) - (Δu)_i
+  sorry -- Detailed index calculation with Levi-Civita identity
 
 /-- Divergence theorem preparation: div of product -/
 theorem div_product_rule (f : ScalarField) (u : VectorField)
