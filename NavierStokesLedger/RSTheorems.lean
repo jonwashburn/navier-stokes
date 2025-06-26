@@ -43,7 +43,15 @@ theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
 /-- The cascade cutoff prevents growth beyond φ⁻⁴ -/
 theorem cascade_cutoff_bound (E : ℝ → ℝ) (hE : ∀ t, 0 ≤ E t) :
     ∃ C > 0, ∀ t ≥ 0, E t ≤ C * exp (cascade_cutoff * t) := by
-  sorry  -- Requires energy evolution analysis
+  -- The cascade cutoff φ⁻⁴ ≈ 0.146 limits energy growth
+  -- From Recognition Science: E(t) ≤ E(0) * exp(cascade_cutoff * t)
+  use 1  -- Take C = 1 for normalized initial energy
+  constructor
+  · norm_num
+  intro t ht
+  -- The eight-beat cycle prevents exponential growth beyond φ⁻⁴ rate
+  -- This is a fundamental RS constraint on energy cascade
+  sorry -- Requires detailed RS energy cascade analysis
 
 /-- Eight-beat periodicity limits growth -/
 theorem eight_beat_growth_bound (f : ℝ → ℝ)
@@ -149,7 +157,12 @@ theorem gronwall_phi_bound (f : ℝ → ℝ) (hf : Continuous f)
     ∀ t ≥ 0, f t ≤ f 0 * exp ((log φ / recognition_tick) * t) := by
   intro t ht
   -- Standard Grönwall inequality with k = log(φ)/τ₀
-  sorry
+  -- If f(t) ≤ f(0) + k*t*f(0), then f(t) ≤ f(0)*exp(k*t)
+  let k := log φ / recognition_tick
+  have hk_pos : 0 < k := div_pos log_φ_pos recognition_tick_pos
+  -- This is a special case of Grönwall's lemma
+  -- The linear bound f(t) ≤ f(0)(1 + kt) implies exponential bound
+  sorry -- Apply standard Grönwall lemma from analysis
 
 /-- Cascade cutoff is approximately 0.1459 -/
 lemma cascade_cutoff_value : abs (cascade_cutoff - 0.1459) < 0.001 := by
