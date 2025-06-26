@@ -1,0 +1,39 @@
+2025-06-17 12:34:19,426 - === SAFE PROOF APPLICATION ===
+2025-06-17 12:34:19,426 - Creating backup in backups/safe_apply_20250617_123419
+2025-06-17 12:34:19,440 - Backup complete
+2025-06-17 12:34:19,440 - Applying C_star_lt_phi_inv to NavierStokesLedger/BasicDefinitions.lean
+2025-06-17 12:34:31,601 - ❌ Reverted C_star_lt_phi_inv - build failed
+2025-06-17 12:34:31,602 - Applying bootstrap_less_than_golden to NavierStokesLedger/GoldenRatioSimple.lean
+2025-06-17 12:34:32,258 - ❌ Reverted bootstrap_less_than_golden - build failed
+2025-06-17 12:34:32,293 - Applying k_star_less_one to NavierStokesLedger/UnconditionalProof_verified.lean
+2025-06-17 12:34:33,279 - ❌ Reverted k_star_less_one - build failed
+2025-06-17 12:34:33,284 - Applying c_star_approx to NavierStokesLedger/UnconditionalProof_verified.lean
+2025-06-17 12:34:34,245 - ❌ Reverted c_star_approx - build failed
+2025-06-17 12:34:34,246 - Skipping measure_ball_scaling - failed validation
+2025-06-17 12:34:34,246 - Applying energyDissipationRate to NavierStokesLedger/FluidDynamics/VelocityField.lean
+2025-06-17 12:34:38,180 - ❌ Reverted energyDissipationRate - build failed
+2025-06-17 12:34:38,180 - Applying enstrophyDissipationRate to NavierStokesLedger/FluidDynamics/VelocityField.lean
+2025-06-17 12:34:41,346 - ❌ Reverted enstrophyDissipationRate - build failed
+2025-06-17 12:34:41,351 - Applying parabolic_energy_estimate to NavierStokesLedger/Harnack/ParabolicPDE.lean
+2025-06-17 12:34:43,748 - ❌ Reverted parabolic_energy_estimate - build failed
+2025-06-17 12:34:43,753 - Applying parabolic_poincare to NavierStokesLedger/Harnack/ParabolicPDE.lean
+2025-06-17 12:34:46,330 - ❌ Reverted parabolic_poincare - build failed
+2025-06-17 12:34:46,336 - Applying poincare_viscous_core to NavierStokesLedger/Bootstrap/DissipationBootstrap.lean
+2025-06-17 12:34:46,962 - ❌ Reverted poincare_viscous_core - build failed
+2025-06-17 12:34:46,968 - Applying proof_is_constructive to NavierStokesLedger/ProofSummary.lean
+2025-06-17 12:34:47,956 - ❌ Reverted proof_is_constructive - build failed
+2025-06-17 12:34:47,962 - Applying millennium_prize_solution to NavierStokesLedger/MainTheoremSimple2.lean
+2025-06-17 12:34:48,972 - ❌ Reverted millennium_prize_solution - build failed
+2025-06-17 12:34:48,978 - Applying no_blowup to NavierStokesLedger/CurvatureBoundSimple2.lean
+2025-06-17 12:34:49,955 - ❌ Reverted no_blowup - build failed
+2025-06-17 12:34:49,961 - Applying satisfiesNS_is_implementable to NavierStokesLedger/PDEImplementation.lean
+2025-06-17 12:34:52,771 - ❌ Reverted satisfiesNS_is_implementable - build failed
+2025-06-17 12:34:52,772 - 
+==================================================
+2025-06-17 12:34:52,772 - SUMMARY:
+2025-06-17 12:34:52,772 -   Applied: 0 proofs
+2025-06-17 12:34:52,772 -   Failed: 26
+2025-06-17 12:34:52,772 -   Skipped: 1
+2025-06-17 12:34:52,772 - 
+Running final build check...
+2025-06-17 12:34:54,110 - ✅ Build successful!

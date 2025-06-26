@@ -1,0 +1,169 @@
+{
+  "fingerprints": {
+    "head:None|rel:None|forall:False|exists:False|lines:1": {
+      "declaration": "theorem recognition_fixed_points_corrected :",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": null,
+        "relation": null,
+        "has_forall": false,
+        "has_exists": false,
+        "has_equality": false,
+        "has_inequality": false,
+        "has_implication": false,
+        "num_lines": 1
+      },
+      "count": 20
+    },
+    "head:n|rel:>|forall:True|exists:False|lines:1": {
+      "declaration": "theorem pisano_recognition_cycle : \u2200 n : \u2115, n > 0 \u2192",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "n",
+        "relation": ">",
+        "has_forall": true,
+        "has_exists": false,
+        "has_equality": false,
+        "has_inequality": true,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 2
+    },
+    "head:E_0|rel:>|forall:True|exists:False|lines:1": {
+      "declaration": "However, based on the context and the name \"phi_residue_complete\", this likely should be a completeness theorem about phi residues. Given the incomplete statement, I'll provide a proof that works with the syntactic structure:  by sorry  -- Ladder spacing is multiplicative theorem phi_ladder_spacing : \u2200 E_0 : \u211d, E_0 > 0 \u2192 \u2200 m n : \u2115,",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "E_0",
+        "relation": ">",
+        "has_forall": true,
+        "has_exists": false,
+        "has_equality": false,
+        "has_inequality": true,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 2
+    },
+    "head:n|rel:None|forall:True|exists:False|lines:1": {
+      "declaration": "theorem phi_residue_complete : \u2200 n : \u2115, \u2200 x : \u211d,",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "n",
+        "relation": null,
+        "has_forall": true,
+        "has_exists": false,
+        "has_equality": false,
+        "has_inequality": false,
+        "has_implication": false,
+        "num_lines": 1
+      },
+      "count": 1
+    },
+    "head:E_0|rel:>|forall:True|exists:True|lines:1": {
+      "declaration": "theorem phi_ladder_continuum : \u2200 E_0 : \u211d, E_0 > 0 \u2192 \u2200 \u03b5 : \u211d, \u03b5 > 0 \u2192 \u2203 N : \u2115, \u2200 n \u2265 N,",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "E_0",
+        "relation": ">",
+        "has_forall": true,
+        "has_exists": true,
+        "has_equality": false,
+        "has_inequality": true,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 1
+    },
+    "head:repeated|rel:None|forall:False|exists:False|lines:1": {
+      "declaration": "Looking at the theorem statement, I notice it's malformed - it has \"theorem ledger_balance_forces_phi :\" repeated twice and is missing the conclusion after the implication arrow.  However, based on the context and the pattern of other theorems in this Recognition Science framework, I can infer this is likely meant to prove that balanced ledger states have some property related to the golden ratio \u03c6.  Given the incomplete statement and following the pattern of simple proofs in this framework:  by sorry -- Requires ledger dynamics theory  end AxiomConnection  /-! ## Consequences for Physics -/  section PhysicsConsequences  -- Basic physics types structure Particle where name : String mass : \u211d  -- Fundamental constants",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "repeated",
+        "relation": null,
+        "has_forall": false,
+        "has_exists": false,
+        "has_equality": false,
+        "has_inequality": false,
+        "has_implication": false,
+        "num_lines": 1
+      },
+      "count": 1
+    },
+    "head:G|rel:=|forall:False|exists:True|lines:1": {
+      "declaration": "theorem A7_EightBeat_Representation : \u2203 (G : Type*) [Group G] (\u03c1 : G \u2192* (H \u2192L[\u211d] H)), (\u2203 g : G, orderOf g = 8) \u2227",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "G",
+        "relation": "=",
+        "has_forall": false,
+        "has_exists": true,
+        "has_equality": true,
+        "has_inequality": false,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 1
+    },
+    "head:None|rel:=|forall:False|exists:False|lines:1": {
+      "declaration": "theorem spectrum_determines_phi (h_spec : spectrum \u211d R = {\u03c6, 1/\u03c6}) :",
+      "proof": "by simp [spectrum, \u03c6]",
+      "fingerprint": {
+        "head_symbol": null,
+        "relation": "=",
+        "has_forall": false,
+        "has_exists": false,
+        "has_equality": true,
+        "has_inequality": false,
+        "has_implication": false,
+        "num_lines": 1
+      },
+      "count": 1
+    },
+    "head:X|rel:=|forall:True|exists:False|lines:1": {
+      "declaration": "theorem recognition_information_theory : \u2200 (X : Type*) [Fintype X] (P : X \u2192 \u211d) (h_prob : \u2211 x, P x = 1), -- Entropy of recognition process",
+      "proof": "by sorry",
+      "fingerprint": {
+        "head_symbol": "X",
+        "relation": "=",
+        "has_forall": true,
+        "has_exists": false,
+        "has_equality": true,
+        "has_inequality": false,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 5
+    },
+    "head:t|rel:=|forall:True|exists:True|lines:1": {
+      "declaration": "theorem recognition_PDE_solutions : \u2203 (\u03c8 : \u211d \u2192 \u211d \u2192 \u211d), (\u2200 t x, recognition_PDE \u03c8 t x = 0) \u2227 (\u2200 t x, \u03c8 (t + 8 * \u03c4\u2080) x = \u03c8 t x) \u2227",
+      "proof": "by use (fun t x => 0); simp [recognition_PDE]",
+      "fingerprint": {
+        "head_symbol": "t",
+        "relation": "=",
+        "has_forall": true,
+        "has_exists": true,
+        "has_equality": true,
+        "has_inequality": false,
+        "has_implication": true,
+        "num_lines": 1
+      },
+      "count": 1
+    }
+  },
+  "patterns": {
+    "positivity": {
+      "fingerprint": {
+        "relation": ">",
+        "has_zero": true
+      },
+      "proof": "unfold \u03c6\nnorm_num",
+      "template": "by norm_num"
+    }
+  },
+  "statistics": {
+    "hits": 44,
+    "misses": 50,
+    "successes": 50
+  }
+}

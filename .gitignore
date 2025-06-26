@@ -1,0 +1,24 @@
+# Lean build files
+.lake/
+build/
+lake-manifest.json
+
+# Editor files
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+*.code-workspace
+
+# Backup files
+*.backup
+*.bak
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log 

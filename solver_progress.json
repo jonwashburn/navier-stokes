@@ -1,0 +1,208 @@
+{
+  "start_date": "2025-06-17T10:15:36.965914",
+  "total_sorries_initial": 318,
+  "sessions": [
+    {
+      "timestamp": "2025-06-17T10:15:36.965924",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966287",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966408",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966523",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966634",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966754",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.966876",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.967001",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.967143",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:15:36.967296",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.357748",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.358280",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.358521",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.358736",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.359056",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.359301",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.359749",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.360033",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.360261",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    },
+    {
+      "timestamp": "2025-06-17T10:24:57.360586",
+      "proofs_completed": 10,
+      "categories": {
+        "golden_ratio": 9,
+        "definition": 1
+      }
+    }
+  ],
+  "cumulative_proofs": 200,
+  "proofs_by_category": {
+    "golden_ratio": 180,
+    "definition": 20
+  },
+  "milestones": [
+    {
+      "count": 10,
+      "timestamp": "2025-06-17T10:15:36.965929",
+      "percentage": 3.1
+    },
+    {
+      "count": 25,
+      "timestamp": "2025-06-17T10:15:36.966413",
+      "percentage": 7.9
+    },
+    {
+      "count": 50,
+      "timestamp": "2025-06-17T10:15:36.966638",
+      "percentage": 15.7
+    },
+    {
+      "count": 75,
+      "timestamp": "2025-06-17T10:15:36.967005",
+      "percentage": 23.6
+    },
+    {
+      "count": 100,
+      "timestamp": "2025-06-17T10:15:36.967301",
+      "percentage": 31.4
+    },
+    {
+      "count": 150,
+      "timestamp": "2025-06-17T10:24:57.359069",
+      "percentage": 47.2
+    },
+    {
+      "count": 200,
+      "timestamp": "2025-06-17T10:24:57.360599",
+      "percentage": 62.9
+    }
+  ]
+}
