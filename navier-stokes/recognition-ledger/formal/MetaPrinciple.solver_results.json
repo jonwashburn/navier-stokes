@@ -1,0 +1,23 @@
+{
+  "file": "../formal/MetaPrinciple.lean",
+  "results": [
+    {
+      "name": "A1_DiscreteRecognition",
+      "line": 161,
+      "proof": "use (7.33e-15 : \u211d), by norm_num\nintro r\nuse 0\nintro m\nsimp",
+      "confidence": 0.7
+    },
+    {
+      "name": "A1_DiscreteRecognition",
+      "line": 168,
+      "proof": "use (7.33e-15 : \u211d), by norm_num\nintro r\nuse 0\nintro m\nsimp",
+      "confidence": 0.7
+    },
+    {
+      "name": "A1_DiscreteRecognition",
+      "line": 182,
+      "proof": "use (7.33e-15 : \u211d), by norm_num\nintro r\nuse 0\nintro m\nsimp",
+      "confidence": 0.7
+    }
+  ]
+}
