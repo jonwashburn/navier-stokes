@@ -10,6 +10,7 @@ import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+import Mathlib.MeasureTheory.Constructions.Pi
 
 open Real MeasureTheory
 
@@ -22,7 +23,7 @@ namespace NavierStokes
 open RecognitionScience (C_star)
 
 -- Set up measure space on Fin 3 → ℝ
-instance : MeasureSpace (Fin 3 → ℝ) := ⟨Measure.pi⟩
+instance : MeasureSpace (Fin 3 → ℝ) := ⟨volume⟩
 
 /-- A minimal singular kernel structure for our purposes,
     until the full SingularIntegralKernel module is available -/
@@ -30,21 +31,111 @@ structure SingularKernel (X Y : Type*) [NormedAddCommGroup Y] [NormedSpace ℝ Y
   kernel : X → X → (Y → Y)
   bound : ℝ → ℝ  -- bound(r) gives the L¹ bound outside ball of radius r
 
-/-- Placeholder for curl operator -/
-def curl {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] : (E → E) → (E → E) := sorry
-
-/-- Placeholder for divergence operator -/
-def divergence_y {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] : ((E → E) → E) → ℝ := sorry
-
-/-- Biot–Savart kernel in R³. For now we axiomatize its properties. -/
+/-- Biot–Savart kernel in R³. K(x,y) = (x-y) × I / (4π|x-y|³) -/
 noncomputable def BS_kernel : SingularKernel (Fin 3 → ℝ) (Fin 3 → ℝ) :=
-  { kernel := fun x y => sorry  -- The actual Biot-Savart kernel formula
+  { kernel := fun x y v =>
+      if h : x = y then 0 else
+      let r := x - y
+      let norm_r := ‖r‖
+      -- Cross product (x-y) × v divided by 4π|x-y|³
+      (1 / (4 * π * norm_r^3)) • ![
+        r 1 * v 2 - r 2 * v 1,
+        r 2 * v 0 - r 0 * v 2,
+        r 0 * v 1 - r 1 * v 0
+      ]
     bound := fun r => 3 / (4 * π * r) }  -- Standard bound
 
 /-- The Biot-Savart kernel has the expected L¹ bound outside balls -/
 lemma BS_kernel_L1_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r) :
-    ∃ B > 0, ∀ y ∉ Metric.ball x r, ∀ v : Fin 3 → ℝ, ‖BS_kernel.kernel x y v‖ ≤ B / r * ‖v‖ :=
-  ⟨3 / (4 * π), by norm_num [pi_pos], fun y _ v => sorry⟩
+    ∃ B > 0, ∀ y ∉ Metric.ball x r, ∀ v : Fin 3 → ℝ, ‖BS_kernel.kernel x y v‖ ≤ B / r * ‖v‖ := by
+  use 1 / (4 * π)
+  constructor
+  · exact div_pos one_pos (mul_pos (by norm_num : (4 : ℝ) > 0) pi_pos)
+  intro y hy v
+  -- For y outside ball of radius r, we have ‖x - y‖ ≥ r
+  have h_dist : r ≤ ‖x - y‖ := by
+    rw [Metric.mem_ball, not_lt] at hy
+    rw [dist_comm] at hy
+    simp [dist_eq_norm] at hy
+    exact hy
+  -- The kernel bound: ‖K(x,y)v‖ ≤ ‖v‖/(4π‖x-y‖²) ≤ ‖v‖/(4πr²)
+  by_cases hxy : x = y
+  · -- If x = y, but y ∉ ball(x,r) with r > 0, contradiction
+    exfalso
+    rw [hxy] at h_dist
+    simp at h_dist
+    linarith
+  · -- Otherwise use the explicit formula
+    simp [BS_kernel, hxy]
+    -- Bound the cross product: ‖(x-y) × v‖ ≤ ‖x-y‖ · ‖v‖
+    have h_cross : ‖![
+        (x - y) 1 * v 2 - (x - y) 2 * v 1,
+        (x - y) 2 * v 0 - (x - y) 0 * v 2,
+        (x - y) 0 * v 1 - (x - y) 1 * v 0
+      ]‖ ≤ ‖x - y‖ * ‖v‖ := by
+      -- Use the standard cross product inequality ‖a × b‖ ≤ ‖a‖ · ‖b‖
+      -- This follows from Lagrange's identity: ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩²
+      have h_lagrange : ‖![
+          (x - y) 1 * v 2 - (x - y) 2 * v 1,
+          (x - y) 2 * v 0 - (x - y) 0 * v 2,
+          (x - y) 0 * v 1 - (x - y) 1 * v 0
+        ]‖^2 ≤ ‖x - y‖^2 * ‖v‖^2 := by
+        -- The cross product satisfies ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩² ≤ ‖a‖²‖b‖²
+        sorry -- Lagrange identity calculation
+      exact sq_le_sq' (by linarith [norm_nonneg (x - y), norm_nonneg v]) h_lagrange
+    -- Now bound the scaled cross product
+    have h_calc : ‖(1 / (4 * π * ‖x - y‖^3)) • ![
+        (x - y) 1 * v 2 - (x - y) 2 * v 1,
+        (x - y) 2 * v 0 - (x - y) 0 * v 2,
+        (x - y) 0 * v 1 - (x - y) 1 * v 0
+      ]‖ ≤ 1 / (4 * π * r) * ‖v‖ := by
+      rw [norm_smul]
+      have h_pos : 0 ≤ 1 / (4 * π * ‖x - y‖^3) := by
+        apply div_nonneg
+        · exact zero_le_one
+        · apply mul_pos
+          · apply mul_pos
+            · norm_num
+            · exact pi_pos
+          · exact pow_pos (norm_pos_iff.mpr hxy) _
+      rw [abs_of_nonneg h_pos]
+      calc 1 / (4 * π * ‖x - y‖^3) * ‖![
+          (x - y) 1 * v 2 - (x - y) 2 * v 1,
+          (x - y) 2 * v 0 - (x - y) 0 * v 2,
+          (x - y) 0 * v 1 - (x - y) 1 * v 0
+        ]‖ ≤ 1 / (4 * π * ‖x - y‖^3) * (‖x - y‖ * ‖v‖) := by
+          gcongr
+          exact h_cross
+      _ = 1 / (4 * π * ‖x - y‖^2) * ‖v‖ := by
+          field_simp
+          ring
+      _ ≤ 1 / (4 * π * r^2) * ‖v‖ := by
+          gcongr
+          exact h_dist
+      _ = 1 / (4 * π * r) * ‖v‖ / r := by ring
+      _ ≤ 1 / (4 * π * r) * ‖v‖ := by
+          rw [div_le_iff hr]
+          linarith
+    exact h_calc
+
+/-- Curl operator for vector fields on Fin 3 → ℝ -/
+noncomputable def curl : ((Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → (Fin 3 → ℝ)) :=
+  fun u x => ![
+    deriv (fun t => u ![x 0, x 1, t] 2) (x 2) - deriv (fun t => u ![x 0, t, x 2] 1) (x 1),
+    deriv (fun t => u ![t, x 1, x 2] 0) (x 0) - deriv (fun t => u ![x 0, x 1, t] 2) (x 2),
+    deriv (fun t => u ![x 0, t, x 2] 1) (x 1) - deriv (fun t => u ![t, x 1, x 2] 0) (x 0)
+  ]
+
+/-- Divergence operator for vector fields on Fin 3 → ℝ -/
+noncomputable def divergence : ((Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → ℝ) :=
+  fun u x =>
+    deriv (fun t => u ![t, x 1, x 2] 0) (x 0) +
+    deriv (fun t => u ![x 0, t, x 2] 1) (x 1) +
+    deriv (fun t => u ![x 0, x 1, t] 2) (x 2)
+
+/-- Divergence with respect to y variable (for kernels) -/
+noncomputable def divergence_y : ((Fin 3 → ℝ) → (Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → (Fin 3 → ℝ) → ℝ) :=
+  fun K x y => divergence (fun y' => K x y') y
 
 /-- Far–field estimate: the contribution of `|y-x| ≥ r` to `∇u` is O(r⁻¹).  We phrase it as
 an operator estimate that will feed the Constantin–Fefferman argument. -/
@@ -54,59 +145,22 @@ lemma farField_grad_bound
     (hcurl : ω = curl u)
     (hωL1 : Integrable (fun x => ‖ω x‖) volume)
     (x : Fin 3 → ℝ) {r : ℝ} (hr : 0 < r) :
-    ∃ C, ‖∫ y, (BS_kernel.kernel x y) (ω y) * (1 - (Set.indicator (Metric.ball x r) (fun _ => 1) y)) ∂volume‖
-      ≤ C / r := by
-  -- Use the L¹–bound on the kernel outside the ball.
+    ∃ C, ‖∫ y in {y | ‖y - x‖ ≥ r}, (BS_kernel.kernel x y) (ω y) ∂volume‖ ≤ C / r := by
+  -- Use the L¹–bound on the kernel outside the ball
   obtain ⟨B, hB_pos, hB⟩ := BS_kernel_L1_bound x r hr
-  -- |∫ K(x,y) ω(y)| ≤ ∫ ‖K‖ ‖ω‖
-  have h1 : ‖∫ y, (BS_kernel.kernel x y) (ω y) * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume‖ ≤
-      ∫ y, ‖(BS_kernel.kernel x y) (ω y)‖ * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume := by
-    simpa using norm_integral_le_integral_norm _
-  -- bound the kernel pointwise by B/r and factor ‖ω‖
-  have h2 : ∫ y, ‖(BS_kernel.kernel x y) (ω y)‖ * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume ≤
-      (B / r) * ∫ y, ‖ω y‖ ∂volume := by
-    have hker : ∀ y, (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) = 0 ∨
-      (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) = 1 := by
-      intro y; by_cases hmem: y ∈ Metric.ball x r <;> simp [Set.indicator_of_mem, Set.indicator_of_not_mem, hmem] at *
-    -- Use kernel bound outside the ball
-    -- Note: We need to handle the operator norm bound properly
-    have hbound : ∀ y ∉ Metric.ball x r, ∀ v,
-        ‖BS_kernel.kernel x y v‖ ≤ B / r * ‖v‖ := hB
-    -- Apply integral inequality
-    have : (∫ y, ‖(BS_kernel x y) (ω y)‖ * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume) ≤
-      (B / r) * ∫ y, ‖ω y‖ ∂volume := by
-      have : ∫ y, ‖(BS_kernel x y) (ω y)‖ * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume ≤
-        ∫ y, (B / r) * ‖ω y‖ ∂volume := by
-        -- bound integrand pointwise
-        have hpt : ∀ y, ‖(BS_kernel x y) (ω y)‖ * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ≤ (B/r) * ‖ω y‖ := by
-          intro y
-          by_cases hmem : y ∈ Metric.ball x r
-          · have : (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) = 0 := by
-              simp [Set.indicator_of_mem hmem] at *
-            simp [this]
-          · have hk : ‖BS_kernel.kernel x y (ω y)‖ ≤ B / r * ‖ω y‖ := hB _ hmem (ω y)
-            have : (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) = 1 := by
-              simp [Set.indicator_of_not_mem hmem] at *
-            simp [this]
-            exact hk
-        have := integral_mono (by
-          -- LHS: integrable because bounded by (B/r) * ‖ω y‖
-          apply Integrable.bdd_mul
-          · apply integrable_const
-          · exact hωL1
-          · intro y
-            exact hpt y) (by
-          -- RHS: (B/r) * ‖ω y‖ is integrable
-          exact Integrable.const_mul (B/r) hωL1) hpt
-        exact this
-      simpa [mul_comm, mul_left_comm] using this
-    exact this
-  -- Combine
-  have : ‖∫ y, (BS_kernel.kernel x y) (ω y) * (1 - Set.indicator (Metric.ball x r) (fun _ => (1:ℝ)) y) ∂volume‖ ≤ (B / r) * ∫ y, ‖ω y‖ ∂volume :=
-    le_trans h1 h2
-  -- Package constant
-  refine ⟨B * ∫ y, ‖ω y‖ ∂volume, ?_⟩
-  simpa [mul_comm, mul_left_comm, mul_assoc] using this
+  -- We integrate over the complement of the ball
+  have h_bound : ∀ y ∈ {y | ‖y - x‖ ≥ r}, ‖BS_kernel.kernel x y (ω y)‖ ≤ B / r * ‖ω y‖ := by
+    intro y hy
+    rw [Set.mem_setOf] at hy
+    have : y ∉ Metric.ball x r := by
+      rw [Metric.mem_ball, not_lt]
+      simp [dist_eq_norm]
+      rw [norm_sub_rev]
+      exact hy
+    exact hB y this (ω y)
+  -- Apply dominated convergence
+  use B * ∫ y, ‖ω y‖ ∂volume
+  sorry -- Technical measure theory calculation
 
 -- Helper: Decompose kernel into symmetric and antisymmetric parts
 def kernel_symmetric (K : (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ) :
@@ -119,7 +173,9 @@ def kernel_antisymmetric (K : (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fi
 
 -- Helper: Angle between vectors
 noncomputable def angle (v w : Fin 3 → ℝ) : ℝ :=
-  Real.arccos (inner v w / (‖v‖ * ‖w‖))
+  if hv : v = 0 then π/2
+  else if hw : w = 0 then π/2
+  else Real.arccos (inner v w / (‖v‖ * ‖w‖))
 
 -- Helper: Angle bound implies norm bound
 lemma angle_bound_norm_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0) (hw : w ≠ 0)
@@ -150,9 +206,17 @@ lemma angle_bound_norm_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0) (hw : w ≠ 0)
 lemma angle_bound_aligned_norm (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     (h_angle : angle w v ≤ π/6) :
     ‖w - v‖ ≤ 2 * sin(π/12) * ‖v‖ := by
-  -- Special case where we assume ‖w‖ ≤ ‖v‖ (aligned vorticity cone)
-  -- Then max(‖v‖,‖w‖) = ‖v‖ and we can apply angle_bound_norm_bound
-  sorry -- Requires showing ‖w‖ ≤ ‖v‖ in aligned case, then apply general bound
+  by_cases hw : w = 0
+  · -- If w = 0, then angle w v = π/2 > π/6, contradicting h_angle
+    exfalso
+    simp [angle, hw, hv] at h_angle
+    linarith [pi_pos]
+  · -- Apply the general bound
+    have h_general := angle_bound_norm_bound v w hv hw h_angle
+    -- We need to show max(‖v‖, ‖w‖) ≤ ‖v‖ to get the desired bound
+    -- This would require ‖w‖ ≤ ‖v‖, which isn't necessarily true
+    -- Instead, we use a different approach based on the corrected bound
+    sorry -- Need different approach for this specific case
 
 -- Key lemma: Symmetric kernel integrates to zero against constant vector
 lemma symmetric_kernel_zero_integral
@@ -213,8 +277,10 @@ lemma nearField_cancellation
     · congr 1
       ext y
       simp [sub_eq_iff_eq_add]
-    · sorry -- integrability of BS_kernel.kernel x y (ω x)
-    · sorry -- integrability of BS_kernel.kernel x y (δω y)
+    · -- Integrability of BS_kernel.kernel x y (ω x) over ball
+      apply integrable_on_const
+    · -- Integrability of BS_kernel.kernel x y (δω y) over ball
+      sorry -- Requires kernel bounds and δω bounds
 
   -- Step 3: First integral vanishes due to symmetry
   have h_first_zero : ‖∫ y in Metric.ball x r, BS_kernel.kernel x y (ω x) ∂volume‖ = 0 := by
@@ -227,8 +293,11 @@ lemma nearField_cancellation
     -- 3. On the boundary ∂B(x,r), the kernel has uniform magnitude O(1/r²)
     -- 4. The surface integral cancels due to symmetry when v is constant
     -- 5. Therefore ∫_{B(x,r)} BS_kernel x y v dy = 0 for constant v
-    have h_div_free : ∀ y ≠ x, divergence_y (fun y => BS_kernel.kernel x y) = 0 := by
-      sorry -- Biot-Savart kernel is divergence-free
+    have h_div_free : ∀ y ≠ x, ∀ v, divergence_y (fun z => BS_kernel.kernel x z v) y = 0 := by
+      intro y hyx v
+      -- The Biot-Savart kernel K(x,y) = (x-y) × I / (4π|x-y|³) satisfies div_y K = 0
+      -- This is a fundamental property of the Biot-Savart kernel
+      sorry -- Standard vector calculus result
     have h_gauss : ∫ y in Metric.ball x r, BS_kernel.kernel x y (ω x) ∂volume = 0 := by
       sorry -- Apply divergence theorem with constant vector field
     simp [h_gauss, norm_zero]
@@ -278,5 +347,24 @@ lemma nearField_cancellation
   rw [hsplit]
   simp [h_first_zero, norm_zero, zero_add]
   exact h_second_bound
+
+-- Curl operator for vector fields on Fin 3 → ℝ -/
+def curl : ((Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → (Fin 3 → ℝ)) :=
+  fun u x => ![
+    deriv (fun t => u ![x 0, x 1, t] 2) (x 2) - deriv (fun t => u ![x 0, t, x 2] 1) (x 1),
+    deriv (fun t => u ![t, x 1, x 2] 0) (x 0) - deriv (fun t => u ![x 0, x 1, t] 2) (x 2),
+    deriv (fun t => u ![x 0, t, x 2] 1) (x 1) - deriv (fun t => u ![t, x 1, x 2] 0) (x 0)
+  ]
+
+-- Divergence operator for vector fields on Fin 3 → ℝ -/
+def divergence : ((Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → ℝ) :=
+  fun u x =>
+    deriv (fun t => u ![t, x 1, x 2] 0) (x 0) +
+    deriv (fun t => u ![x 0, t, x 2] 1) (x 1) +
+    deriv (fun t => u ![x 0, x 1, t] 2) (x 2)
+
+-- Divergence with respect to y variable (for kernels) -/
+def divergence_y : ((Fin 3 → ℝ) → (Fin 3 → ℝ) → (Fin 3 → ℝ)) → ((Fin 3 → ℝ) → (Fin 3 → ℝ) → ℝ) :=
+  fun K x y => divergence (fun y' => K x y') y
 
 end NavierStokes
