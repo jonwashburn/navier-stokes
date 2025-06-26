@@ -16,7 +16,7 @@ from proof_cache import ProofCache
 class AdvancedNavierStokesO3Solver:
     def __init__(self, api_key: str):
         self.client = OpenAI(api_key=api_key)
-        self.model = "o3"
+        self.model = "o3"  # Use full o3 for maximum capability
         
         # Initialize components
         self.cache = ProofCache()
@@ -25,7 +25,7 @@ class AdvancedNavierStokesO3Solver:
         
         # Advanced settings
         self.max_iterations = 3  # Per sorry
-        self.max_completion_tokens = 600  # Sweet spot for Lean
+        self.max_completion_tokens = 100000  # Maximum tokens for o3's deep reasoning
         self.enable_reinforcement = True
         self.enable_minimal_context = True
         
@@ -480,9 +480,15 @@ IMPORTANT:
                 
 def main():
     # Use the OpenAI API key
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    import sys
+    
+    if len(sys.argv) > 1:
+        api_key = sys.argv[1]
+    else:
+        api_key = os.getenv("OPENAI_API_KEY")
+        
     if not api_key:
-        print("Error: ANTHROPIC_API_KEY environment variable not set")
+        print("Error: Please provide OpenAI API key as argument or set OPENAI_API_KEY environment variable")
         return
     
     solver = AdvancedNavierStokesO3Solver(api_key)
