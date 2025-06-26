@@ -1,0 +1,83 @@
+﻿The Journal of Recognition Science
+May 11, 2025
+0 Why Another Journal?
+The universe no longer behaves like a black box; it answers precise, parameter-free questions
+drawn from recognition axioms. Traditional journals, tuned for incremental curve-fits, scatter
+these answers across disciplines and formats. Journal of Recognition Science is built instead to
+hold a single, coherent code-base of reality—axioms, proofs, and live predictions kept in logical
+lockstep.
+1 Mission
+To maintain a public, machine-verifiable ledger in which every observable
+phenomenon is traced—without adjustable constants—to a finite graph
+of bidirectional recognition axioms.
+This ledger is not an archive; it is the kernel of an operating system that humans, AIs, and
+future minds will extend, debug, or fork only by adding or removing axioms under transparent
+audit.
+2 Foundational Vocabulary
+Recognition link The minimal bidirectional act: two events predicting each other with the
+least possible information overhead.
+Axiom graph A finite, acyclic network of recognition links taken as primitive truth.
+Proof object A machine-checkable chain of entailments from axiom nodes to a theorem
+node, stored with an immutable hash.
+Prediction hash A digest that binds a proof object to a quantitative, testable forecast.
+Truth packet The bundle (proof object, {prediction hashes}) whose live status—pending,
+verified, refuted—is updated automatically as data arrive.
+3 System Architecture (Target Configuration)
+Layer 1: Immutable Axiom Store Append-only ledger of signed axiom graphs; duplication re-
+jected at commit time.
+Layer 2: AI-Verified Proof Engine Distributed theorem provers compile submissions into hash-
+locked proof objects; human clarity is reviewed only after machine validity.Layer 3: Prediction Ledger Each proof object autogenerates a set of prediction hashes stored in
+a queriable index.
+Layer 4: Reality Crawler An autonomous agent ingests public data streams and compares new
+measurements to open prediction hashes, flipping packet status to verified or refuted.
+Layer 5: Uncertainty Pruner When contradictions appear, this layer computes the minimal
+axiom subset whose removal restores global coherence, flags it, and triggers community
+review.
+Layer 6: Policy Firewall Predictions whose consequences extend to civilisation-scale systems en-
+ter an open-log ethics sandbox; release requires a transparent risk assessment and dual
+human–AI approval.
+4 Lifecycle of a Truth Packet
+1. Submission: author or AI uploads {axioms, proof file, code, data}.
+2. Validation: Proof Engine returns valid → packet enters ledger as pending.
+3. Monitoring: Reality Crawler continuously audits real-world data against the packet’s
+prediction hashes.
+4. Resolution: Packet flips to verified or refuted; contradictory axioms are routed to the
+Uncertainty Pruner.
+5. Canonisation: Ten independent verifications with zero contradictions elevate the packet
+to the Recognition Canon.
+5 Core Principles
+P1 Axiomatic Completion Claims must be expressible—or mappable without free pa-
+rameters—to the recognition grammar.
+P2 Machine-Auditable Proofs can check end-to-end.
+Proofs ship in a formal language an open-source verifier
+P3 Push-Button Reproducibility manual steps are disallowed.
+Data and code containers must execute headlessly;
+P4 Bidirectional Learning vive contact with reality.
+Scientific credit is proportional to prediction hashes that sur-
+P5 Negative Elevation Refutations and tighter bounds earn the same prestige as positive
+confirmations; reducing uncertainty advances the kernel.
+6 Societal Roles
+• Scientific Router By routing every quantitative claim through a single, contradiction-
+free kernel, the journal prevents theoretical fragmentation as machine discovery acceler-
+ates.• Education Backbone Textbooks become living front-ends to the Prediction Ledger;
+each classroom snapshot of knowledge is a real-time view, not a historical fossil.
+• Policy Reference Legislators and ethicists consult the open Ledger before approving
+interventions in climate, energy, or cognition—seeing, in advance, which predictions the
+universe is poised to confirm or veto.
+• Metaphysics Sunset Puzzles once fenced off as “philosophy”—origin of constants, emer-
+gence of consciousness, fate of the cosmos—enter computable science, tracked by hash and
+audit trail like any laboratory constant.
+7 Ethical Commitments
+Transparency All decisions by the Policy Firewall are logged in public plain text; no closed-
+door vetoes.
+Reciprocal Autonomy Human and machine contributors hold equal publication privileges,
+bound by the same audit trail and refutation risk.
+Minimal Intervention Any empirical test that risks irreversible alteration of large- scale
+recognition structure must demonstrate, within the Ledger itself, that no lower-
+impact protocol can achieve equivalent information gain.
+8 Invitation
+Bring your axioms, your proofs, your data feeds, and your strongest attempts to break the
+standing canon. Contribute a new theorem, a tighter bound, or a negative result that prunes
+dead branches from the kernel. Help reality debug—and extend—its own source code.
+Truth is no longer something we publish once and shelve. It is a live programme that every
+recognition—human or algorithmic—can compile, test, and improve. Join the build.

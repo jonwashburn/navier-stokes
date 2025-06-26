@@ -1,0 +1,14 @@
+[
+  {
+    "file": "formal/EWCorrections.lean",
+    "name": "yukawa_hierarchy",
+    "reason": "Timeout",
+    "attempted_proof": "by\n  constructor\n  \u00b7 -- y_u < y_d\n    unfold y_u y_d yukawa_coupling\n    simp only [Int.coe_nat_sub, Int.coe_nat_cast]\n    apply mul_lt_mul_of_pos_left\n    \u00b7 apply zpow_lt_zpow_right\n      \u00b7 norm_num [\u03c6]\n      \u00b7 norm_num\n    \u00b7 norm_num [y_e_calibration]\n  constructor\n  \u00b7 -- y_d < y_s  \n    unfold y_d y_s yukawa_coupling\n    simp only [Int.coe_nat_sub, Int.coe_nat_cast]\n    apply mul_lt_mul_of_pos_left\n    \u00b7 apply zpow_lt_zpow_right\n      \u00b7 norm_num [\u03c6]\n      \u00b7 norm_num\n    \u00b7 norm_num [y_e_calibration]\n  constructor\n  \u00b7 -- y_s < y_c\n    unfold y_s y_c yukawa_coupling\n    simp only [Int.coe_nat_sub, Int.coe_nat_cast]\n    apply mul_lt_mul_of_pos_left\n    \u00b7 apply zpow_lt_zpow_right\n      \u00b7 norm_num [\u03c6]\n      \u00b7 norm_num\n    \u00b7 norm_num [y_e_calibration]\n  constructor\n  \u00b7 -- y_c < y_b\n    unfold y_c y_b yukawa_coupling\n    simp only [Int.coe_nat_sub, Int.coe_nat_cast]\n    apply mul_lt_mul_of_pos_left\n    \u00b7 apply zpow_lt_zpow_right\n      \u00b7 norm_num [\u03c6]\n      \u00b7 norm_num\n    \u00b7 norm_num [y_e_calibration]\n  \u00b7 -- y_b < y_t\n    unfold y_b y_t yukawa_coupling\n    simp only [Int.coe_nat_sub, Int.coe_nat_cast]\n    apply mul_lt_mul_of_pos_left\n    \u00b7 apply zpow_lt_zpow_right\n      \u00b7 norm_num [\u03c6]\n      \u00b7 norm_num\n    \u00b7 norm_num [y_e_calibration]"
+  },
+  {
+    "file": "formal/EWCorrections.lean",
+    "name": "mass_ratio_muon_electron",
+    "reason": "Timeout",
+    "attempted_proof": "by simp [m_muon_EW, m_electron_EW, y_\u03bc, y_e, yukawa_coupling]; ring"
+  }
+]
