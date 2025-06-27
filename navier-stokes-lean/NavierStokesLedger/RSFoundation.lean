@@ -38,7 +38,11 @@ theorem φ_property : φ^2 = φ + 1 := by
   -- From (1 + sqrt 5)^2 = 1 + 2*sqrt 5 + 5 = 6 + 2*sqrt 5
   -- So (1 + sqrt 5)^2 / 4 = (6 + 2*sqrt 5) / 4 = 3/2 + sqrt 5 / 2
   -- And (1 + sqrt 5) / 2 + 1 = 1/2 + sqrt 5 / 2 + 1 = 3/2 + sqrt 5 / 2
-  sorry -- Requires field_simp and sqrt_sq lemmas
+  field_simp
+  rw [sq]
+  ring_nf
+  rw [sq_sqrt (by norm_num : (0 : ℝ) ≤ 5)]
+  ring
 
 theorem φ_positive : 0 < φ := by
   unfold φ
@@ -67,7 +71,16 @@ theorem τ_recognition_positive : 0 < τ_recognition := by
 theorem C_GD_positive : 0 < C_GD := by
   unfold C_GD
   -- C_GD = 2 * sin(π/12) > 0 since 0 < π/12 < π
-  sorry
+  apply mul_pos
+  · norm_num
+  · apply sin_pos_of_mem_Ioo
+    constructor
+    · apply div_pos pi_pos
+      norm_num
+    · -- π/12 < π is equivalent to 1/12 < 1
+      have h : (1 : ℝ) / 12 < 1 := by norm_num
+      have : π * (1 / 12) < π * 1 := mul_lt_mul_of_pos_left h pi_pos
+      simpa using this
 
 -- Recognition Science specific axioms
 namespace RecognitionScience.Axioms

@@ -41,7 +41,14 @@ theorem eight_beat_prevents_blowup (u : ℝ → Fin 3 → ℝ) (t : ℝ) :
   · rfl
   · -- Use the eight_beat_bounded axiom
     have ⟨h_lower, h_upper⟩ := RecognitionScience.Axioms.eight_beat_bounded t
-    sorry -- Need norm properties of scalar multiplication
+    -- ‖eight_beat t • u t‖ ≤ |eight_beat t| * ‖u t‖ ≤ (9/8) * ‖u t‖
+    rw [norm_smul]
+    apply mul_le_mul_of_nonneg_right
+    · rw [Real.norm_eq_abs]
+      have h_nonneg : 0 ≤ eight_beat t := le_trans (by norm_num : (0 : ℝ) ≤ 7/8) h_lower
+      rw [abs_of_nonneg h_nonneg]
+      exact h_upper
+    · exact norm_nonneg _
 
 end
 

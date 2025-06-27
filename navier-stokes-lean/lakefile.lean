@@ -14,7 +14,6 @@ require mathlib from git
 @[default_target]
 lean_lib «NavierStokesLedger» where
   -- add any library configuration options here
-  moreLeanArgs := #[s!"--max-heartbeats=400000"]
 
 -- Add sorry finder executable
 lean_exe «sorry_finder» where

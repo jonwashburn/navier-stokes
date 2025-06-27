@@ -186,7 +186,11 @@ lemma cascade_cutoff_value : abs (cascade_cutoff - 0.1459) < 0.001 := by
 
 /-- Recognition tick is approximately 7.33 femtoseconds -/
 lemma recognition_tick_value : abs (recognition_tick - 7.33e-15) < 1e-16 := by
-  sorry -- Requires numerical computation
+  unfold recognition_tick
+  -- recognition_tick is defined as τ_recog = 7.33e-15
+  -- So we need to show |7.33e-15 - 7.33e-15| < 1e-16
+  simp
+  norm_num
 
 /-- C* = 0.05 is the critical vorticity constant -/
 lemma C_star_value : C_star = 0.05 := by

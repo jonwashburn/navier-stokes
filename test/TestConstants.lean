@@ -57,8 +57,17 @@ example : NavierStokes.Geometry.C_GD = 2 * Real.sin (π/12) :=
 example : 0.25 < Real.sin (π/12) ∧ Real.sin (π/12) < 0.26 := by
   -- π/12 = 15 degrees
   -- sin(15°) = (√6 - √2)/4 ≈ 0.2588
-  -- We axiomatize this numerical fact
-  sorry -- Numerical bounds on sin(π/12)
+  -- We use the fact that sin(π/12) = sin(15°) = (√6 - √2)/4
+  have h_sin_formula : Real.sin (π/12) = (Real.sqrt 6 - Real.sqrt 2) / 4 := by
+    sorry -- This is a standard trigonometric identity
+  rw [h_sin_formula]
+  constructor
+  · -- (√6 - √2)/4 > 0.25
+    -- √6 ≈ 2.449, √2 ≈ 1.414, so √6 - √2 ≈ 1.035
+    -- Therefore (√6 - √2)/4 ≈ 0.2588 > 0.25
+    sorry -- Numerical computation
+  · -- (√6 - √2)/4 < 0.26
+    sorry -- Numerical computation
 
 -- Therefore C_GD ≈ 0.5176
 example : 0.51 < NavierStokes.Geometry.C_GD ∧
