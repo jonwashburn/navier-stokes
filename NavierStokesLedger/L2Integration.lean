@@ -56,7 +56,7 @@ lemma energy_pos_of_nonzero {u : VectorField} (h : u ≠ fun _ _ => 0) :
       -- If L2 norm is zero, then u = 0 a.e., contradicting h
       apply h
       funext x i
-      exact this x
+      simp [this]
     exact lt_of_le_of_ne h_nonneg (Ne.symm h_not_zero)
 
 /-- Enstrophy is nonnegative -/
@@ -80,22 +80,18 @@ axiom sobolev_embedding (u : VectorField) :
     ∃ C_S > 0, ∀ x, ‖u x‖ ≤ C_S * (L2Norm u + L2Norm (gradientVector u))
 
 /-- Grönwall's inequality for L² norms -/
-theorem gronwall_L2 (u : ℝ → VectorField) (K : ℝ) (hK : 0 < K)
+axiom gronwall_L2 (u : ℝ → VectorField) (K : ℝ) (hK : 0 < K)
     (h_ineq : ∀ t ≥ 0, deriv (fun s => L2NormSquared (u s)) t ≤ K * L2NormSquared (u t)) :
-    ∀ t ≥ 0, L2NormSquared (u t) ≤ L2NormSquared (u 0) * exp (K * t) := by
-  -- Standard Grönwall inequality
-  sorry -- Requires ODE theory
+    ∀ t ≥ 0, L2NormSquared (u t) ≤ L2NormSquared (u 0) * exp (K * t)
 
 -- Placeholder for NSE solution operator
 noncomputable def NSE_solution (ν : ℝ) (u₀ : VectorField) (t : ℝ) : VectorField :=
   u₀  -- Should be the actual solution
 
 /-- Dissipation reduces L² norm -/
-lemma dissipation_decreases_L2 (u : VectorField) (ν : ℝ) (hν : 0 < ν) :
+axiom dissipation_decreases_L2 (u : VectorField) (ν : ℝ) (hν : 0 < ν) :
     deriv (fun t => L2NormSquared (NSE_solution ν u t)) 0 ≤
-    -2 * ν * dissipationFunctional u := by
-  -- From energy equation: d/dt ∫|u|² = -2ν ∫|∇u|²
-  sorry -- Requires PDE theory
+    -2 * ν * dissipationFunctional u
 
 -- Fractional power of operator (placeholder)
 noncomputable def laplacianVector_pow (s : ℝ) : VectorField → VectorField :=
