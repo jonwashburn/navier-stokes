@@ -4,9 +4,10 @@
 This document tracks the current status of the formal proof of global regularity for the 3D incompressible Navier-Stokes equations using Recognition Science principles.
 
 ## Progress Summary
-- **Total Sorries**: ~50 (down from initial 46, but increased due to new framework)
+- **Total Sorries**: 67 (increased from initial 46 due to new framework and files)
 - **Key Achievement**: Established complete proof architecture with clear dependencies
 - **Main Blockers**: Measure theory setup, harmonic analysis lemmas, cross product bounds
+- **Files with Compilation Issues**: L2Integration.lean, GeometricLemmas.lean, CoreBounds.lean
 
 ## File Status
 
@@ -75,6 +76,10 @@ This document tracks the current status of the formal proof of global regularity
 - `VectorCalc/Basic.lean` - Common vector calculus utilities
 - `Assumptions.md` - Complete list of mathematical assumptions
 - `test/TestConstants.lean` - Numerical validation tests
+- `L2Integration.lean` - L² integration utilities (compilation issues)
+- `GeometricLemmas.lean` - Key geometric lemmas (compilation issues)
+- `CoreBounds.lean` - Core bounds for NSE (compilation issues)
+- `GeometricDepletionSimplified.lean` - Simplified Biot-Savart bounds
 
 ## Key Mathematical Components
 
