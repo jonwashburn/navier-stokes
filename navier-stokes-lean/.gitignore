@@ -1,0 +1,7 @@
+.lake/
+.lake/*
+.lean_cache/
+.lakebuild/
+.elan
+.vscode/
+/build
