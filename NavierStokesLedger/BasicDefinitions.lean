@@ -1,4 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 open Real
 
@@ -39,6 +40,11 @@ def C_stretch : ℝ := 2  -- Dimensional analysis suggests O(1)
 /-- Recognition time scale: τ = 7.33 femtoseconds
     The fundamental tick of the recognition ledger -/
 def τ_recog : ℝ := 7.33e-15  -- In seconds
+
+/-- Eight-beat modulation function
+    Represents the 8-beat cycle that modulates vorticity dynamics -/
+noncomputable def eight_beat_modulation (t : ℝ) : ℝ :=
+  1 + (1/8) * Real.sin (8 * 2 * Real.pi * t / τ_recog)
 
 -- Positivity lemmas for constants
 lemma C_star_pos : 0 < C_star := by norm_num [C_star]

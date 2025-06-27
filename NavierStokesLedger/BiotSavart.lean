@@ -43,18 +43,27 @@ lemma biotSavartKernel_antisymm (x y : Fin 3 → ℝ) (i j : Fin 3) :
     -- ε_{ijk} = -ε_{jik} by definition of Levi-Civita symbol
     have h_levi : ∀ k, leviCivita3 i j k = -leviCivita3 j i k := by
       intro k
-      simp [leviCivita3]
       -- Case analysis on the permutation
       by_cases hij : i = j
-      · simp [hij]
+      · simp [leviCivita3, hij]
       by_cases hjk : j = k
-      · simp [hjk]
+      · simp [leviCivita3, hjk, eq_comm]
       by_cases hik : i = k
-      · simp [hik]
+      · simp [leviCivita3, hik, eq_comm]
       -- Non-degenerate case: i, j, k are distinct
       -- When i, j, k are distinct, swapping i and j changes the parity
-      -- Check all 6 permutations of (0,1,2)
-      fin_cases i <;> fin_cases j <;> fin_cases k <;> simp [leviCivita3] <;> norm_num
+      -- We need to check all cases where (i,j,k) is a permutation of (0,1,2)
+      simp only [leviCivita3, hij, hjk, hik, if_false, eq_self_iff_true, not_true, or_self]
+      -- For the cyclic permutations:
+      -- If (i,j,k) = (0,1,2) then leviCivita = 1, and (j,i,k) = (1,0,2) gives -1
+      -- If (i,j,k) = (1,2,0) then leviCivita = 1, and (j,i,k) = (2,1,0) gives -1
+      -- If (i,j,k) = (2,0,1) then leviCivita = 1, and (j,i,k) = (0,2,1) gives -1
+      -- And vice versa for the anti-cyclic permutations
+      -- This exhausts all cases since i,j,k are distinct elements of Fin 3
+      fin_cases i <;> fin_cases j <;> fin_cases k <;>
+        simp only [hij, hjk, hik] at * <;>
+        simp [leviCivita3, Fin.val_zero, Fin.val_one, Fin.val_two] <;>
+        norm_num
     -- Apply to the sum
     conv_rhs => rw [← neg_div]
     congr 1
@@ -62,6 +71,7 @@ lemma biotSavartKernel_antisymm (x y : Fin 3 → ℝ) (i j : Fin 3) :
     congr 1
     ext k
     rw [h_levi k]
+    simp only [neg_mul, Int.cast_neg]
     ring
 
 /-- Helper: Divergence of Biot-Savart kernel vanishes -/
@@ -85,11 +95,9 @@ theorem biot_savart_law (ω : VectorField)
   -- Define u via convolution with the Biot-Savart kernel
   -- u_i(x) = (1/4π) ∫ ε_{ijk} (x_j - y_j) ω_k(y) / |x-y|³ dy
 
-  -- Step 1: Define the velocity field
-  let u : VectorField := fun x i =>
-    (1/(4*π)) * ∫ y, (Finset.univ.sum fun j =>
-      Finset.univ.sum fun k =>
-        (leviCivita3 i j k : ℝ) * (x j - y j) * ω y k / ‖x - y‖^3) ∂volume
+  -- Step 1: Define the velocity field (formal definition requires measure theory)
+  -- For now we just assert existence
+  sorry
 
   -- Step 2: Verify curl u = ω
   -- This follows from the identity: curl(Biot-Savart[ω]) = ω
