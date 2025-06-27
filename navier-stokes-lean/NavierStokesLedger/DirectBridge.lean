@@ -43,7 +43,11 @@ lemma vorticity_max_principle (ν : ℝ) (hν : 0 < ν) (nse : NSE ν) (t : ℝ)
     -- 2. Laplacian is non-positive: ∆|ω| ≤ 0
     -- 3. Transport term vanishes: (u·∇)|ω| = 0
     -- Therefore: d/dt|ω| ≤ |ω·∇u| - ν|∆ω| ≤ C|ω|² - ν|ω|
-    sorry -- Requires detailed analysis at maximum point
+
+    -- The key bound |ω·∇u| ≤ C|ω|² comes from the fact that
+    -- |∇u| is controlled by |ω| via the Biot-Savart law
+    -- This gives the Riccati-type inequality
+    sorry -- Requires maximum principle and Biot-Savart estimates
 
 /-- Direct proof of vorticity bound using ODE analysis -/
 theorem vorticity_bound_direct (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
