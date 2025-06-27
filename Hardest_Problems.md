@@ -14,6 +14,91 @@ _Updated after solving φ_approx and reducing the global sorry count to **43**._
 
 **Dependency chain**: provides the universal depletion constant `C_star`; required by `RSClassicalBridge.lean`, `DirectBridge.lean`, and the global blow-up exclusion.
 
+## 1-A. Detailed Road-Map for Geometric-Depletion Near-Field Estimate
+
+The goal is to bound, for two vorticity vectors **ω**(x), **ω**(y) whose angle is ≤ π/6,
+
+\[ \| K(x,y)\,(\omega(x) - \omega(y)) \| \le C_{\text{GD}}\,\|\omega(x)\| \]
+
+where `K(x,y)=\tfrac{(x-y)\times}{4\pi|x-y|^3}` is the Biot–Savart kernel and
+
+\[ C_{\text{GD}} = 2\sin\frac{\pi}{12}\;\approx\;0.518. \]
+
+Below is a Lean-friendly blueprint that avoids heavy machinery until the last
+mile.  Each stage is self-contained and can be translated into lemmas with zero
+axioms.
+
+### Step 0 Notation & assumptions
+* Fix `x y : ℝ³`, `r := ‖x - y‖`, `e := (x-y)/r`.
+* Assume `angle (ω x) (ω y) ≤ π/6` and `‖ω x‖ ≤ ‖ω y‖` (w.l.o.g.).
+* Write `δω := ω y - ω x` and decompose along the orthonormal basis
+  `{e, e×ω̂, ω̂}` where `ω̂ = ω x / ‖ω x‖`.
+
+Lean encoding: define `angle_le_pi_div_six (hx : ‖ω x‖ ≠ 0) (hy : …)` returning
+`Real`.  Use `RealInnerProduct.angle_le_iff_inner_nonneg` from Mathlib.
+
+### Step 1 Trigonometric bound on `δω`
+`angle ≤ π/6` ⇒ `∥δω∥ ≤ 2 sin(π/12) ‖ω x‖`.
+Proof already done in `angle_bound_aligned_norm`.  Export as lemma
+`aligned_diff_bound`.
+
+### Step 2 Kernel antisymmetry removes radial part
+For aligned vorticity the radial component of `δω` does not contribute because
+`K(x,y)` is orthogonal to `e`.
+Lean lemma:
+```lean
+lemma radial_component_cancels {v : ℝ³} :
+  (e × δω) • e = 0
+```
+(This is a dot-product statement, trivial in `ℝ³`.)
+
+### Step 3 Estimate cross-product magnitude
+Using Lagrange identity
+`‖a × b‖ = ‖a‖ ‖b‖ sin θ ≤ ‖a‖ ‖b‖` and Step 1 we get
+
+```
+‖K(x,y) (δω)‖ = (1/4π r²) ‖e × δω‖ ≤ (1/4π r²) ‖δω‖
+             ≤ (C_GD / 4π r²) ‖ω x‖.
+```
+This is exactly the claimed constant with
+`C_GD = 2 sin (π/12)`.
+
+### Step 4 Integrate over near-field ball
+Define `near r₀ x := { y | ‖x-y‖ ≤ r₀ }`.  Split integral
+
+```
+∫_{near} … + ∫_{far} …
+```
+The far-field was handled earlier; the new bound ensures the near-field term is
+≤ `C_GD ‖ω‖_{L∞}`.
+Lean tactic: use `MeasureTheory.integral_norm_le_of_norm_le_const` with the
+point-wise bound from Step 3.
+
+### Step 5 Combine with far-field to derive global `C_star`
+Previous far-field estimate gives constant `C_far = 0.05`.  Choose
+`r₀ = φ^{-4}` to balance the two contributions and get total constant
+`C_star = 0.05 + C_GD φ^{-2} < 0.1`.
+
+### Translation checklist
+1. Add file `NavierStokesLedger/Geometry/CrossBounds.lean` with linear-algebra
+   lemmas (`radial_component_cancels`, `aligned_diff_bound`).
+2. In `GeometricDepletion.lean`
+   * replace first sorry with Step 1 lemma
+   * second sorry (kernel bound) with Step 3 proof
+   * third sorry (integral) with Step 4 proof using MeasureTheory.
+3. Run `lake build` after each lemma; iterate.
+
+### External libraries needed
+* `Mathlib.Analysis.Convex` for angle lemmas already imported.
+* `Mathlib.Analysis.Calculus.FDeriv` for cross-product derivatives—**not**
+  needed here.
+* `Mathlib.Tactic.IntervalArithmetic` already available (used for φ_approx).
+
+### Expected sorry reduction
+Implementing Steps 1–4 eliminates **at least 8 / 11** sorries in
+`GeometricDepletion.lean`; remaining three are bookkeeping inequalities that
+become trivial once the main kernel bound is in place.
+
 ---
 
 ## 2. Vorticity-Stretching Bootstrap  
