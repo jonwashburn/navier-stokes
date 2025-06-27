@@ -1,9 +1,12 @@
 import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Constructions.Pi
 import NavierStokesLedger.BasicDefinitions
 
-open Real
+open Real MeasureTheory
 
 namespace NavierStokes
 
@@ -79,19 +82,34 @@ noncomputable def LinftyNorm (u : VectorField) : ℝ :=
 /-- The space ℝ³ -/
 def R3 : Type := Fin 3 → ℝ
 
-/-- L² norm squared (axiomatized for now) -/
-noncomputable def L2NormSquared : VectorField → ℝ := fun _ =>
-  -- Placeholder: this should be ∫ ‖u x‖² dx over ℝ³
-  -- For now, we use a constant function that satisfies our axioms
-  1  -- This is just a placeholder; the actual value comes from the axioms
+/-- Measure space instance for ℝ³ -/
+instance : MeasureSpace (Fin 3 → ℝ) := ⟨volume⟩
 
-/-- L² norm of a vector field (simplified - axiomatized for now) -/
+/-- L² norm squared using Bochner integral -/
+noncomputable def L2NormSquared (u : VectorField) : ℝ :=
+  ∫ x, ‖u x‖^2 ∂volume
+
+/-- L² norm of a vector field -/
 noncomputable def L2Norm (u : VectorField) : ℝ :=
   Real.sqrt (L2NormSquared u)
 
--- Axioms about our norms (to be replaced with proofs later)
-axiom L2_norm_nonneg (u : VectorField) : 0 ≤ L2NormSquared u
-axiom L2_norm_zero_iff (u : VectorField) : L2NormSquared u = 0 ↔ (∀ x, u x = 0)
+-- Properties of L² norm (now provable from measure theory)
+lemma L2_norm_nonneg (u : VectorField) : 0 ≤ L2NormSquared u := by
+  unfold L2NormSquared
+  apply integral_nonneg
+  intro x
+  exact sq_nonneg _
+
+lemma L2_norm_zero_iff (u : VectorField) (h_meas : AEStronglyMeasurable u volume)
+    (h_int : Integrable (fun x => ‖u x‖^2) volume) :
+    L2NormSquared u = 0 ↔ (∀ᵐ x ∂volume, u x = 0) := by
+  unfold L2NormSquared
+  rw [integral_eq_zero_iff_of_nonneg]
+  · simp only [sq_eq_zero_iff, norm_eq_zero]
+  · exact Filter.eventually_of_forall (fun x => sq_nonneg _)
+  · exact h_int
+
+-- Triangle inequality requires more setup, keeping as axiom for now
 axiom L2_norm_triangle (u v : VectorField) :
   Real.sqrt (L2NormSquared (fun x => u x + v x)) ≤ L2Norm u + L2Norm v
 
