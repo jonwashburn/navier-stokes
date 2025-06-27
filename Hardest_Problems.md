@@ -1,16 +1,21 @@
 # Hardest Remaining Problems (Navier-Stokes Proof Project)
 
-_Updated after solving φ_approx and reducing the global sorry count to **43**._
+_Updated after implementing geometric depletion framework. Current sorry count in NavierStokesLedger: **50**._
+
+## Recent Progress
+- ✓ Implemented `Geometry/CrossBounds.lean` with cross product lemmas
+- ✓ Created `GeometricDepletionSimplified.lean` with Biot-Savart kernel bounds
+- ✓ Established geometric depletion constant C_GD = 2*sin(π/12) ≈ 0.518
+- ✓ Fixed compilation issues in PDEOperators.lean
 
 ## 1. Geometric-Depletion Near-Field Estimate  
 **File:** `NavierStokesLedger/GeometricDepletion.lean` (11 sorries)  
-**Why it is hard**
-* Requires full 3-D harmonic‐analysis of the Biot–Savart integral with sharp angular cancellation.
-* Needs rigorous treatment of 
-  * Calderón–Zygmund singular kernels
-  * ε–regularity in the aligned-vorticity regime
-  * measure-theoretic decomposition of near-/far-field zones.
-* Current outline uses informal ``angle_bound_aligned_norm`` but lacks the dominating kernel estimates.
+**Status:** Framework implemented in `GeometricDepletionSimplified.lean` and `Geometry/CrossBounds.lean`
+* ✓ Cross product bounds established
+* ✓ Geometric depletion constant C_GD = 2*sin(π/12) defined
+* ✓ Simplified Biot-Savart kernel bounds proven (with sorries for technical details)
+* ✓ Near-field theorem framework established
+* ⚠ Still need: Full integral bounds, measure theory details, complete proofs
 
 **Dependency chain**: provides the universal depletion constant `C_star`; required by `RSClassicalBridge.lean`, `DirectBridge.lean`, and the global blow-up exclusion.
 
