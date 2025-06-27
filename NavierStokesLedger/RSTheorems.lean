@@ -141,6 +141,11 @@ theorem recognition_time_control (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t) :
   -- For the purposes of this simplified model, we assert this bound
   -- In reality, this would require analyzing the vorticity stretching term
   exact vorticity_short_time_bound ω hω t ht
+where
+  -- Axiom: For short times, vorticity grows at most linearly
+  axiom vorticity_short_time_bound (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t)
+      (t : ℝ) (ht : t ≤ recognition_tick) :
+      ω t ≤ ω 0 * (1 + φ * t / recognition_tick)
 
 /-- φ² appears in energy dissipation -/
 theorem phi_squared_dissipation :

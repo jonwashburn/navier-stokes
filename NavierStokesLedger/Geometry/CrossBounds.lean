@@ -17,10 +17,10 @@ def crossProduct (a b : Fin 3 → ℝ) : Fin 3 → ℝ :=
 /-- Lagrange identity bound for cross products -/
 lemma cross_product_bound (a b : Fin 3 → ℝ) :
     ‖crossProduct a b‖ ≤ ‖a‖ * ‖b‖ := by
-  -- We prove this using the Cauchy-Schwarz inequality
-  -- The cross product satisfies ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩²
-  -- Since ⟨a,b⟩² ≥ 0, we get ‖a × b‖² ≤ ‖a‖²‖b‖²
-  sorry -- Standard cross product inequality from Lagrange's identity
+  -- We use the standard fact that ‖a × b‖ ≤ ‖a‖ ‖b‖
+  -- This follows from Lagrange's identity: ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩²
+  -- For now we'll use a direct calculation approach
+  sorry -- Standard cross product inequality
 
 /-- The geometric depletion constant -/
 noncomputable def C_GD : ℝ := 2 * sin (π / 12)
@@ -40,14 +40,34 @@ lemma aligned_vector_difference_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     ‖w - v‖ ≤ C_GD * ‖v‖ := by
   -- Extract the angle θ from the hypothesis
   obtain ⟨θ, hθ_bound, hθ_cos⟩ := h_aligned
-  -- The key insight is that ‖w - v‖ is maximized when:
-  -- 1. θ = π/6 (maximum allowed angle)
-  -- 2. ‖w‖ = ‖v‖ (equal magnitudes)
-  -- In this case, by the law of cosines:
-  -- ‖w - v‖² = ‖v‖² + ‖v‖² - 2‖v‖‖v‖cos(π/6) = 2‖v‖²(1 - cos(π/6))
-  -- Using 1 - cos(θ) = 2sin²(θ/2), we get:
-  -- ‖w - v‖² = 2‖v‖² · 2sin²(π/12) = 4‖v‖²sin²(π/12)
-  -- Therefore ‖w - v‖ = 2‖v‖sin(π/12) = C_GD · ‖v‖
-  sorry -- Complete optimization argument
+
+  -- Step 1: Use the law of cosines identity from hypothesis
+  have h_law : ‖w - v‖^2 = ‖v‖^2 + ‖w‖^2 - 2 * ‖v‖ * ‖w‖ * cos θ := hθ_cos
+
+  -- Step 2: For fixed θ, ‖w - v‖² is maximized when d/d‖w‖ = 0
+  -- This gives ‖w‖ = ‖v‖ as the critical point
+  -- At this point: ‖w - v‖² = 2‖v‖²(1 - cos θ)
+
+  -- Step 3: Since θ ≤ π/6 and cos is decreasing on [0,π],
+  -- the maximum occurs at θ = π/6
+  -- So ‖w - v‖² ≤ 2‖v‖²(1 - cos(π/6))
+
+  -- Step 4: Use the identity 1 - cos θ = 2sin²(θ/2)
+  have h_trig : 1 - cos (π/6) = 2 * sin (π/12)^2 := by
+    rw [cos_pi_div_six]
+    -- cos(π/6) = √3/2
+    -- So 1 - √3/2 = 2sin²(π/12)
+    -- This requires showing sin(π/12) = √((2-√3)/4)
+    sorry -- Trigonometric identity
+
+  -- Step 5: Combine to get the bound
+  have h_bound : ‖w - v‖^2 ≤ 4 * ‖v‖^2 * sin (π/12)^2 := by
+    -- This requires the optimization argument from steps 2-3
+    sorry -- Optimization calculation
+
+  -- Step 6: Take square roots
+  rw [C_GD_value]
+  -- From ‖w - v‖² ≤ 4‖v‖²sin²(π/12), we get ‖w - v‖ ≤ 2‖v‖sin(π/12)
+  sorry -- Square root calculation
 
 end NavierStokes.Geometry
