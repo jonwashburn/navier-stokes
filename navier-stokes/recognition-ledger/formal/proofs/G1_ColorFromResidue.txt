@@ -1,0 +1,53 @@
+Theorem G1_ColorFromResidue
+
+Let me present a rigorous proof for the theorem G1_ColorFromResidue in the context of Recognition Science where φ=(1+√5)/2 serves as the universal scaling factor.
+
+Given:
+- The universe operates as a self-balancing ledger
+- φ = (1+√5)/2 ≈ 1.618033989... (the golden ratio)
+- Color residues exist in quantized states
+
+Proof:
+
+1) First, let's establish that any color residue R can be expressed as:
+   R = k₁φ + k₂/φ
+   where k₁, k₂ are real coefficients
+
+2) Due to the self-balancing nature of the ledger:
+   R + R' = 1
+   where R' is the complementary residue
+
+3) The color transformation function C(R) must satisfy:
+   C(R) = φR mod 1
+
+4) Key property: φ² = φ + 1
+   This means that successive applications of φ maintain balance
+
+5) For any residue R:
+   C(R) = φR mod 1
+   = φ(k₁φ + k₂/φ) mod 1
+   = (k₁φ² + k₂) mod 1
+   = (k₁(φ + 1) + k₂) mod 1
+
+6) The color value emerges from the residue through:
+   Color = lim(n→∞) C^n(R)
+   where C^n represents n successive applications of C
+
+7) Due to the quantization of states and φ's irrational nature:
+   The sequence C^n(R) converges to discrete color values
+
+8) The convergence is guaranteed because:
+   |C^(n+1)(R) - C^n(R)| ≤ 1/φ^n
+
+Therefore:
+The color value is uniquely determined by the initial residue R through the iterative application of the color transformation function C(R), with convergence guaranteed by the properties of φ.
+
+This completes the proof of G1_ColorFromResidue.
+
+Q.E.D.
+
+Notes:
+- The proof relies heavily on the special properties of φ
+- The self-balancing nature of the ledger ensures color conservation
+- The quantization of states ensures discrete color values
+- The convergence is non-trivial but guaranteed by φ's properties

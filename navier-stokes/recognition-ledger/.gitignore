@@ -1,0 +1,38 @@
+# Lean 4
+build/
+lake-manifest.json
+.lake/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+
+# Data
+*.db
+*.sqlite
+validation/status.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary
+*.tmp
+*.bak
+*.log
+~*
+
+# Secrets (never commit API keys)
+.env
+secrets.yaml
+config/production.yaml 

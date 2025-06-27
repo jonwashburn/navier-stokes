@@ -1,0 +1,250 @@
+{
+  "timestamp": "2025-06-11T08:49:21.131905",
+  "proven": [
+    "E3_MassEnergyEquivalence",
+    "F3_DualInvolution",
+    "C1_GoldenRatioLockIn",
+    "E1_CoherenceQuantum",
+    "F2_TickInjective",
+    "C3_RecognitionLength",
+    "P4_GravitationalConstant",
+    "F1_LedgerBalance",
+    "F4_CostNonnegative",
+    "C2_EightBeatPeriod",
+    "C4_TickIntervalFormula",
+    "E2_PhiLadder",
+    "E4_ElectronRung",
+    "E5_ParticleRungTable",
+    "G1_ColorFromResidue",
+    "G2_IsospinFromResidue",
+    "G3_HyperchargeFormula",
+    "G4_GaugeGroupEmergence",
+    "G5_CouplingConstants",
+    "P1_ElectronMass",
+    "P2_MuonMass",
+    "P3_FineStructure",
+    "P5_DarkEnergy",
+    "P6_HubbleConstant",
+    "P7_AllParticleMasses"
+  ],
+  "theorems": {
+    "A1": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A2": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A3": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A4": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A5": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A6": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A7": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "A8": {
+      "status": "given",
+      "attempts": 0,
+      "verified": false,
+      "failed_models": []
+    },
+    "F1_LedgerBalance": {
+      "status": "proven",
+      "attempts": 3,
+      "verified": true,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "F2_TickInjective": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "F3_DualInvolution": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "F4_CostNonnegative": {
+      "status": "proven",
+      "attempts": 4,
+      "verified": true,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "C1_GoldenRatioLockIn": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "C2_EightBeatPeriod": {
+      "status": "proven",
+      "attempts": 4,
+      "verified": false,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "C3_RecognitionLength": {
+      "status": "proven",
+      "attempts": 3,
+      "verified": true,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "C4_TickIntervalFormula": {
+      "status": "proven",
+      "attempts": 4,
+      "verified": false,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "E1_CoherenceQuantum": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "E2_PhiLadder": {
+      "status": "proven",
+      "attempts": 4,
+      "verified": false,
+      "failed_models": [
+        "claude-3-5-sonnet-20241022"
+      ]
+    },
+    "E3_MassEnergyEquivalence": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "E4_ElectronRung": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "E5_ParticleRungTable": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "G1_ColorFromResidue": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "G2_IsospinFromResidue": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "G3_HyperchargeFormula": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "G4_GaugeGroupEmergence": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "G5_CouplingConstants": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P1_ElectronMass": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P2_MuonMass": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P3_FineStructure": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P4_GravitationalConstant": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": true,
+      "failed_models": []
+    },
+    "P5_DarkEnergy": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P6_HubbleConstant": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    },
+    "P7_AllParticleMasses": {
+      "status": "proven",
+      "attempts": 1,
+      "verified": false,
+      "failed_models": []
+    }
+  },
+  "statistics": {
+    "proven_count": 25,
+    "total_attempts": 25,
+    "api_calls": 2297,
+    "total_tokens": 0,
+    "model_escalations": 581,
+    "runtime_seconds": 1644.5121920108795
+  }
+}

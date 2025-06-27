@@ -1,0 +1,35 @@
+{
+  "file": "../formal/Philosophy/Purpose.lean",
+  "results": [
+    {
+      "name": "recognition_synergy",
+      "line": 84,
+      "proof": "unfold shared_meaning meaning_measure\nsimp only [add_div]\nrw [div_lt_div_iff]\n\u00b7 ring_nf\n  linarith [mul_pos h h0]\n\u00b7 exact add_pos h h0\n\u00b7 exact mul_pos (add_pos h h0) (add_pos h h0)",
+      "confidence": 0.7
+    },
+    {
+      "name": "evolution_maximizes_recognition",
+      "line": 102,
+      "proof": "intro bp\nunfold evolutionary_fitness\ncases bp with\n| survival_focused => simp [BiologicalPurpose.recognition_rate]\n| reproduction_focused => simp [BiologicalPurpose.recognition_rate]\n| recognition_focused => simp [BiologicalPurpose.recognition_rate]; ring",
+      "confidence": 0.5
+    },
+    {
+      "name": "consciousness_alignment",
+      "line": 112,
+      "proof": "unfold contribution_to_universal consciousness_level\napply div_pos\n\u00b7 apply mul_pos\n  \u00b7 exact phi_gt_one\n  \u00b7 assumption\n\u00b7 norm_num",
+      "confidence": 0.7
+    },
+    {
+      "name": "human_role",
+      "line": 131,
+      "proof": "intro hp h_threshold\nunfold can_recognize_universal_purpose\nconstructor\n\u00b7 exact h_threshold\n\u00b7 apply universal_purpose_accessible\n  exact h_threshold",
+      "confidence": 0.5
+    },
+    {
+      "name": "purpose_emergence",
+      "line": 159,
+      "proof": "intro h_recog_max\nuse fun ur => ur.growth_rate\nintro ur\nrfl",
+      "confidence": 0.5
+    }
+  ]
+}

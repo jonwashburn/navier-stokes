@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "files_analyzed": 63,
+    "total_proofs": 124,
+    "avg_proof_length": 510.7
+  },
+  "tactics": {
+    "most_common": {
+      "norm_num": 199,
+      "exact": 145,
+      "have": 109,
+      "rw": 105,
+      "constructor": 74,
+      "apply": 69,
+      "calc": 37,
+      "simp": 33,
+      "unfold": 31,
+      "linarith": 29,
+      "intro": 23,
+      "ring": 6,
+      "use": 5,
+      "show": 4,
+      "rfl": 4
+    },
+    "total_unique": 18
+  },
+  "recognition_science": {
+    "categories": {
+      "coherence": 7,
+      "phi_related": 57,
+      "ledger": 3,
+      "eight_beat": 5,
+      "general": 5,
+      "gauge": 2,
+      "mass_spectrum": 8
+    },
+    "patterns": {
+      "phi_related": "\u03c6|phi|golden|fibonacci",
+      "eight_beat": "eight|beat|period|tick",
+      "coherence": "coherence|E_coh|energy",
+      "ledger": "ledger|state|recognition",
+      "meta_principle": "nothing|cannot|recognize|itself",
+      "mass_spectrum": "mass|particle|electron|muon",
+      "gauge": "gauge|symmetry|SU|U\\(1\\)",
+      "cosmological": "dark|energy|hubble|cosmological"
+    }
+  },
+  "proof_patterns": {
+    "numerical": 14,
+    "definitional": 21,
+    "inductive": 0,
+    "calc_based": 6
+  },
+  "common_sequences": [
+    {
+      "type": "numerical",
+      "common_tactics": [
+        [
+          "norm_num",
+          14
+        ],
+        [
+          "simp",
+          5
+        ],
+        [
+          "rw",
+          5
+        ],
+        [
+          "unfold",
+          2
+        ],
+        [
+          "exact",
+          1
+        ]
+      ],
+      "example": "-- m_electron_EW = y_e * v_EW / \u221a2\n  -- = (y_e_calibration * \u03c6^0) * 246 / \u221a2\n  -- = y_e_calibration * 246 / \u221a2\n  -- = (0.000511 * \u221a2 / 246) * 246 / \u221a2\n  -- = 0.000511 GeV = 0.511 MeV\n  unfold m_electron_EW y_e yukawa_coupling\n  simp [pow_zero]\n  ring_nf\n  norm_num\n\n-- Yukawa hierarchy preserved"
+    },
+    {
+      "type": "definitional",
+      "common_tactics": [
+        [
+          "norm_num",
+          108
+        ],
+        [
+          "exact",
+          66
+        ],
+        [
+          "have",
+          62
+        ],
+        [
+          "rw",
+          44
+        ],
+        [
+          "constructor",
+          36
+        ]
+      ],
+      "example": "unfold m_muon_EW m_electron_EW y_\u03bc y_e yukawa_coupling\n  -- (\u03c6^5 * v / \u221a2) / (1 * v / \u221a2) = \u03c6^5\n  simp [div_div]\n  -- The masses cancel except for yukawa ratio\n  field_simp [pow_sub, div_eq_iff (ne_of_gt (sqrt_pos (by norm_num : (0 : \u211d) < 2)))]\n  ring_nf\n  -- Now we have |\u03c6^5 - \u03c6^5| < 0.001 which is 0 < 0.001\n  norm_num\n\n-- Running to MS-bar scale\nnoncomputable"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "file": "../formal/FundamentalTick.lean",
+  "results": [
+    {
+      "name": "statement",
+      "line": 243,
+      "proof": "Looking at this context, I can see this is about proving the existence of some value related to Recognition Science constants. Based on the comment mentioning n=139 and the logarithmic relationship, this appears to be about finding an n where \u03c6^n relates to some physical constant.\n\nSince the goal asks for existence and the comment suggests n=139 is the correct logarithmic value, here's the proof:\n\n```lean\nuse 139\nnorm_num\n```",
+      "confidence": 0.3
+    },
+    {
+      "name": "tau_from_recognition_dynamics",
+      "line": 260,
+      "proof": "Looking at this theorem, I need to prove an equality involving several undefined constants (\u03c4, c, \u03bb_DNA). Since these appear to be physical constants that should be defined elsewhere in the Recognition Science framework but aren't available in the current context, I'll need to indicate that this proof requires those definitions.\n\nHowever, since the instruction asks for proof code only, and this appears to be a definitional relationship in Recognition Science, the most appropriate response is:\n\n```lean\nsorry\n```\n\nThe theorem cannot be proven without the definitions of \u03c4, c, and \u03bb_DNA, which are not present in the current file context.",
+      "confidence": 0.3
+    }
+  ]
+}
