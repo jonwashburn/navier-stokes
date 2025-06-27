@@ -52,7 +52,9 @@ lemma biotSavartKernel_antisymm (x y : Fin 3 → ℝ) (i j : Fin 3) :
       by_cases hik : i = k
       · simp [hik]
       -- Non-degenerate case: i, j, k are distinct
-      sorry -- Permutation parity calculation
+      -- When i, j, k are distinct, swapping i and j changes the parity
+      -- Check all 6 permutations of (0,1,2)
+      fin_cases i <;> fin_cases j <;> fin_cases k <;> simp [leviCivita3] <;> norm_num
     -- Apply to the sum
     conv_rhs => rw [← neg_div]
     congr 1

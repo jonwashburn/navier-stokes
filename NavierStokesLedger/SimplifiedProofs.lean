@@ -32,7 +32,7 @@ where
   the corresponding component of a vector field `v`, then the square of the
   `L²`-norm of `u` is bounded by that of `v`.
 
-  This is the natural monotonicity property of the integral  
+  This is the natural monotonicity property of the integral
   `∫ ‖u x‖² dx ≤ ∫ ‖v x‖² dx` under the point-wise bound
   `‖u x‖ ≤ ‖v x‖`.  Because `L2NormSquared` itself is axiomatised, we
   introduce the corresponding inequality as an axiom as well.
@@ -159,9 +159,7 @@ theorem phase_coherence_bounded (u : VectorField)
     -- For general u, we have enstrophy/energy ≤ 1/λ₁
     -- where λ₁ is the first eigenvalue of the Laplacian
     have h_poincare : enstrophyReal u ≤ (1/lambda_1) * energyReal u := by
-      by
-  -- direct application of the (axiomatized) Poincaré inequality
-  simpa using poincare_inequality u
+      sorry  -- Requires Poincaré inequality
     calc phase_coherence_indicator u = enstrophyReal u / (energyReal u + 1)
       _ ≤ enstrophyReal u / energyReal u := by
           apply div_le_div_of_nonneg_left

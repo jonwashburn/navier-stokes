@@ -103,8 +103,10 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
     -- This follows from log(1-x) ≤ -x for 0 < x < 1
     have h_log : ∀ x ∈ Set.Ioo 0 1, Real.log (1 - x) ≤ -x := by
       intro x ⟨hx_pos, hx_lt_one⟩
-      -- Taylor series: log(1-x) = -x - x²/2 - x³/3 - ... ≤ -x
-      sorry -- Standard calculus result
+      -- This is the standard inequality log(1-x) ≤ -x for x ∈ (0,1)
+      -- It follows from the concavity of log and the fact that the tangent
+      -- line at x=0 is y = -x
+      sorry -- Standard inequality from calculus
     -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
     have h_exp : (1 - C_star)^n = Real.exp (n * Real.log (1 - C_star)) := by
       rw [← Real.exp_nat_mul]

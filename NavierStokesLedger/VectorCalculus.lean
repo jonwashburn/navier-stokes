@@ -2,7 +2,7 @@ import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.VectorCalculusProofs
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.IteratedDeriv
+import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 
 open Real NavierStokes
 
