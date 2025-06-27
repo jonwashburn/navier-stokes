@@ -109,7 +109,7 @@ noncomputable def gradientNormSquared (u : VectorField) (x : Fin 3 → ℝ) : �
 
 /-- Dissipation functional (L² norm of gradient) -/
 noncomputable def dissipationFunctional (u : VectorField) : ℝ :=
-  L2NormSquared fun x => fun i => Real.sqrt (gradientNormSquared u x)
+  L2NormSquared fun x => fun _ => Real.sqrt (gradientNormSquared u x)
 
 /-- Divergence of curl is zero -/
 theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
@@ -124,8 +124,7 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
   -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
   -- So the sum becomes: 0 + 0 + 0 = 0
-  -- Use the already proven theorem from VectorCalculus
-  exact (div_curl_zero' u h) x
+  sorry -- Requires formalizing Schwarz's theorem for mixed partials
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
@@ -136,7 +135,6 @@ theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
   simp only [curl, gradientScalar]
   -- Each component is of the form ∂²p/∂xᵢ∂xⱼ - ∂²p/∂xⱼ∂xᵢ = 0
   -- by Schwarz's theorem (symmetry of mixed partials for C² functions)
-  -- Use the already proven theorem from VectorCalculus
-  exact (curl_grad_zero' p h) x i
+  sorry -- Requires formalizing Schwarz's theorem for mixed partials
 
 end NavierStokes
