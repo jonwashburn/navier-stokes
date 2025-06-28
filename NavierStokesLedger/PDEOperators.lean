@@ -118,13 +118,14 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- This follows from the symmetry of mixed partial derivatives
   funext x
   simp only [divergence, curl]
-  -- The key insight: each second-order mixed partial appears twice with opposite signs
-  -- and they cancel by Schwarz's theorem (symmetry of mixed partials)
   -- Expanding: div(curl u) = ∂/∂x₀(∂u₂/∂x₁ - ∂u₁/∂x₂) + ∂/∂x₁(∂u₀/∂x₂ - ∂u₂/∂x₀) + ∂/∂x₂(∂u₁/∂x₀ - ∂u₀/∂x₁)
   -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
   -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
   -- So the sum becomes: 0 + 0 + 0 = 0
-  sorry -- Requires formalizing Schwarz's theorem for mixed partials
+
+  -- At this point we need Schwarz's theorem: mixed partials commute for C² functions
+  -- This is a fundamental result that should be in mathlib
+  sorry -- Requires Schwarz's theorem from mathlib
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :

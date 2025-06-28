@@ -19,8 +19,26 @@ lemma cross_product_bound (a b : Fin 3 → ℝ) :
     ‖crossProduct a b‖ ≤ ‖a‖ * ‖b‖ := by
   -- We use the standard fact that ‖a × b‖ ≤ ‖a‖ ‖b‖
   -- This follows from Lagrange's identity: ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩²
-  -- For now we'll use a direct calculation approach
-  sorry -- Standard cross product inequality
+
+  -- Handle the zero cases
+  by_cases ha : a = 0
+  · rw [ha]
+    -- Show crossProduct 0 b = 0
+    ext i
+    simp [crossProduct]
+    ring
+  by_cases hb : b = 0
+  · rw [hb]
+    -- Show crossProduct a 0 = 0
+    ext i
+    simp [crossProduct]
+    ring
+
+  -- For non-zero vectors, use Lagrange's identity
+  -- We have ‖a × b‖² + ⟨a,b⟩² = ‖a‖²‖b‖² (Lagrange's identity)
+  -- Since ⟨a,b⟩² ≥ 0, we get ‖a × b‖² ≤ ‖a‖²‖b‖²
+
+  sorry -- Lagrange's identity: ‖a × b‖² + ⟨a,b⟩² = ‖a‖²‖b‖²
 
 /-- The geometric depletion constant -/
 noncomputable def C_GD : ℝ := 2 * sin (π / 12)

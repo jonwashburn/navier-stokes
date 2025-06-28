@@ -104,9 +104,9 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
     have h_log : ∀ x ∈ Set.Ioo 0 1, Real.log (1 - x) ≤ -x := by
       intro x ⟨hx_pos, hx_lt_one⟩
       -- This is the standard inequality log(1-x) ≤ -x for x ∈ (0,1)
-      -- It follows from the concavity of log and the fact that the tangent
-      -- line at x=0 is y = -x
-      sorry -- Standard inequality from calculus
+      -- It follows from concavity of log: the graph lies below its tangent at x=0
+      -- The tangent line to log(1-x) at x=0 is y = -x
+      sorry -- Standard calculus inequality
     -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
     have h_exp : (1 - C_star)^n = Real.exp (n * Real.log (1 - C_star)) := by
       rw [← Real.exp_nat_mul]
