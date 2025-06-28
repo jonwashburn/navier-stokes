@@ -11,6 +11,9 @@ package «navier-stokes» where
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "v4.21.0-rc3"
 
+require RecognitionScience from git
+  "https://github.com/jonwashburn/recognition-ledger.git" @ "main"
+
 @[default_target]
 lean_lib «NavierStokesLedger» where
   -- add any library configuration options here
