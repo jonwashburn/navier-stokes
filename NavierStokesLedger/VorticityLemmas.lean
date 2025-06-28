@@ -100,29 +100,9 @@ theorem vorticity_stretching_bound (u : VectorField) (ω : VectorField)
     ∀ x, ‖vorticityStretching ω u x‖ ≤ C_stretch * ‖ω x‖^2 := by
   intro x
   -- The stretching term (ω·∇)u is bounded by |ω||∇u|
-  calc ‖vorticityStretching ω u x‖
-      = ‖convectiveDerivative ω u x‖ := rfl
-    _ = ‖∑ i, (ω x) i • partialDeriv i u x‖ := by
-        simp [convectiveDerivative]
-    _ ≤ ∑ i, ‖(ω x) i • partialDeriv i u x‖ := by
-        apply norm_sum_le
-    _ ≤ ∑ i, |(ω x) i| * ‖partialDeriv i u x‖ := by
-        simp only [norm_smul]
-        apply Finset.sum_le_sum
-        intro i _
-        rfl
-    _ ≤ ‖ω x‖ * sqrt (gradientNormSquared u x) := by
-        -- Cauchy-Schwarz inequality
-        sorry -- Technical calculation
-    _ ≤ ‖ω x‖ * sqrt (C_CZ * ‖curl u x‖^2) := by
-        gcongr
-        exact vorticity_controls_gradient u h_div_free (by sorry : ContDiff ℝ 1 u) x
-    _ = ‖ω x‖ * sqrt C_CZ * ‖ω x‖ := by
-        simp [h_biot_savart]
-    _ = sqrt C_CZ * ‖ω x‖^2 := by ring
-    _ ≤ C_stretch * ‖ω x‖^2 := by
-        gcongr
-        exact le_of_lt (by sorry : sqrt C_CZ < C_stretch)
+  -- Since vorticityStretching = convectiveDerivative, we have:
+  -- ‖(ω·∇)u‖ ≤ ‖ω‖ ‖∇u‖ ≤ C‖ω‖²
+  sorry  -- This requires Calderón-Zygmund theory and the vorticity_controls_gradient lemma
 
 /-- Recognition Science: 8-beat cycle limits vorticity amplification -/
 theorem eight_beat_vorticity_damping (ω : ℝ → VectorField) :

@@ -81,7 +81,8 @@ lemma BS_kernel_L1_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r) :
           (x - y) 0 * v 1 - (x - y) 1 * v 0
         ]‖^2 ≤ ‖x - y‖^2 * ‖v‖^2 := by
         -- The cross product satisfies ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩² ≤ ‖a‖²‖b‖²
-        sorry -- Lagrange identity calculation
+        -- This is Lagrange's identity for the cross product in R³
+        sorry
       exact sq_le_sq' (by linarith [norm_nonneg (x - y), norm_nonneg v]) h_lagrange
     -- Now bound the scaled cross product
     have h_calc : ‖(1 / (4 * π * ‖x - y‖^3)) • ![
@@ -239,7 +240,7 @@ lemma antisymmetric_quadratic_zero
     rw [Matrix.inner_mulVec_eq_mulVec_inner]
   rw [h1, h2, hA]
   simp only [Matrix.neg_mulVec, inner_neg_right]
-  ring
+  linarith
 
 -- Helper: Biot-Savart kernel bound (operator norm)
 lemma BS_kernel_bound (x y : Fin 3 → ℝ) (hxy : x ≠ y) (v : Fin 3 → ℝ) :
