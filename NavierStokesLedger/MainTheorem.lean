@@ -75,16 +75,17 @@ theorem navier_stokes_global_regularity (ν : ℝ) (hν : 0 < ν)
     · exact smooth_from_bounded_derivatives nse.smooth_solution t h_grad_bound
     · exact nse.divergence_free t
 
-where
-  -- These are standard PDE regularity results
-  axiom smooth_from_bounded_derivatives {u : VectorField}
-      (h_local : ContDiff ℝ ⊤ u)
-      (h_bound : ∃ C > 0, ∀ x, gradientNormSquared u x ≤ C) :
-      ContDiff ℝ ⊤ u
+-- These are standard PDE regularity results
+theorem smooth_from_bounded_derivatives {u : VectorField}
+    (h_local : ContDiff ℝ ⊤ u)
+    (h_bound : ∃ C > 0, ∀ x, gradientNormSquared u x ≤ C) :
+    ContDiff ℝ ⊤ u := by
+  sorry  -- Standard parabolic regularity theory
 
-  axiom pressure_smooth_from_velocity_smooth {u : VectorField} {p : ScalarField}
-      (h_u : ContDiff ℝ ⊤ u) (h_div : divergence u = fun _ => 0) :
-      ContDiff ℝ ⊤ p
+theorem pressure_smooth_from_velocity_smooth {u : VectorField} {p : ScalarField}
+    (h_u : ContDiff ℝ ⊤ u) (h_div : divergence u = fun _ => 0) :
+    ContDiff ℝ ⊤ p := by
+  sorry  -- Follows from elliptic regularity for pressure equation
 
 /-- Corollary: Energy remains bounded -/
 theorem energy_bounded (ν : ℝ) (hν : 0 < ν)
@@ -110,8 +111,10 @@ theorem energy_bounded (ν : ℝ) (hν : 0 < ν)
         ≤ C * exp (cascade_cutoff * t) := h_bound
       _ ≤ 1 * exp (cascade_cutoff * 1) := by
           gcongr
-          · sorry -- C = 1 for normalized case
-          · sorry -- t ≤ 1 or use monotonicity
+          · -- C = 1 for normalized case
+            sorry  -- This requires showing C = 1 from normalization
+          · -- t ≤ 1 or use monotonicity
+            sorry  -- This requires bounding t or using monotonicity of exp
       _ = exp cascade_cutoff := by simp
 
 /-- Corollary: Enstrophy remains bounded -/

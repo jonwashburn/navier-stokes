@@ -43,7 +43,7 @@ theorem geometric_depletion
     (h_smooth : ContDiff ℝ 2 u)
     (h_vort : ω = curl u)
     (hr_pos : r > 0)
-    (h_scale : r * (sSup {‖ω y‖ | y ∈ ball x r}) ≤ 1) :
+    (h_scale : r * sSup {‖ω y‖ | y ∈ Metric.ball x r} ≤ 1) :
     ‖(ω x) • ∇ u x‖ ≤ C_star / r := by
   -- This is the core of the Constantin-Fefferman approach
   -- We use the result from GeometricDepletion.lean
