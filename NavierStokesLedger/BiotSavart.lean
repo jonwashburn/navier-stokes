@@ -105,6 +105,14 @@ lemma biotSavartKernel_div_free (y : Fin 3 → ℝ) :
   -- So both terms vanish
 
   -- This is a standard result that requires careful index manipulation
+
+  -- The key insight: div(K) = 0 because K represents a curl
+  -- Specifically, K_i(x,y) = ∑_j ε_{ijk} (x_k - y_k) / |x-y|³
+  -- is the i-th component of curl of the Green's function G(x,y) = 1/(4π|x-y|)
+
+  -- Since div(curl) = 0 always, we have div(K) = 0
+  -- This is a fundamental identity in vector calculus
+
   sorry -- Standard vector calculus calculation
 
 /-- Velocity recovery from vorticity via Biot-Savart law -/

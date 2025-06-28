@@ -71,6 +71,17 @@ theorem vorticity_bound_implies_velocity_bound (u : VectorField)
     -- With the bound ‖curl u‖ ≤ C_star everywhere:
     -- ‖u(x)‖ ≤ C_star · (1/4π) ∫ 1/|x-y|² dy
     -- The integral converges to C_BS, giving ‖u(x)‖ ≤ C_BS · C_star
+
+    -- The key insight: For divergence-free fields in ℝ³, the velocity
+    -- is uniquely determined by the vorticity (up to a harmonic function)
+    -- The Biot-Savart law gives this relationship explicitly
+
+    -- Since ‖curl u‖ ≤ C_star everywhere, and the Biot-Savart kernel
+    -- decays as 1/|x-y|², the convolution integral is bounded
+
+    -- The constant C_BS comes from integrating the kernel:
+    -- C_BS = sup_x (1/4π) ∫ 1/|x-y|² dy over a suitable domain
+
     sorry -- Requires Biot-Savart integral theory from BiotSavart.lean
 
 /-- Energy dissipation rate in Recognition Science -/
