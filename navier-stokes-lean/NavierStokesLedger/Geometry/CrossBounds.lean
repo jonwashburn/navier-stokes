@@ -2,20 +2,19 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.InnerProductSpace.Basic
 import NavierStokesLedger.BasicDefinitions
-import NavierStokesLedger.VectorCalc.Basic  -- brings in cross and norm_cross_le
+import NavierStokesLedger.VectorCalc.Basic
 
 namespace NavierStokes.Geometry
 
-open Real NavierStokes
+open Real NavierStokes NavierStokes.VectorCalc
 
-/-- Use the proven cross product from VectorCalc -/
-abbrev crossProduct := NavierStokes.VectorCalc.cross
+/-- Use the cross product from VectorCalc -/
+abbrev crossProduct := cross
 
 /-- Lagrange identity bound for cross products -/
 lemma cross_product_bound (a b : Fin 3 → ℝ) :
-    ‖crossProduct a b‖ ≤ ‖a‖ * ‖b‖ := by
-  -- Directly use the proven bound from VectorCalc
-  simpa using NavierStokes.VectorCalc.norm_cross_le a b
+    ‖crossProduct a b‖ ≤ ‖a‖ * ‖b‖ :=
+  norm_cross_le a b
 
 /-- The geometric depletion constant -/
 noncomputable def C_GD : ℝ := 2 * sin (π / 12)
