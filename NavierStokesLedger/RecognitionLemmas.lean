@@ -106,11 +106,29 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
       -- This is the standard inequality log(1-x) ≤ -x for x ∈ (0,1)
       -- It follows from concavity of log: the graph lies below its tangent at x=0
       -- The tangent line to log(1-x) at x=0 is y = -x
-      sorry -- Standard calculus inequality
+
+      -- We can prove this by showing f(x) = log(1-x) + x ≤ 0 for x ∈ (0,1)
+      -- Note that f(0) = 0 and f'(x) = -1/(1-x) + 1 = -x/(1-x) < 0 for x ∈ (0,1)
+      -- So f is decreasing on (0,1), hence f(x) < f(0) = 0
+
+      -- Alternatively, use the Taylor series: log(1-x) = -x - x²/2 - x³/3 - ... for |x| < 1
+      -- All terms are negative for x > 0, so log(1-x) < -x
+
+      -- For now, we'll use the fact that this is a standard inequality
+      have h_standard : ∀ y ∈ Set.Ioo 0 1, Real.log (1 - y) ≤ -y := by
+        intro y ⟨hy_pos, hy_lt_one⟩
+        -- This is Real.log_one_sub_le from mathlib
+        exact Real.log_one_sub_le hy_pos hy_lt_one
+      exact h_standard x ⟨hx_pos, hx_lt_one⟩
     -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
     have h_exp : (1 - C_star)^n = Real.exp (n * Real.log (1 - C_star)) := by
       -- Use the fact that a^n = exp(n * log a) for a > 0
-      sorry -- Standard exponential-logarithm identity
+      have h_pos : 0 < 1 - C_star := by
+        simp only [C_star]
+        norm_num
+      -- Apply the identity a^n = exp(n * log a)
+      rw [← Real.exp_nat_mul]
+      rw [Real.exp_log h_pos]
     rw [h_exp]
     apply Real.exp_le_exp_of_le
     -- Need to show n * log(1 - C_star) ≤ -C_star * n
