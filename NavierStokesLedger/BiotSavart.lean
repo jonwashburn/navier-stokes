@@ -86,6 +86,25 @@ lemma biotSavartKernel_div_free (y : Fin 3 → ℝ) :
 
   -- This is a classical result in vector calculus
   -- div(curl) = 0 always holds for smooth vector fields
+
+  -- The Biot-Savart kernel represents a curl, so its divergence is zero
+  -- Specifically, K_{ij}(x,y) = ε_{ijk} (x_k - y_k) / |x-y|³
+  -- represents the j-th component of curl of a Green's function
+
+  -- We can show this directly:
+  simp only [divergence, partialDerivVec]
+
+  -- The divergence is ∑_i ∂_i K_{ij} = ∑_i ∂_i (∑_k ε_{ijk} r_k / |r|³)
+  -- = ∑_{i,k} ε_{ijk} ∂_i (r_k / |r|³)
+
+  -- Now ∂_i (r_k / |r|³) = δ_{ik} / |r|³ - 3 r_i r_k / |r|⁵
+  -- So ∑_i ε_{ijk} ∂_i (r_k / |r|³) = ε_{ijk} / |r|³ - 3 (∑_i ε_{ijk} r_i) r_k / |r|⁵
+
+  -- But ∑_i ε_{ijk} r_i = 0 when i = j (since ε_{jjk} = 0)
+  -- And ε_{ijk} = 0 when j = k
+  -- So both terms vanish
+
+  -- This is a standard result that requires careful index manipulation
   sorry -- Standard vector calculus calculation
 
 /-- Velocity recovery from vorticity via Biot-Savart law -/

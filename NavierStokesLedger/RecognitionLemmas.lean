@@ -122,7 +122,11 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
       exact Nat.cast_nonneg n
     -- Simplify the right side
     rw [mul_neg] at h_mul
-    rw [mul_comm (n : ℝ) C_star]
+    -- Need to show n * log(1 - C_star) ≤ -C_star * n
+    -- We have n * log(1 - C_star) ≤ -n * C_star
+    -- Which is the same as n * log(1 - C_star) ≤ -C_star * n since multiplication commutes
+    have h_comm : -(n : ℝ) * C_star = -C_star * (n : ℝ) := by ring
+    rw [← h_comm]
     exact h_mul
   · exact le_of_lt h_pos
 
