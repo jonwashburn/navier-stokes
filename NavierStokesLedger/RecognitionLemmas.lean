@@ -120,8 +120,9 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
     have h_mul : n * Real.log (1 - C_star) ≤ n * (-C_star) := by
       apply mul_le_mul_of_nonneg_left h_ineq
       exact Nat.cast_nonneg n
+    -- Simplify the right side
     rw [mul_neg] at h_mul
-    rw [mul_comm C_star n]
+    rw [mul_comm (n : ℝ) C_star]
     exact h_mul
   · exact le_of_lt h_pos
 

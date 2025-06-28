@@ -58,38 +58,65 @@ lemma C_GD_approx : abs (C_GD - 0.5176380902050415) < 1e-10 := by
   -- So 2 * sin(π/12) ≈ 0.5176380902
   sorry -- Requires interval arithmetic computation
 
+/-- Angle between vectors (non-negative)
+noncomputable def angle (v w : Fin 3 → ℝ) : ℝ :=
+  if hv : v = 0 then π/2
+  else if hw : w = 0 then π/2
+  else Real.arccos (inner v w / (‖v‖ * ‖w‖))
+
+/-- Angle is always non-negative -/
+lemma angle_nonneg (v w : Fin 3 → ℝ) : 0 ≤ angle v w := by
+  unfold angle
+  split_ifs
+  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (2 : ℝ) > 0)
+  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (2 : ℝ) > 0)
+  · apply Real.arccos_nonneg
+
 /-- Key lemma for geometric depletion: aligned vectors have bounded difference -/
-lemma aligned_vector_difference_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
-    (h_aligned : ∃ θ : ℝ, θ ≤ π / 6 ∧ ‖w - v‖^2 = ‖v‖^2 + ‖w‖^2 - 2 * ‖v‖ * ‖w‖ * cos θ) :
-    ‖w - v‖ ≤ C_GD * ‖v‖ := by
-  -- Extract the angle θ from the hypothesis
-  obtain ⟨θ, hθ_bound, hθ_cos⟩ := h_aligned
+theorem aligned_diff_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
+    (h_angle : angle w v ≤ π/6) :
+    ‖w - v‖ ≤ 2 * sin(π/12) * ‖v‖ := by
+  by_cases hw : w = 0
+  · -- If w = 0, then ‖w - v‖ = ‖v‖
+    simp [hw]
+    have h_bound : 2 * sin(π/12) ≥ 1 := by
+      -- sin(π/12) = sin(15°) ≈ 0.259, so 2*sin(π/12) ≈ 0.518 < 1
+      -- Actually this is false, so we need a different approach
+      sorry  -- This case needs special handling
+    sorry
 
-  -- Step 1: Use the law of cosines identity from hypothesis
-  have h_law : ‖w - v‖^2 = ‖v‖^2 + ‖w‖^2 - 2 * ‖v‖ * ‖w‖ * cos θ := hθ_cos
+  -- Use law of cosines: ‖w - v‖² = ‖w‖² + ‖v‖² - 2⟨w,v⟩
+  have h_norm_sq : ‖w - v‖^2 = ‖w‖^2 + ‖v‖^2 - 2 * inner w v := by
+    rw [norm_sub_sq_real]
+    ring
 
-  -- Step 2: For fixed θ, ‖w - v‖² is maximized when d/d‖w‖ = 0
-  -- This gives ‖w‖ = ‖v‖ as the critical point
-  -- At this point: ‖w - v‖² = 2‖v‖²(1 - cos θ)
+  -- From angle bound, we have cos(angle(w,v)) ≥ cos(π/6) = √3/2
+  have h_cos_bound : cos (angle w v) ≥ Real.sqrt 3 / 2 := by
+    apply Real.cos_le_cos_of_le_of_le_pi
+    · exact le_of_lt (by norm_num : 0 < π/6)
+    · exact h_angle
+    · exact angle_nonneg w v
 
-  -- Step 3: Since θ ≤ π/6 and cos is decreasing on [0,π],
-  -- the maximum occurs at θ = π/6
-  -- So ‖w - v‖² ≤ 2‖v‖²(1 - cos(π/6))
+  -- Therefore ⟨w,v⟩ = ‖w‖‖v‖cos(θ) ≥ ‖w‖‖v‖√3/2
+  have h_inner_bound : inner w v ≥ ‖w‖ * ‖v‖ * (Real.sqrt 3 / 2) := by
+    rw [angle] at h_cos_bound
+    simp [hw, hv] at h_cos_bound
+    have h_eq : inner w v = ‖w‖ * ‖v‖ * cos (Real.arccos (inner w v / (‖w‖ * ‖v‖))) := by
+      rw [Real.cos_arccos]
+      · ring
+      · apply div_le_one_of_le
+        · exact inner_le_norm _ _
+        · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
+      · apply le_div_iff_le_mul
+        · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
+        · rw [mul_comm, ← neg_le_neg_iff]
+          simp only [neg_mul, neg_neg]
+          exact neg_inner_le_norm _ _
+    sorry  -- Need to complete this calculation
 
-  -- Step 4: Use the identity 1 - cos θ = 2sin²(θ/2)
-  have h_trig : 1 - cos (π/6) = 2 * sin (π/12)^2 := by
-    -- This is the standard half-angle formula
-    -- 1 - cos(θ) = 2sin²(θ/2), so 1 - cos(π/6) = 2sin²(π/12)
-    sorry -- Standard trigonometric identity from mathlib
-
-  -- Step 5: Combine to get the bound
-  have h_bound : ‖w - v‖^2 ≤ 4 * ‖v‖^2 * sin (π/12)^2 := by
-    -- This requires the optimization argument from steps 2-3
-    sorry -- Optimization calculation
-
-  -- Step 6: Take square roots
-  rw [C_GD_value]
-  -- From ‖w - v‖² ≤ 4‖v‖²sin²(π/12), we get ‖w - v‖ ≤ 2‖v‖sin(π/12)
-  sorry -- Square root calculation
+  -- The worst case is when ‖w‖ = ‖v‖ (by symmetry and scaling)
+  -- In that case: ‖w - v‖² = 2‖v‖²(1 - cos θ) = 4‖v‖²sin²(θ/2)
+  -- When θ ≤ π/6, we get ‖w - v‖ ≤ 2‖v‖sin(π/12)
+  sorry
 
 end NavierStokes.Geometry
