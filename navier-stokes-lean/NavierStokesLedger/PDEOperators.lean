@@ -1,6 +1,8 @@
 import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -111,6 +113,15 @@ noncomputable def gradientNormSquared (u : VectorField) (x : Fin 3 → ℝ) : �
 noncomputable def dissipationFunctional (u : VectorField) : ℝ :=
   L2NormSquared fun x => fun _ => Real.sqrt (gradientNormSquared u x)
 
+/-- Schwarz's theorem: Symmetry of mixed partial derivatives for C² functions -/
+lemma schwarz_symmetry {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ} {i j : Fin 3}
+    (hf : ContDiff ℝ 2 f) :
+    fderiv ℝ (fun y => partialDeriv i f y) x (fun k => if k = j then 1 else 0) =
+    fderiv ℝ (fun y => partialDeriv j f y) x (fun k => if k = i then 1 else 0) := by
+  -- This is a consequence of the symmetry of the second derivative
+  -- For C² functions, the Hessian matrix is symmetric
+  sorry -- TODO: Link to mathlib's symmetric second derivative theorem
+
 /-- Divergence of curl is zero -/
 theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
     divergence (curl u) = fun _ => 0 := by
@@ -124,7 +135,13 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
   -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
   -- So the sum becomes: 0 + 0 + 0 = 0
-  sorry -- Requires formalizing Schwarz's theorem for mixed partials
+
+  -- Apply Schwarz's theorem to show cancellation
+  -- Each term cancels with its symmetric counterpart
+  simp only [partialDerivVec, Fin.sum_univ_three]
+  ring_nf
+  -- After expansion, we get pairs of mixed partials that cancel
+  sorry -- TODO: Complete the algebraic simplification
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
@@ -135,6 +152,12 @@ theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
   simp only [curl, gradientScalar]
   -- Each component is of the form ∂²p/∂xᵢ∂xⱼ - ∂²p/∂xⱼ∂xᵢ = 0
   -- by Schwarz's theorem (symmetry of mixed partials for C² functions)
-  sorry -- Requires formalizing Schwarz's theorem for mixed partials
+
+  -- Apply Schwarz's theorem directly
+  cases i using Fin.cases with
+  | H0 => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
+  | Hsucc i' => cases i' using Fin.cases with
+    | H0 => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
+    | Hsucc i'' => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
 
 end NavierStokes

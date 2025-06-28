@@ -55,7 +55,18 @@ lemma aligned_vector_difference_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     -- So we need: 1 - cos(π/6) = 2sin²(π/12)
     -- We know cos(π/6) = √3/2, so 1 - cos(π/6) = 1 - √3/2 = (2 - √3)/2
     -- We'll axiomatize this standard trigonometric fact
-    sorry -- Standard trigonometric identity: half-angle formula
+    -- Use the half-angle formula: sin²(θ/2) = (1 - cos θ)/2
+    -- Rearranging: 1 - cos θ = 2sin²(θ/2)
+    -- With θ = π/6, we have θ/2 = π/12
+    have h1 : π/12 = (π/6)/2 := by norm_num
+    rw [← h1]
+    -- Apply the half-angle identity
+    have h2 : ∀ x, 1 - cos x = 2 * sin (x/2)^2 := by
+      intro x
+      -- This is a standard identity from Mathlib
+      rw [cos_two_mul_add_one]
+      ring
+    exact h2 (π/6)
 
   -- Step 5: Combine to get the bound
   have h_bound : ‖w - v‖^2 ≤ 4 * ‖v‖^2 * sin (π/12)^2 := by

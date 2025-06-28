@@ -1,5 +1,6 @@
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.TimeDependent
+import NavierStokesLedger.Operators.FredholmTheory
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
@@ -80,7 +81,28 @@ theorem biot_savart_velocity_bound (ω : VectorField)
     ∀ x, ‖u x‖ ≤ (1/(4*π)) * iSup (fun y => ‖ω y‖ / ‖x - y‖) := by
   -- The Biot-Savart law gives u = K * ω where K is the kernel
   -- The bound follows from the kernel decay
-  sorry  -- TODO: Implement convolution and kernel estimates
+
+  -- Step 1: Define the Biot-Savart kernel K(x,y) = 1/(4π|x-y|³) × (x-y)
+  -- This kernel satisfies the decay condition needed for compact_from_kernel
+
+  -- Step 2: The velocity field is given by convolution
+  use fun x => (1/(4*π)) • ∫ y, (1/‖x - y‖^3) • ((x - y) ×₃ ω y)
+
+  constructor
+  · -- Prove curl u = ω
+    -- This follows from the identity: curl(K * ω) = ω for the Biot-Savart kernel
+    sorry -- TODO: Formalize convolution and curl interchange
+
+  constructor
+  · -- Prove divergence u = 0
+    intro x
+    -- The Biot-Savart construction automatically gives divergence-free fields
+    sorry -- TODO: Formalize divergence of convolution
+
+  · -- Prove the pointwise bound
+    intro x
+    -- The bound follows from the kernel estimate |K(x,y)| ≤ 1/(4π|x-y|)
+    sorry -- TODO: Apply kernel decay bounds
 
 /-- Vorticity controls velocity gradient through Calderón-Zygmund theory -/
 theorem vorticity_controls_gradient (u : VectorField)
@@ -91,7 +113,22 @@ theorem vorticity_controls_gradient (u : VectorField)
   -- 1. Divergence-free condition
   -- 2. Calderón-Zygmund singular integral theory
   -- 3. The fact that ∇u is controlled by Riesz transforms of ω
-  sorry  -- TODO: This requires deep harmonic analysis
+
+  intro x
+  -- For divergence-free vector fields, we have the identity:
+  -- Δu = -curl(curl u) = -curl ω
+  -- This means each component uᵢ satisfies: Δuᵢ = -(curl ω)ᵢ
+
+  -- By the Calderón-Zygmund theory for the Laplacian:
+  -- ‖∇uᵢ‖_L² ≤ C‖Δuᵢ‖_L² = C‖(curl ω)ᵢ‖_L²
+
+  -- At a point x, this gives us:
+  -- |∇u(x)|² ≤ C_CZ |ω(x)|²
+
+  -- The constant C_CZ comes from the Calderón-Zygmund operator norm
+  -- for the Riesz transform R = ∇(-Δ)^(-1/2)
+
+  sorry -- TODO: Formalize Riesz transform bounds
 
 /-- Key estimate: Vorticity stretching is quadratic in vorticity -/
 theorem vorticity_stretching_bound (u : VectorField) (ω : VectorField)
