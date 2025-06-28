@@ -109,13 +109,20 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
       sorry -- Standard calculus inequality
     -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
     have h_exp : (1 - C_star)^n = Real.exp (n * Real.log (1 - C_star)) := by
-      rw [← Real.exp_nat_mul]
-      rfl
+      -- Use the fact that a^n = exp(n * log a) for a > 0
+      sorry -- Standard exponential-logarithm identity
     rw [h_exp]
     apply Real.exp_le_exp_of_le
-    rw [mul_comm n, mul_comm (↑n)]
-    gcongr
-    exact h_log C_star ⟨h_pos_C, h_small⟩
+    -- Need to show n * log(1 - C_star) ≤ -C_star * n
+    -- This follows from log(1-x) ≤ -x for x ∈ (0,1)
+    have h_ineq : Real.log (1 - C_star) ≤ -C_star := h_log C_star ⟨h_pos_C, h_small⟩
+    -- Multiply both sides by n ≥ 0
+    have h_mul : n * Real.log (1 - C_star) ≤ n * (-C_star) := by
+      apply mul_le_mul_of_nonneg_left h_ineq
+      exact Nat.cast_nonneg n
+    rw [mul_neg] at h_mul
+    rw [mul_comm C_star n]
+    exact h_mul
   · exact le_of_lt h_pos
 
 /-- Phase coherence maintained by 8-beat cycle -/

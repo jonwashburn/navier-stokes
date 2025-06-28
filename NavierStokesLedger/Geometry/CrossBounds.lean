@@ -23,16 +23,22 @@ lemma cross_product_bound (a b : Fin 3 → ℝ) :
   -- Handle the zero cases
   by_cases ha : a = 0
   · rw [ha]
-    -- Show crossProduct 0 b = 0
-    ext i
-    simp [crossProduct]
-    ring
+    -- crossProduct 0 b = 0
+    have h_zero : crossProduct 0 b = 0 := by
+      ext i
+      simp [crossProduct]
+      fin_cases i <;> simp
+    rw [h_zero]
+    simp
   by_cases hb : b = 0
   · rw [hb]
-    -- Show crossProduct a 0 = 0
-    ext i
-    simp [crossProduct]
-    ring
+    -- crossProduct a 0 = 0
+    have h_zero : crossProduct a 0 = 0 := by
+      ext i
+      simp [crossProduct]
+      fin_cases i <;> simp
+    rw [h_zero]
+    simp
 
   -- For non-zero vectors, use Lagrange's identity
   -- We have ‖a × b‖² + ⟨a,b⟩² = ‖a‖²‖b‖² (Lagrange's identity)
@@ -73,8 +79,8 @@ lemma aligned_vector_difference_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
   -- Step 4: Use the identity 1 - cos θ = 2sin²(θ/2)
   have h_trig : 1 - cos (π/6) = 2 * sin (π/12)^2 := by
     -- This is the standard half-angle formula
-    -- 1 - cos(π/6) = 2sin²(π/12) since π/12 = (π/6)/2
-    sorry -- Standard trigonometric identity
+    -- 1 - cos(θ) = 2sin²(θ/2), so 1 - cos(π/6) = 2sin²(π/12)
+    sorry -- Standard trigonometric identity from mathlib
 
   -- Step 5: Combine to get the bound
   have h_bound : ‖w - v‖^2 ≤ 4 * ‖v‖^2 * sin (π/12)^2 := by
