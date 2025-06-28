@@ -54,6 +54,14 @@ theorem geometric_depletion
     -- The stretching term is the inner product of vorticity with velocity gradient
     simp only [inner_def]
     -- This is just the definition of the action
+
+    -- The stretching term (ω·∇)u represents how vorticity stretches/tilts
+    -- In component form: (ω·∇)u_i = ∑_j ω_j ∂u_i/∂x_j
+    -- The norm of this is what we're bounding
+
+    -- The key insight: When ω is aligned in a region, the inner product
+    -- with ∇u has significant cancellation due to the Biot-Savart structure
+
     sorry -- Definition of inner product action
 
   -- Step 2: Apply the geometric depletion mechanism

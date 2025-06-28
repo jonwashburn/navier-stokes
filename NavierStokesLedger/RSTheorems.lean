@@ -51,6 +51,18 @@ theorem cascade_cutoff_bound (E : ℝ → ℝ) (hE : ∀ t, 0 ≤ E t) :
   intro t ht
   -- The eight-beat cycle prevents exponential growth beyond φ⁻⁴ rate
   -- This is a fundamental RS constraint on energy cascade
+
+  -- The proof follows from:
+  -- 1. Energy cascade in turbulence follows E_k ~ k^(-5/3) (Kolmogorov)
+  -- 2. Recognition Science modifies this to E_k ~ φ^(-4k) at small scales
+  -- 3. The eight-beat cycle creates periodic damping that prevents runaway
+
+  -- For a normalized system with E(0) = 1, we have:
+  -- E(t) ≤ exp(cascade_cutoff * t) where cascade_cutoff = φ^(-4) ≈ 0.146
+
+  -- This is because the energy transfer rate is bounded by the
+  -- geometric constraint at scale φ^(-4)
+
   sorry -- Requires detailed RS energy cascade analysis
 
 /-- Eight-beat periodicity limits growth -/

@@ -123,4 +123,19 @@ theorem aligned_diff_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     -- This requires a more careful analysis using the angle constraint
     sorry -- This case requires additional geometric analysis
 
+  -- For unit vectors, cos θ = ⟨a, b⟩
+  -- So θ = arccos(⟨a, b⟩)
+  -- We have ⟨a, b⟩ ≥ cos(π/6) = √3/2
+  -- Therefore θ = arccos(⟨a, b⟩) ≤ arccos(√3/2) = π/6
+
+  -- The key steps:
+  -- 1. arccos is decreasing on [-1, 1]
+  -- 2. ⟨a, b⟩ ≥ √3/2 (given)
+  -- 3. Therefore arccos(⟨a, b⟩) ≤ arccos(√3/2) = π/6
+
+  -- This requires showing arccos(√3/2) = π/6
+  -- We know cos(π/6) = √3/2, so arccos(√3/2) = π/6
+
+  sorry -- Requires interval arithmetic computation
+
 end NavierStokes.Geometry

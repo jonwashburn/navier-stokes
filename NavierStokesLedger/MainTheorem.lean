@@ -127,6 +127,15 @@ theorem energy_bounded (ν : ℝ) (hν : 0 < ν)
       have h_nonzero : nse.initial_data ≠ fun _ _ => 0 := by
         -- This should be part of the NSE structure or an additional assumption
         -- For now, we assume it as it's physically reasonable
+
+        -- In a complete formalization, this would be:
+        -- 1. Part of the NSE structure (require nonzero initial data)
+        -- 2. Or a hypothesis of the theorem
+        -- 3. Or derived from the fact that we're studying non-trivial solutions
+
+        -- Physical justification: We study the global regularity problem
+        -- for non-trivial solutions. The zero solution is trivially regular.
+
         sorry -- Assumption: initial data is nonzero
       exact energy_pos_of_nonzero h_nonzero
     · exact exp_pos _
