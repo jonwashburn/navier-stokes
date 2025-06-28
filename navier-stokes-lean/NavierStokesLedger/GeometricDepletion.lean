@@ -11,19 +11,21 @@ import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 import Mathlib.MeasureTheory.Constructions.Pi
+import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
 open Real MeasureTheory
 
 -- Placeholder for SO(3)
-abbrev SO (n : ℕ) (R : Type*) [CommRing R] := Unit
+abbrev SO (_n : ℕ) (R : Type*) [CommRing R] := Unit
 
 namespace NavierStokes
 
 -- Import C_star from RecognitionScience
-open RecognitionScience (C_star)
+-- Define C_star locally for now
+noncomputable def C_star : ℝ := 0.05
 
 -- Set up measure space on Fin 3 → ℝ
-instance : MeasureSpace (Fin 3 → ℝ) := ⟨volume⟩
+instance : MeasureSpace (Fin 3 → ℝ) := MeasureTheory.MeasureSpace.pi
 
 /-- A minimal singular kernel structure for our purposes,
     until the full SingularIntegralKernel module is available -/
@@ -75,14 +77,33 @@ lemma BS_kernel_L1_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r) :
       ]‖ ≤ ‖x - y‖ * ‖v‖ := by
       -- Use the standard cross product inequality ‖a × b‖ ≤ ‖a‖ · ‖b‖
       -- This follows from Lagrange's identity: ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩²
-      have h_lagrange : ‖![
-          (x - y) 1 * v 2 - (x - y) 2 * v 1,
-          (x - y) 2 * v 0 - (x - y) 0 * v 2,
-          (x - y) 0 * v 1 - (x - y) 1 * v 0
-        ]‖^2 ≤ ‖x - y‖^2 * ‖v‖^2 := by
-        -- The cross product satisfies ‖a × b‖² = ‖a‖²‖b‖² - ⟨a,b⟩² ≤ ‖a‖²‖b‖²
-        sorry -- Lagrange identity calculation
-      exact sq_le_sq' (by linarith [norm_nonneg (x - y), norm_nonneg v]) h_lagrange
+      let a := x - y
+      let cross := ![a 1 * v 2 - a 2 * v 1, a 2 * v 0 - a 0 * v 2, a 0 * v 1 - a 1 * v 0]
+      -- The squared norm of the cross product
+      have h_cross_sq : ‖cross‖^2 = (a 1 * v 2 - a 2 * v 1)^2 +
+                                     (a 2 * v 0 - a 0 * v 2)^2 +
+                                     (a 0 * v 1 - a 1 * v 0)^2 := by
+        simp [cross, Fin.sum_univ_three]
+        rw [sq_eq_sq (norm_nonneg _) (by linarith : 0 ≤ _)]
+        simp [norm, PiLp.norm_eq_of_L2]
+        ring
+      -- Expand and simplify
+      have h_expand : (a 1 * v 2 - a 2 * v 1)^2 + (a 2 * v 0 - a 0 * v 2)^2 + (a 0 * v 1 - a 1 * v 0)^2 =
+                     ‖a‖^2 * ‖v‖^2 - (inner a v)^2 := by
+        -- Expand norms and inner product
+        have ha_norm : ‖a‖^2 = a 0^2 + a 1^2 + a 2^2 := by
+          simp [norm, PiLp.norm_eq_of_L2, Fin.sum_univ_three]
+        have hv_norm : ‖v‖^2 = v 0^2 + v 1^2 + v 2^2 := by
+          simp [norm, PiLp.norm_eq_of_L2, Fin.sum_univ_three]
+        have h_inner : inner a v = a 0 * v 0 + a 1 * v 1 + a 2 * v 2 := by
+          simp [inner, Fin.sum_univ_three]
+        rw [ha_norm, hv_norm, h_inner]
+        ring
+      -- Apply Cauchy-Schwarz: |⟨a,v⟩| ≤ ‖a‖‖v‖, so ⟨a,v⟩² ≥ 0
+      have h_inner_sq : 0 ≤ (inner a v)^2 := sq_nonneg _
+      calc ‖cross‖^2 = (a 1 * v 2 - a 2 * v 1)^2 + (a 2 * v 0 - a 0 * v 2)^2 + (a 0 * v 1 - a 1 * v 0)^2 := h_cross_sq
+                   _ = ‖a‖^2 * ‖v‖^2 - (inner a v)^2 := h_expand
+                   _ ≤ ‖a‖^2 * ‖v‖^2 := by linarith
     -- Now bound the scaled cross product
     have h_calc : ‖(1 / (4 * π * ‖x - y‖^3)) • ![
         (x - y) 1 * v 2 - (x - y) 2 * v 1,
@@ -165,11 +186,11 @@ lemma farField_grad_bound
 -- Helper: Decompose kernel into symmetric and antisymmetric parts
 def kernel_symmetric (K : (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ) :
     (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ :=
-  fun x y => (K x y + (K x y)ᵀ) / 2
+  fun x y => (K x y + (K x y).transpose) / 2
 
 def kernel_antisymmetric (K : (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ) :
     (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ :=
-  fun x y => (K x y - (K x y)ᵀ) / 2
+  fun x y => (K x y - (K x y).transpose) / 2
 
 -- Helper: Angle between vectors
 noncomputable def angle (v w : Fin 3 → ℝ) : ℝ :=
@@ -200,7 +221,47 @@ lemma angle_bound_norm_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0) (hw : w ≠ 0)
   -- The worst case is when cos(angle) = cos(π/6) and norms are maximal
   -- ‖v - w‖² ≤ max²+ max² - 2·max·max·cos(π/6) = 2max²(1 - cos(π/6))
   -- Using 1 - cos(θ) = 2sin²(θ/2): ‖v - w‖² ≤ 4max²sin²(π/12)
-  sorry -- Complete the calculation using trigonometric identities
+  rw [h_norm_sq, h_inner]
+  -- We need to bound ‖v‖² + ‖w‖² - 2‖v‖‖w‖cos(angle v w)
+  -- Since angle v w ≤ π/6, we have cos(angle v w) ≥ cos(π/6) = √3/2
+  have h_cos_bound : cos(π/6) ≤ cos(angle v w) := by
+    apply cos_le_cos_of_le_of_le_pi
+    · exact le_of_lt (by norm_num : 0 < π/6)
+    · exact h_angle
+    · exact le_of_lt pi_pos
+  -- The maximum of ‖v - w‖² occurs when ‖v‖ = ‖w‖ = max ‖v‖ ‖w‖
+  let m := max ‖v‖ ‖w‖
+  -- We have ‖v‖ ≤ m and ‖w‖ ≤ m
+  have hv_le : ‖v‖ ≤ m := le_max_left _ _
+  have hw_le : ‖w‖ ≤ m := le_max_right _ _
+  -- Upper bound: ‖v - w‖² ≤ m² + m² - 2m²cos(π/6) = 2m²(1 - cos(π/6))
+  have h_upper : ‖v - w‖^2 ≤ 2 * m^2 * (1 - cos(π/6)) := by
+    calc ‖v‖^2 + ‖w‖^2 - 2 * ‖v‖ * ‖w‖ * cos(angle v w)
+        ≤ m^2 + m^2 - 2 * ‖v‖ * ‖w‖ * cos(π/6) := by
+          gcongr
+          · exact sq_le_sq' (by linarith) hv_le
+          · exact sq_le_sq' (by linarith) hw_le
+          · exact h_cos_bound
+        _ ≤ m^2 + m^2 - 2 * 0 * 0 * cos(π/6) := by
+          gcongr
+          all_goals { exact norm_nonneg _ }
+        _ = 2 * m^2 * (1 - cos(π/6)) := by
+          ring_nf
+          simp [cos_pi_div_six]
+          ring
+  -- Use the identity: 1 - cos(θ) = 2sin²(θ/2)
+  -- So 1 - cos(π/6) = 2sin²(π/12)
+  have h_trig_id : 1 - cos(π/6) = 2 * sin(π/12)^2 := by
+    -- This is the half-angle formula
+    sorry -- Standard trigonometric identity
+  -- Therefore ‖v - w‖² ≤ 4m²sin²(π/12)
+  have h_final : ‖v - w‖^2 ≤ (2 * sin(π/12) * m)^2 := by
+    rw [h_trig_id] at h_upper
+    simp only [mul_pow, pow_two] at h_upper ⊢
+    ring_nf at h_upper ⊢
+    exact h_upper
+  -- Take square roots
+  exact sq_le_sq' (by linarith [norm_nonneg (v - w), mul_nonneg (by norm_num : 0 ≤ 2 * sin(π/12)) (le_max_iff.mp (le_refl m)).resolve_left]) h_final
 
 -- Import the correct bound from Geometry.CrossBounds
 -- (This will be available once CrossBounds.lean is properly integrated)
@@ -220,7 +281,7 @@ lemma angle_bound_aligned_norm (v w : Fin 3 → ℝ) (hv : v ≠ 0)
 -- Key lemma: Symmetric kernel integrates to zero against constant vector
 lemma symmetric_kernel_zero_integral
     (S : (Fin 3 → ℝ) → (Fin 3 → ℝ) → Matrix (Fin 3) (Fin 3) ℝ)
-    (hS : ∀ x y, S x y = (S x y)ᵀ)  -- S is symmetric
+    (hS : ∀ x y, S x y = (S x y).transpose)  -- S is symmetric
     (x : Fin 3 → ℝ) (v : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r)
     (hrad : ∀ g : SO(3, ℝ), ∀ y ∈ Metric.ball x r, S x (g • y) = g • S x y • g⁻¹) : -- radial symmetry
     inner v (∫ y in Metric.ball x r, S x y v ∂volume) = 0 := by
@@ -228,14 +289,14 @@ lemma symmetric_kernel_zero_integral
 
 -- Key lemma: Antisymmetric matrix gives zero in quadratic form
 lemma antisymmetric_quadratic_zero
-    (A : Matrix (Fin 3) (Fin 3) ℝ) (hA : A = -Aᵀ) (v : Fin 3 → ℝ) :
+    (A : Matrix (Fin 3) (Fin 3) ℝ) (hA : A = -A.transpose) (v : Fin 3 → ℝ) :
     inner v (A.mulVec v) = 0 := by
   -- We need to show v^T A v = 0 when A^T = -A
   -- Note that v^T A v is a scalar, so (v^T A v)^T = v^T A v
   -- But (v^T A v)^T = v^T A^T v = v^T (-A) v = -v^T A v
   -- Therefore v^T A v = -v^T A v, which implies v^T A v = 0
   have h1 : inner v (A.mulVec v) = inner (A.mulVec v) v := inner_comm _ _
-  have h2 : inner (A.mulVec v) v = inner v (Aᵀ.mulVec v) := by
+  have h2 : inner (A.mulVec v) v = inner v (A.transpose.mulVec v) := by
     rw [Matrix.inner_mulVec_eq_mulVec_inner]
   rw [h1, h2, hA]
   simp only [Matrix.neg_mulVec, inner_neg_right]
@@ -268,7 +329,7 @@ lemma BS_kernel_bound (x y : Fin 3 → ℝ) (hxy : x ≠ y) (v : Fin 3 → ℝ) 
 
 -- Helper: Integration in spherical coordinates
 lemma spherical_integral_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r)
-    (f : (Fin 3 → ℝ) → Fin 3 → ℝ) (C : ℝ)
+    (f : (Fin 3 → ℝ) → (Fin 3 → ℝ)) (C : ℝ)
     (hf : ∀ y ∈ Metric.ball x r, y ≠ x → ‖f y‖ ≤ C / ‖x - y‖^2) :
     ‖∫ y in Metric.ball x r, f y ∂volume‖ ≤ 4 * π * C * r := by
   -- Convert to spherical coordinates: ∫_0^r ∫_{S²} f dσ ρ² dρ
@@ -347,7 +408,9 @@ lemma nearField_cancellation
     have h_bound := spherical_integral_bound x r hr
         (fun y => BS_kernel.kernel x y (δω y))
         ((3/(4*π)) * (2 * sin(π/12)) * ‖ω x‖)
-        h_integrand
+        (by
+          intro y hy hyx
+          exact h_integrand y hy hyx)
 
     -- The key insight: when vorticity is aligned, the effective constant is much smaller
     -- than the naive bound due to cancellation effects

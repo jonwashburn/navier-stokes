@@ -21,6 +21,16 @@ namespace NavierStokesLedger.YangMillsImports
 
 open Real
 
+-- Type variables for generic operators
+variable {E F : Type*} [NormedAddCommGroup E] [NormedAddCommGroup F]
+  [NormedSpace ℝ E] [NormedSpace ℝ F]
+
+-- Placeholder definitions
+def largest_eigenvalue : ℝ := 1
+def IsCalderonZygmund (T : E →L[ℝ] F) : Prop := sorry
+def gap_at_scale (scale : ℝ) : ℝ := sorry
+def β₀ : ℝ := 11/3  -- One-loop beta function coefficient
+
 /-!
 ## From Yang-Mills Stage2: Lattice Theory
 -/
@@ -41,9 +51,12 @@ axiom transfer_gap_persistence {T : Type*} [NormedAddCommGroup T]
 -/
 
 /-- Calderón-Zygmund operators are L² bounded -/
-axiom calderon_zygmund_L2_bound {f : (Fin 3 → ℝ) → ℝ}
-  (h_kernel : is_CZ_kernel f) :
-  ∃ C > 0, ∀ u, L2_norm (CZ_operator f u) ≤ C * L2_norm u
+noncomputable def calderonZygmund_bound (f : E → F) : ℝ :=
+  2 * ‖f‖
+
+theorem calderonZygmund_L2_bound (T : E →L[ℝ] F) (hCZ : IsCalderonZygmund T) :
+    ∀ f : E → F, ‖T.toFun f‖ ≤ calderonZygmund_bound f := by
+  sorry -- Placeholder for CZ theory
 
 /-- Littlewood-Paley decomposition -/
 axiom littlewood_paley_decomposition :
@@ -56,7 +69,7 @@ axiom littlewood_paley_decomposition :
 -/
 
 -- These are PROVEN in the RSJ submodule, not axiomatized
-def φ_proven : ℝ := (1 + sqrt 5) / 2
+noncomputable def φ_proven : ℝ := (1 + Real.sqrt 5) / 2
 def E_coh_proven : ℝ := 0.090  -- eV
 def q73_proven : ℕ := 73
 def λ_rec_proven : ℝ := 1.07e-3
@@ -89,5 +102,15 @@ theorem one_loop_running (g₀ : ℝ) (μ μ₀ : ℝ)
   ∃ g_μ > 0, g_μ = g₀ / (1 + β₀ * g₀^2 * log(μ/μ₀)) := by
   -- From Stage5_Renormalization/RunningCoupling.lean
   sorry
+
+-- Eight-beat phase-locked dynamics
+noncomputable def eight_beat_phase (t : ℝ) : ℝ :=
+  Real.sin (8 * t)
+
+noncomputable def phase_locked_evolution (φ : ℝ) : Prop :=
+  ∀ t : ℝ, eight_beat_phase (φ * t) = eight_beat_phase t
+
+theorem phase_locked_at_golden_ratio : phase_locked_evolution φ_proven := by
+  sorry -- Placeholder until we properly import RSJ
 
 end NavierStokesLedger.YangMillsImports

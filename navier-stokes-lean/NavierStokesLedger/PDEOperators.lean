@@ -169,9 +169,9 @@ theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
 
   -- Apply Schwarz's theorem directly
   cases i using Fin.cases with
-  | H0 => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
-  | Hsucc i' => cases i' using Fin.cases with
-    | H0 => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
-    | Hsucc i'' => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
+  | zero => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
+  | succ i' => cases i' using Fin.cases with
+    | zero => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
+    | succ i'' => simp [partialDeriv, partialDerivVec]; sorry -- TODO: Apply schwarz_symmetry
 
 end NavierStokes
