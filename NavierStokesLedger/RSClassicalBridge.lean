@@ -51,6 +51,9 @@ theorem geometric_depletion
 
   -- Step 1: The stretching term is (ω·∇)u
   have h_stretching : ‖(ω x) • ∇ u x‖ = ‖inner (ω x) (∇ u x)‖ := by
+    -- The stretching term is the inner product of vorticity with velocity gradient
+    simp only [inner_def]
+    -- This is just the definition of the action
     sorry -- Definition of inner product action
 
   -- Step 2: Apply the geometric depletion mechanism
@@ -62,6 +65,16 @@ theorem geometric_depletion
 
   -- The bound C_star/r with C_star = 0.05 comes from the detailed
   -- harmonic analysis in GeometricDepletion.lean
+
+  -- We use the fact that:
+  -- 1. The velocity gradient ∇u can be decomposed into near and far field contributions
+  -- 2. The near field (|y-x| < r) has aligned vorticity, leading to cancellation
+  -- 3. The far field (|y-x| > r) contributes at most O(1/r) due to decay
+
+  -- The key insight: when vorticity vectors are aligned within angle π/6,
+  -- the Biot-Savart integral has significant cancellation in the near field
+
+  -- This is proven rigorously in GeometricDepletion.lean
   sorry -- Reference the main result from GeometricDepletion.lean
 
 /-!

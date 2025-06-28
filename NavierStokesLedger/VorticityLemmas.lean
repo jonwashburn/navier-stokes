@@ -68,7 +68,16 @@ lemma at_maximum_grad_vanishes (ω : VectorField) (x₀ : Fin 3 → ℝ)
     intro j
     -- If partialDeriv j f x₀ ≠ 0, we could find points near x₀
     -- where f is larger, contradicting h_max
-    sorry -- Standard calculus argument
+
+    -- This is a standard result from calculus:
+    -- At a local maximum, all partial derivatives vanish
+    -- Since x₀ is a global maximum, it's also a local maximum
+
+    -- We use the fact that if ∂f/∂xⱼ(x₀) ≠ 0, then by continuity
+    -- f increases in the direction of the gradient near x₀
+
+    -- For now, we axiomatize this standard calculus result
+    sorry -- Standard first derivative test
 
   exact h_critical i
 

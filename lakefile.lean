@@ -1,13 +1,14 @@
 import Lake
 open Lake DSL
 
-package «navier-stokes» where
+package NavierStokesLedger where
   leanOptions := #[
-    ⟨`pp.unicode.fun, true⟩
+    ⟨`pp.unicode.fun, true⟩,
+    ⟨`autoImplicit, false⟩
   ]
 
-require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.21.0-rc3"
-
 @[default_target]
-lean_lib «NavierStokesLedger»
+lean_lib NavierStokesLedger
+
+require mathlib from git
+  "https://github.com/leanprover-community/m

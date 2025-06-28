@@ -123,32 +123,20 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
   -- So the sum becomes: 0 + 0 + 0 = 0
 
-  -- At this point we need Schwarz's theorem: mixed partials commute for C² functions
-  -- This is a fundamental result that should be in mathlib
-
   -- Let's expand the definition and use the fact that mixed partials commute
   simp only [partialDerivVec]
 
   -- We have six terms that cancel in pairs due to Schwarz's theorem
-  -- Term 1: ∂²u₂/∂x₀∂x₁ cancels with Term 4: -∂²u₂/∂x₁∂x₀
-  -- Term 2: -∂²u₁/∂x₀∂x₂ cancels with Term 5: ∂²u₁/∂x₂∂x₀
-  -- Term 3: ∂²u₀/∂x₁∂x₂ cancels with Term 6: -∂²u₀/∂x₂∂x₁
-
   -- Since u is C², all second partials exist and are continuous
   -- By Schwarz's theorem (Clairaut's theorem), mixed partials commute
-  have h_schwarz : ∀ (i j k : Fin 3), i ≠ j →
-    fderiv ℝ (fun y => partialDerivVec j u k y) x (fun l => if l = i then 1 else 0) =
-    fderiv ℝ (fun y => partialDerivVec i u k y) x (fun l => if l = j then 1 else 0) := by
-    intro i j k hij
-    -- This follows from the C² assumption and Schwarz's theorem
-    sorry -- This requires the formal statement of Schwarz's theorem from mathlib
 
-  -- Apply Schwarz's theorem to show all terms cancel
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Finset.sum_range_zero,
-    Finset.sum_empty, add_zero]
+  -- The divergence of curl equals:
+  -- ∑ᵢ ∂/∂xᵢ (curl u)ᵢ = ∑ᵢ ∂/∂xᵢ (εᵢⱼₖ ∂uₖ/∂xⱼ)
+  -- = ∑ᵢⱼₖ εᵢⱼₖ ∂²uₖ/∂xᵢ∂xⱼ
+  -- This sum vanishes because εᵢⱼₖ is antisymmetric in i,j while ∂²uₖ/∂xᵢ∂xⱼ is symmetric
 
-  -- The sum equals zero because each term cancels with another
-  sorry -- Complete the cancellation using h_schwarz
+  -- For now, we axiomatize this standard result
+  sorry -- This requires the formal machinery of Schwarz's theorem applied to vector fields
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
@@ -165,26 +153,13 @@ theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
   · -- i = 0: curl(∇p)₀ = ∂(∂p/∂x₂)/∂x₁ - ∂(∂p/∂x₁)/∂x₂
     simp only [partialDerivVec, partialDeriv]
     -- This is ∂²p/∂x₁∂x₂ - ∂²p/∂x₂∂x₁ = 0 by Schwarz
-    have h_comm : fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 2 then 1 else 0)) x
-        (fun j => if j = 1 then 1 else 0) =
-      fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 1 then 1 else 0)) x
-        (fun j => if j = 2 then 1 else 0) := by
-      -- This is Schwarz's theorem for C² functions
-      sorry -- Requires formal Schwarz's theorem from mathlib
-    simp only [sub_eq_zero]
-    exact h_comm
+    -- For C² functions, mixed partials commute
+    sorry -- Requires formal application of Schwarz's theorem
 
   · -- i = 1: curl(∇p)₁ = ∂(∂p/∂x₀)/∂x₂ - ∂(∂p/∂x₂)/∂x₀
     simp only [partialDerivVec, partialDeriv]
     -- This is ∂²p/∂x₂∂x₀ - ∂²p/∂x₀∂x₂ = 0 by Schwarz
-    have h_comm : fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 0 then 1 else 0)) x
-        (fun j => if j = 2 then 1 else 0) =
-      fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 2 then 1 else 0)) x
-        (fun j => if j = 0 then 1 else 0) := by
-      -- This is Schwarz's theorem for C² functions
-      sorry -- Requires formal Schwarz's theorem from mathlib
-    simp only [sub_eq_zero]
-    exact h_comm
+    sorry -- Requires formal application of Schwarz's theorem
 
   · -- i = 2: curl(∇p)₂ = ∂(∂p/∂x₁)/∂x₀ - ∂(∂p/∂x₀)/∂x₁
     simp only [partialDerivVec, partialDeriv]
