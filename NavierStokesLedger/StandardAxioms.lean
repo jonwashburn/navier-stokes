@@ -111,9 +111,13 @@ where
 -/
 
 /-- Divergence theorem -/
-axiom divergence_theorem : ∀ (u : VectorField) (Ω : Set (Fin 3 → ℝ)),
+theorem divergence_theorem : ∀ (u : VectorField) (Ω : Set (Fin 3 → ℝ)),
     smooth_domain Ω →
-    volume_integral Ω (divergence u) = surface_integral (∂Ω) u
+    volume_integral Ω (divergence u) = surface_integral (∂Ω) u := by
+  intro u Ω h_smooth
+  -- The divergence theorem: ∫_Ω div(u) dx = ∫_∂Ω u·n dS
+  -- This is a fundamental theorem in vector calculus
+  sorry -- TODO: Apply mathlib's divergence theorem when available
 where
   def smooth_domain (Ω : Set (Fin 3 → ℝ)) : Prop := True
   def volume_integral (Ω : Set (Fin 3 → ℝ)) (f : ScalarField) : ℝ := 0

@@ -1,6 +1,6 @@
 {"log":
  [{"message":
-   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true -DautoImplicit=false /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/RSImports.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/RSImports.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/RSImports.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/RSImports.c --json",
+   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/RSImports.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/RSImports.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/RSImports.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/RSImports.c --json",
    "level": "trace"},
   {"message":
    "NavierStokesLedger/RSImports.lean:23:7: 'Mathlib.MeasureTheory.Integral.Bochner' has been deprecated: please replace this import by\n\nimport Mathlib.MeasureTheory.Integral.Bochner.Basic\nimport Mathlib.MeasureTheory.Integral.Bochner.L1\nimport Mathlib.MeasureTheory.Integral.Bochner.VitaliCaratheodory\n\nnote: this linter can be disabled with `set_option linter.deprecated.module false`",
@@ -8,8 +8,8 @@
  "inputs":
  [["NavierStokesLedger.RSImports:deps",
    [["deps",
-     [["NavierStokesLedger/NavierStokesLedger:extraDep",
-       [["@NavierStokesLedger:extraDep", "1723"]]],
+     [["«navier-stokes»/NavierStokesLedger:extraDep",
+       [["@«navier-stokes»:extraDep", "1723"]]],
       ["import oleans",
        [["Mathlib.Data.Real.Basic:olean",
          [["Mathlib.Data.Real.Basic:deps", "698409057490170208"],
@@ -87,8 +87,7 @@
       ["module plugins", "1723"]]]]],
   ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
    "11123825329739276520"],
-  ["Module.leanArgs: #[-Dpp.unicode.fun=true, -DautoImplicit=false]",
-   "2480034161766020459"],
+  ["Module.leanArgs: #[-Dpp.unicode.fun=true]", "16183078925686905371"],
   ["/Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/RSImports.lean",
    "17812687812933854893"]],
- "depHash": "6283121022027676030"}
+ "depHash": "15704805598349497171"}

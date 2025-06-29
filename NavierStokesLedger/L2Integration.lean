@@ -8,13 +8,13 @@ throughout the Navier-Stokes proof.
 
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Measure.Lebesgue
-import Mathlib.Analysis.NormedSpace.lpSpace
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.FunctionalSpaces.SobolevInequality
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.Analysis.Convolution
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.BasicDefinitions
 
@@ -127,8 +127,25 @@ theorem sobolev_embedding (u : VectorField) : sup_norm u ≤ C_sob * (L2Norm u +
 
 -- Keep existing definitions
 axiom biotSavartKernel : VectorField → VectorField
-axiom convolution : (VectorField → VectorField) → VectorField → VectorField
-axiom biotSavartConvergence (ω : VectorField) : curl (convolution biotSavartKernel ω) = ω
+
+/-- Convolution of a kernel with a vector field -/
+noncomputable def convolution (K : (Fin 3 → ℝ) → (Fin 3 → ℝ) → (Fin 3 → ℝ)) (ω : VectorField) : VectorField :=
+  fun x i => ∫ y, K x y • (ω y i) ∂(volume : Measure (Fin 3 → ℝ))
+
+/-- The Biot-Savart law: curl of convolution with Biot-Savart kernel recovers vorticity -/
+theorem biotSavartConvergence (ω : VectorField)
+    (h_decay : ∀ R > 0, ∃ C > 0, ∀ x, ‖x‖ > R → ‖ω x‖ < C / ‖x‖^2) :
+    curl (convolution biotSavartKernel ω) = ω := by
+  -- This is the fundamental theorem of the Biot-Savart law
+  -- It states that if we convolve the vorticity with the Biot-Savart kernel,
+  -- then take the curl, we recover the original vorticity
+
+  -- The proof requires:
+  -- 1. Dominated convergence theorem for the integral
+  -- 2. Differentiation under the integral sign
+  -- 3. The identity curl(K * ω) = ω for the specific kernel K
+
+  sorry -- TODO: Apply mathlib's convolution theory with proper kernel
 
 /-- Hölder inequality for L² -/
 theorem L2_holder (u v : VectorField) :

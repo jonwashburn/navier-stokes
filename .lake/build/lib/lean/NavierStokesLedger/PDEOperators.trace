@@ -1,18 +1,18 @@
 {"log":
  [{"message":
-   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true -DautoImplicit=false /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/PDEOperators.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/PDEOperators.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/PDEOperators.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/PDEOperators.c --json",
+   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/PDEOperators.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/PDEOperators.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/PDEOperators.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/PDEOperators.c --json",
    "level": "trace"},
   {"message":
-   "NavierStokesLedger/PDEOperators.lean:115:8: declaration uses 'sorry'",
+   "NavierStokesLedger/PDEOperators.lean:117:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "NavierStokesLedger/PDEOperators.lean:142:8: declaration uses 'sorry'",
+   "NavierStokesLedger/PDEOperators.lean:124:8: declaration uses 'sorry'",
    "level": "warning"}],
  "inputs":
  [["NavierStokesLedger.PDEOperators:deps",
    [["deps",
-     [["NavierStokesLedger/NavierStokesLedger:extraDep",
-       [["@NavierStokesLedger:extraDep", "1723"]]],
+     [["«navier-stokes»/NavierStokesLedger:extraDep",
+       [["@«navier-stokes»:extraDep", "1723"]]],
       ["import oleans",
        [["Mathlib.Analysis.Calculus.Gradient.Basic:olean",
          [["Mathlib.Analysis.Calculus.Gradient.Basic:deps",
@@ -29,6 +29,15 @@
            "12847772501501619056"],
           ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/Calculus/ContDiff/Basic.olean",
            "3094461696447764306"]]],
+        ["Mathlib.Analysis.Calculus.FDeriv.Symmetric:olean",
+         [["Mathlib.Analysis.Calculus.FDeriv.Symmetric:deps",
+           "602168864688242528"],
+          ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/Calculus/FDeriv/Symmetric.olean",
+           "7525906782031629903"]]],
+        ["Mathlib.Analysis.Calculus.Deriv.Basic:olean",
+         [["Mathlib.Analysis.Calculus.Deriv.Basic:deps", "6641687180126964099"],
+          ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/Calculus/Deriv/Basic.olean",
+           "10245854579616894076"]]],
         ["NavierStokesLedger.BasicDefinitions:olean",
          [["NavierStokesLedger.BasicDefinitions:deps", "16057427931367726781"],
           ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/BasicDefinitions.olean",
@@ -40,8 +49,7 @@
       ["module plugins", "1723"]]]]],
   ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
    "11123825329739276520"],
-  ["Module.leanArgs: #[-Dpp.unicode.fun=true, -DautoImplicit=false]",
-   "2480034161766020459"],
+  ["Module.leanArgs: #[-Dpp.unicode.fun=true]", "16183078925686905371"],
   ["/Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/PDEOperators.lean",
-   "7867472636548363415"]],
- "depHash": "5491664233115876373"}
+   "15763485074351102961"]],
+ "depHash": "3655212271823022418"}

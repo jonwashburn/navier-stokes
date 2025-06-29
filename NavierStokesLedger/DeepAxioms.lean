@@ -140,9 +140,16 @@ where
 -/
 
 /-- Divergence theorem -/
-axiom divergence_theorem (u : VectorField) (Ω : Set (Fin 3 → ℝ))
+theorem divergence_theorem (u : VectorField) (Ω : Set (Fin 3 → ℝ))
     (h_smooth : smooth_boundary Ω) :
-    ∫_Ω divergence u = ∫_∂Ω ⟨u, n⟩
+    ∫_Ω divergence u = ∫_∂Ω ⟨u, n⟩ := by
+  -- The divergence theorem states that the integral of divergence over a domain
+  -- equals the flux through the boundary
+  -- ∫_Ω div(u) dx = ∫_∂Ω u·n dS
+
+  -- This is a fundamental theorem in vector calculus
+  -- In mathlib, this would use the divergence theorem from measure theory
+  sorry -- TODO: Apply mathlib's divergence theorem when available
 where
   def smooth_boundary (Ω : Set (Fin 3 → ℝ)) : Prop := True
   notation "∫_" Ω => fun _ => (0 : ℝ)
