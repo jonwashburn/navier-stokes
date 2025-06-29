@@ -200,13 +200,33 @@ by sorry -- Main theorem structure
 namespace NavierStokesProof
 
 -- 1. Energy estimates
-theorem energy_growth_bound {u : ℝ → Fin 3 → ℝ → ℝ} (t : ℝ) :
-    EnergyBound u t :=
-by
+theorem energy_growth_bound {u : ℝ → Fin 3 → ℝ → ℝ} (t : ℝ)
+    (h_smooth : ∀ s ∈ Set.Icc 0 t, ContDiff ℝ 1 (u s))
+    (h_energy : ∀ s ∈ Set.Icc 0 t, HasDerivWithinAt
+      (fun τ => energyReal (u τ))
+      (energyDissipation (u s))
+      (Set.Icc 0 t) s)
+    (h_bound : ∃ C > 0, ∀ s ∈ Set.Icc 0 t, energyDissipation (u s) ≤ C * energyReal (u s)) :
+    energyReal (u t) ≤ energyReal (u 0) * Real.exp (C * t) := by
   -- Use Grönwall's inequality from mathlib
   -- The energy E(t) satisfies dE/dt ≤ C * E(t)
   -- By Grönwall: E(t) ≤ E(0) * exp(C * t)
-  sorry
+
+  obtain ⟨C, hC_pos, h_dissip⟩ := h_bound
+
+  -- Apply Grönwall's lemma
+  -- We need the function to be continuous and satisfy the differential inequality
+  have h_continuous : ContinuousOn (fun s => energyReal (u s)) (Set.Icc 0 t) := by
+    sorry -- Follows from smoothness of u
+
+  have h_deriv_bound : ∀ s ∈ Set.Ico 0 t,
+      deriv (fun τ => energyReal (u τ)) s ≤ C * energyReal (u s) := by
+    intro s hs
+    -- Use the energy dissipation bound
+    sorry -- Connect derivative to energyDissipation
+
+  -- Now apply mathlib's Grönwall
+  sorry -- TODO: Apply norm_le_gronwallBound_of_norm_deriv_right_le or similar
 
 end NavierStokesProof
 

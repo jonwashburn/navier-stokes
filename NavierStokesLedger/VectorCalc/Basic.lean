@@ -28,7 +28,28 @@ theorem norm_cross_le (a b : Fin 3 → ℝ) :
   -- ‖a × b‖² = ‖a‖² ‖b‖² - ⟨a, b⟩²
   -- Since ⟨a, b⟩² ≤ ‖a‖² ‖b‖² by Cauchy-Schwarz
   -- We have ‖a × b‖² ≤ ‖a‖² ‖b‖²
-  sorry -- TODO: Use Lagrange's identity and Cauchy-Schwarz
+
+  -- First, use Lagrange's identity
+  have h_lagrange := lagrange_identity a b
+
+  -- Apply Cauchy-Schwarz: |⟨a, b⟩| ≤ ‖a‖ ‖b‖
+  have h_cs : (⟪a, b⟫_ℝ)^2 ≤ ‖a‖^2 * ‖b‖^2 := by
+    have := InnerProductSpace.norm_inner_le_norm a b
+    rw [abs_le_iff_sq_le_sq] at this
+    exact this.2
+    · exact mul_nonneg (norm_nonneg a) (norm_nonneg b)
+    · exact abs_nonneg _
+
+  -- Therefore ‖cross a b‖² ≤ ‖a‖² ‖b‖²
+  rw [h_lagrange]
+  linarith
+
+  -- Taking square roots gives the result
+  have h_sq : ‖cross a b‖^2 ≤ (‖a‖ * ‖b‖)^2 := by
+    rw [h_lagrange, mul_pow]
+    linarith
+
+  exact nonneg_le_nonneg_of_sq_le_sq (mul_nonneg (norm_nonneg a) (norm_nonneg b)) h_sq
 
 /-- Cross product is antisymmetric -/
 lemma cross_antisymm (a b : Fin 3 → ℝ) :
