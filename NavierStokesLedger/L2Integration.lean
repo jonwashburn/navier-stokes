@@ -53,48 +53,16 @@ theorem L2_triangle_proper (u v : VectorField)
   simp only [L2NormProper]
   -- We need: (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
 
-  -- This is the triangle inequality for L² norm
-  -- In mathlib, this is eLpNorm_add_le for p = 2
-  have h := @eLpNorm_add_le _ _ _ _ _ _ u v volume
-    (aestronglyMeasurable_id.comp measurable_id)
-    (aestronglyMeasurable_id.comp measurable_id)
-    (by norm_num : (1 : ℝ) ≤ 2)
-
-  -- Convert from eLpNorm to our L2NormProper
-  simp [eLpNorm, eLpNorm'] at h
-  convert h
-  · simp [L2NormProper]
-    sorry -- TODO: Connect our definition to mathlib's eLpNorm
-  · simp [L2NormProper]
-    sorry -- TODO: Connect our definition to mathlib's eLpNorm
-  · simp [L2NormProper]
-    sorry -- TODO: Connect our definition to mathlib's eLpNorm
+  -- This is Minkowski's inequality for L² spaces
+  -- For now, we'll use a sorry until we properly connect to mathlib's eLpNorm
+  sorry -- TODO: Apply Minkowski's inequality from mathlib
 
 /-- Scaling property of L² norm -/
 theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
     L2NormProper (fun x => c • u x) = |c| * L2NormProper u := by
-  simp [L2NormProper]
-  -- We need to show: (∫ ‖c • u x‖²)^(1/2) = |c| * (∫ ‖u x‖²)^(1/2)
-
-  -- First, ‖c • u x‖ = |c| * ‖u x‖
-  have h_norm : ∀ x, ‖c • u x‖ = |c| * ‖u x‖ := by
-    intro x
-    exact norm_smul c (u x)
-
-  -- Therefore ‖c • u x‖² = |c|² * ‖u x‖²
-  have h_sq : ∀ x, ‖c • u x‖^2 = |c|^2 * ‖u x‖^2 := by
-    intro x
-    rw [h_norm x, mul_pow]
-
-  -- Now use linearity of integral
-  conv_lhs =>
-    arg 1
-    ext x
-    rw [h_sq x]
-
-  rw [integral_mul_left]
-  rw [← mul_rpow (sq_nonneg |c|) (integral_nonneg (fun x => sq_nonneg _))]
-  rw [sq_abs, Real.rpow_two]
+  -- This follows from the homogeneity of the L² norm
+  -- ‖c·u‖_L² = |c|·‖u‖_L²
+  sorry -- TODO: Apply integral_mul_left and properties of norms
 
 -- Keep the original axioms for backward compatibility but mark as deprecated
 @[deprecated L2_norm_nonneg_proper]
@@ -109,6 +77,10 @@ axiom L2_scaling (u : VectorField) (c : ℝ) : L2Norm (fun x => c • u x) = |c|
 -- Additional axioms that need proper proofs
 axiom vorticity_L2_bound (u : VectorField) : L2Norm (curl u) ≤ C_star * L2Norm u
 axiom energy_dissipation (u : VectorField) : deriv (fun t => energy u) 0 ≤ -ν * enstrophy u
+
+/-- Supremum norm of a vector field -/
+noncomputable def sup_norm (u : VectorField) : ℝ :=
+  iSup fun x => ‖u x‖
 
 /-- Sobolev embedding constant -/
 def C_sob : ℝ := 1  -- Placeholder value
@@ -150,31 +122,11 @@ theorem biotSavartConvergence (ω : VectorField)
 /-- Hölder inequality for L² -/
 theorem L2_holder (u v : VectorField) :
     ∫ x, ‖u x‖ * ‖v x‖ ∂(volume : Measure (Fin 3 → ℝ)) ≤ L2NormProper u * L2NormProper v := by
-  -- Use Hölder's inequality for p = q = 2
-  have hpq : Real.HolderConjugate 2 2 := by
-    constructor
-    · norm_num
-    · norm_num
-    · norm_num
-
-  -- Apply integral_mul_le_Lp_mul_Lq_of_nonneg
-  have h := @integral_mul_le_Lp_mul_Lq_of_nonneg _ _ volume 2 2 hpq
-    (fun x => ‖u x‖) (fun x => ‖v x‖)
-    (fun x => norm_nonneg (u x)) (fun x => norm_nonneg (v x))
-
-  -- Simplify the result
-  simp only [Real.rpow_two] at h
-
-  -- L2NormProper is defined as (∫ ‖u x‖²)^(1/2)
-  rw [L2NormProper, L2NormProper]
-
-  -- The inequality becomes: ∫ ‖u‖ * ‖v‖ ≤ (∫ ‖u‖²)^(1/2) * (∫ ‖v‖²)^(1/2)
-  convert h
-  · simp only [sq]
-  · simp only [sq]
+  -- This is Hölder's inequality for p = q = 2 (Cauchy-Schwarz)
+  sorry -- TODO: Apply integral_mul_le_Lp_mul_Lq from mathlib
 
 /-- Integration by parts for vector fields -/
-theorem integration_by_parts (u v : VectorField) (h_div_v : divergence v = 0) :
+theorem integration_by_parts (u v : VectorField) (h_div_v : divergence v = fun _ => (0 : ℝ)) :
     inner_product_integral u (laplacianVec v) = -inner_product_integral (gradient u) (gradient v) := by
   -- Integration by parts: ∫ u·(Δv) dx = -∫ (∇u)·(∇v) dx when div v = 0
   -- This follows from the vector identity: u·(Δv) = div(u·∇v) - (∇u)·(∇v)
@@ -228,7 +180,8 @@ lemma energy_nonneg (u : VectorField) : 0 ≤ energyReal u := by
   simp only [energyReal]
   apply mul_nonneg
   · norm_num
-  · exact L2_norm_nonneg u
+  · -- energyReal uses L2NormSquared, which is defined via axiom
+    exact PDEOperators.L2_norm_nonneg u
 
 /-- Energy of nonzero field is positive -/
 lemma energy_pos_of_nonzero {u : VectorField} (h : u ≠ fun _ _ => 0) :
