@@ -1,5 +1,4 @@
 import NavierStokesLedger.PDEOperators
-import NavierStokesLedger.VectorCalculusProofs
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
@@ -17,36 +16,36 @@ the Navier-Stokes proof.
 
 /-- Helper: Derivative of zero function is zero -/
 theorem fderiv_zero (x : Fin 3 → ℝ) :
-    fderiv ℝ (fun _ : Fin 3 → ℝ => (0 : ℝ)) x = 0 :=
-  fderiv_zero_proof x
+    fderiv ℝ (fun _ : Fin 3 → ℝ => (0 : ℝ)) x = 0 := by
+  sorry
 
 /-- Helper: Partial derivative of zero is zero -/
 theorem partialDeriv_zero (i : Fin 3) (x : Fin 3 → ℝ) :
-    partialDeriv i (fun _ => (0 : ℝ)) x = 0 :=
-  partialDeriv_zero_proof i x
+    partialDeriv i (fun _ => (0 : ℝ)) x = 0 := by
+  sorry
 
 /-- Helper: Partial derivative of vector zero is zero -/
 theorem partialDerivVec_zero (i j : Fin 3) (x : Fin 3 → ℝ) :
-    partialDerivVec i (fun _ _ => (0 : ℝ)) j x = 0 :=
-  partialDerivVec_zero_proof i j x
+    partialDerivVec i (fun _ _ => (0 : ℝ)) j x = 0 := by
+  sorry
 
 /-- Divergence of zero vector field is zero -/
-theorem div_zero_field : divergence (fun _ _ => (0 : ℝ)) = fun _ => 0 :=
-  div_zero_field_proof
+theorem div_zero_field : divergence (fun _ _ => (0 : ℝ)) = fun _ => 0 := by
+  sorry
 
 /-- Curl of zero vector field is zero -/
-theorem curl_zero_field : curl (fun _ _ => (0 : ℝ)) = fun _ _ => 0 :=
-  curl_zero_field_proof
+theorem curl_zero_field : curl (fun _ _ => (0 : ℝ)) = fun _ _ => 0 := by
+  sorry
 
 /-- Gradient of constant scalar field is zero -/
 theorem grad_const_field (c : ℝ) :
-    gradientScalar (fun _ => c) = fun _ _ => 0 :=
-  grad_const_field_proof c
+    gradientScalar (fun _ => c) = fun _ _ => 0 := by
+  sorry
 
 /-- Laplacian of constant is zero -/
 theorem laplacian_const (c : ℝ) :
-    laplacianScalar (fun _ => c) = fun _ => 0 :=
-  laplacian_const_proof c
+    laplacianScalar (fun _ => c) = fun _ => 0 := by
+  sorry
 
 /-- Helper for symmetry of mixed partials -/
 theorem fderiv_symmetric {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
@@ -58,29 +57,26 @@ theorem fderiv_symmetric {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
   -- This is Schwarz's theorem / Clairaut's theorem
   -- For C² functions, mixed partials commute
   -- Use Mathlib's theorem about symmetry of the second derivative
-  have h2 : ContDiff ℝ 2 f := hf
-  -- The second derivative is symmetric as a bilinear map
-  exact iteratedFDeriv_succ_apply_comm h2 (le_refl 2) x
-    (fun k => if k = i then 1 else 0) (fun k => if k = j then 1 else 0)
+  sorry
 
 /-- Mixed partials commute for C² functions -/
 theorem partialDeriv_comm {f : (Fin 3 → ℝ) → ℝ} {x : Fin 3 → ℝ}
     (hf : ContDiff ℝ 2 f) (i j : Fin 3) :
     partialDeriv i (fun y => partialDeriv j f y) x =
-    partialDeriv j (fun y => partialDeriv i f y) x :=
+    partialDeriv j (fun y => partialDeriv i f y) x := by
   -- This follows from the symmetry of second derivatives
   -- ∂_i ∂_j f = ∂_j ∂_i f for C² functions
-  second_partials_symmetric hf i j x
+  sorry
 
 /-- Divergence of curl is always zero (simplified proof structure) -/
 theorem div_curl_zero' (u : VectorField) (h : ContDiff ℝ 2 u) :
-    divergence (curl u) = fun _ => 0 :=
-  div_curl_zero_proof u h
+    divergence (curl u) = fun _ => 0 := by
+  sorry
 
 /-- Curl of gradient is always zero (simplified proof structure) -/
 theorem curl_grad_zero' (p : ScalarField) (h : ContDiff ℝ 2 p) :
-    curl (gradientScalar p) = fun _ _ => 0 :=
-  curl_grad_zero_proof p h
+    curl (gradientScalar p) = fun _ _ => 0 := by
+  sorry
 
 /-- Laplacian commutes with curl for smooth fields -/
 theorem laplacian_curl_comm (u : VectorField) (h : ContDiff ℝ 3 u) :
@@ -91,7 +87,7 @@ theorem laplacian_curl_comm (u : VectorField) (h : ContDiff ℝ 3 u) :
   simp only [laplacianVector, curl]
   -- Both sides expand to sums of mixed third derivatives
   -- which are equal by Schwarz's theorem
-  exact laplacian_curl_comm_component u h x i
+  sorry
 
 /-- Vector identity: curl of curl -/
 theorem curl_curl (u : VectorField) (h : ContDiff ℝ 2 u) :
@@ -107,17 +103,13 @@ theorem curl_curl (u : VectorField) (h : ContDiff ℝ 2 u) :
   --                       = ∂_i (div u) - (Δu)_i
   -- This is a standard vector calculus identity that requires
   -- expanding the Levi-Civita symbols and using index manipulations
-  exact curl_curl_identity u h x i
-where
-  -- Axiom: The vector identity ∇×(∇×u) = ∇(∇·u) - Δu
-  axiom curl_curl_identity (u : VectorField) (h : ContDiff ℝ 2 u) (x : Fin 3 → ℝ) (i : Fin 3) :
-    curl (curl u) x i = gradientScalar (divergence u) x i - laplacianVector u x i
+  sorry
 
 /-- Divergence theorem preparation: div of product -/
 theorem div_product_rule (f : ScalarField) (u : VectorField)
     (hf : ContDiff ℝ 1 f) (hu : ContDiff ℝ 1 u) :
     divergence (fun x => f x • u x) =
-    fun x => ∑ i : Fin 3, gradientScalar f x i * u x i + f x * divergence u x :=
-  div_product_rule_proof f u hf hu
+    fun x => ∑ i : Fin 3, gradientScalar f x i * u x i + f x * divergence u x := by
+  sorry
 
 end NavierStokes
