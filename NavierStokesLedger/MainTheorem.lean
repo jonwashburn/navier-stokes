@@ -12,10 +12,11 @@ import NavierStokesLedger.GeometricDepletion
 import NavierStokesLedger.VorticityLemmas
 import NavierStokesLedger.DirectBridge
 import NavierStokesLedger.RSClassicalBridge
+import Mathlib.Analysis.ODE.Gronwall
 
 namespace NavierStokes.MainTheorem
 
-open Real NavierStokes RecognitionScience
+open Real NavierStokes RecognitionScience Filter Set
 
 /-- Main Theorem: Global regularity for 3D Navier-Stokes -/
 theorem navier_stokes_global_regularity (ν : ℝ) (hν : 0 < ν)
@@ -186,5 +187,27 @@ theorem eight_beat_prevents_blowup (ν : ℝ) (hν : 0 < ν)
   -- The eight-beat cycle creates periodic damping
   -- This prevents exponential enstrophy growth
   sorry -- Requires detailed eight-beat analysis
+
+-- Main Navier-Stokes global regularity theorem
+theorem NavierStokesRegularity {n : ℕ} (hn : n = 3) :
+    ∀ (u₀ : Fin n → ℝ → ℝ) (p₀ : ℝ → ℝ),
+    SmoothInitialData u₀ p₀ →
+    ∃ (u : ℝ → Fin n → ℝ → ℝ) (p : ℝ → ℝ → ℝ),
+    GlobalSmoothSolution u p u₀ p₀ :=
+by sorry -- Main theorem structure
+
+-- Key components of the proof
+namespace NavierStokesProof
+
+-- 1. Energy estimates
+theorem energy_growth_bound {u : ℝ → Fin 3 → ℝ → ℝ} (t : ℝ) :
+    EnergyBound u t :=
+by
+  -- Use Grönwall's inequality from mathlib
+  -- The energy E(t) satisfies dE/dt ≤ C * E(t)
+  -- By Grönwall: E(t) ≤ E(0) * exp(C * t)
+  sorry
+
+end NavierStokesProof
 
 end NavierStokes.MainTheorem

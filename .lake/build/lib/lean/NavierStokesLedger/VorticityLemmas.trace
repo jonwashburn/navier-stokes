@@ -1,6 +1,6 @@
 {"log":
  [{"message":
-   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/VorticityLemmas.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/VorticityLemmas.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/VorticityLemmas.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/VorticityLemmas.c --json",
+   ".> LEAN_PATH=/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Cli/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/batteries/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/Qq/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/aesop/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/proofwidgets/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/importGraph/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/plausible/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/packages/mathlib/.lake/build/lib/lean:/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean /Users/jonathanwashburn/.elan/toolchains/leanprover--lean4---v4.21.0-rc3/bin/lean -Dpp.unicode.fun=true -DautoImplicit=false /Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/VorticityLemmas.lean -R /Users/jonathanwashburn/Desktop/navier-stokes -o /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/VorticityLemmas.olean -i /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/VorticityLemmas.ilean -c /Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/ir/NavierStokesLedger/VorticityLemmas.c --json",
    "level": "trace"},
   {"message":
    "NavierStokesLedger/VorticityLemmas.lean:24:8: declaration uses 'sorry'",
@@ -9,29 +9,29 @@
    "NavierStokesLedger/VorticityLemmas.lean:54:6: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "NavierStokesLedger/VorticityLemmas.lean:77:8: declaration uses 'sorry'",
-   "level": "warning"},
-  {"message":
    "NavierStokesLedger/VorticityLemmas.lean:86:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "NavierStokesLedger/VorticityLemmas.lean:97:8: declaration uses 'sorry'",
+   "NavierStokesLedger/VorticityLemmas.lean:95:8: declaration uses 'sorry'",
    "level": "warning"},
   {"message":
-   "NavierStokesLedger/VorticityLemmas.lean:108:8: declaration uses 'sorry'",
+   "NavierStokesLedger/VorticityLemmas.lean:106:8: declaration uses 'sorry'",
+   "level": "warning"},
+  {"message":
+   "NavierStokesLedger/VorticityLemmas.lean:117:8: declaration uses 'sorry'",
    "level": "warning"}],
  "inputs":
  [["NavierStokesLedger.VorticityLemmas:deps",
    [["deps",
-     [["«navier-stokes»/NavierStokesLedger:extraDep",
-       [["@«navier-stokes»:extraDep", "1723"]]],
+     [["NavierStokesLedger/NavierStokesLedger:extraDep",
+       [["@NavierStokesLedger:extraDep", "1723"]]],
       ["import oleans",
        [["NavierStokesLedger.PDEOperators:olean",
          [["NavierStokesLedger.PDEOperators:deps", "13300701643599956007"],
           ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/PDEOperators.olean",
-           "10876540640120591568"]]],
+           "16119530248584583632"]]],
         ["NavierStokesLedger.TimeDependent:olean",
-         [["NavierStokesLedger.TimeDependent:deps", "2275448644206021654"],
+         [["NavierStokesLedger.TimeDependent:deps", "12556201917984943050"],
           ["/Users/jonathanwashburn/Desktop/navier-stokes/.lake/build/lib/lean/NavierStokesLedger/TimeDependent.olean",
            "14444963739304883515"]]],
         ["Mathlib.Analysis.Calculus.ContDiff.Basic:olean",
@@ -51,7 +51,8 @@
       ["module plugins", "1723"]]]]],
   ["Lean 4.21.0, commit 6741444a63eec253a7eae7a83f1beb3de015023d",
    "11123825329739276520"],
-  ["Module.leanArgs: #[-Dpp.unicode.fun=true]", "16183078925686905371"],
+  ["Module.leanArgs: #[-Dpp.unicode.fun=true, -DautoImplicit=false]",
+   "2480034161766020459"],
   ["/Users/jonathanwashburn/Desktop/navier-stokes/NavierStokesLedger/VorticityLemmas.lean",
-   "18272919516800440147"]],
- "depHash": "2796993055682622197"}
+   "5772164366500347888"]],
+ "depHash": "3414322320471212959"}

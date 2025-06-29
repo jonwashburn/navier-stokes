@@ -44,7 +44,21 @@ axiom L2_norm_proper_zero_iff (u : VectorField) :
 /-- Triangle inequality for L² norm -/
 theorem L2_triangle_proper (u v : VectorField) :
     L2NormProper (fun x => u x + v x) ≤ L2NormProper u + L2NormProper v := by
-  sorry -- TODO: Use mathlib's triangle inequality for L² spaces
+  -- Use the definition of L2NormProper
+  simp only [L2NormProper]
+  -- We need to show: (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
+  -- This is Minkowski's inequality for L² spaces
+
+  -- First, we need integrability assumptions
+  -- For now, assume u and v are in L²
+  have hu : Integrable (fun x => ‖u x‖^2) volume := by
+    sorry -- TODO: Add integrability hypothesis
+  have hv : Integrable (fun x => ‖v x‖^2) volume := by
+    sorry -- TODO: Add integrability hypothesis
+
+  -- Apply Minkowski's inequality (triangle inequality for Lp norms)
+  -- In mathlib, this would be `Lp.norm_add_le` for p = 2
+  sorry -- TODO: Apply mathlib's Lp.norm_add_le
 
 /-- Hölder inequality for L² -/
 theorem L2_holder (u v : VectorField) :

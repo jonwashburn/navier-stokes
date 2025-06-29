@@ -119,10 +119,28 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- This follows from the symmetry of mixed partial derivatives
   funext x
   simp only [divergence, curl]
-  -- Expanding: div(curl u) = ∂/∂x₀(∂u₂/∂x₁ - ∂u₁/∂x₂) + ∂/∂x₁(∂u₀/∂x₂ - ∂u₂/∂x₀) + ∂/∂x₂(∂u₁/∂x₀ - ∂u₀/∂x₁)
-  -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
-  -- By Schwarz's theorem (symmetry of mixed partials), this equals 0
-  sorry -- This requires the formal machinery of Schwarz's theorem applied to vector fields
+  -- The divergence of curl expands to a sum of mixed partial derivatives that cancel
+  -- div(curl u) = ∑ᵢ ∂/∂xᵢ(curl u)ᵢ
+  -- Each term involves second mixed partials that cancel by symmetry
+
+  -- We'll show each summand is zero
+  simp [partialDerivVec, partialDeriv]
+
+  -- The key is that for C² functions, mixed partials commute:
+  -- ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
+  -- This is a consequence of ContDiff 2
+
+  -- Since u is C², each component uᵢ is C²
+  have hu_comp : ∀ i, ContDiff ℝ 2 (fun y => u y i) := by
+    intro i
+    exact ContDiff.comp (contDiff_apply i) h
+
+  -- The divergence of curl expands to:
+  -- ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
+  -- Which equals 0 by symmetry of mixed partials
+
+  -- For now we need the explicit computation with fderiv symmetry
+  sorry -- TODO: Apply ContDiff.iteratedFDeriv_comm or similar
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
