@@ -141,7 +141,66 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
 
   -- Now we can use the symmetry of second derivatives
   -- Each pair of mixed partials cancels
-  sorry -- TODO: Apply specific symmetry lemma from mathlib
+
+  -- We need to show that the sum of the divergence terms equals zero
+  -- div(curl u) = ∂/∂x₀(curl u)₀ + ∂/∂x₁(curl u)₁ + ∂/∂x₂(curl u)₂
+  -- where:
+  -- (curl u)₀ = ∂u₂/∂x₁ - ∂u₁/∂x₂
+  -- (curl u)₁ = ∂u₀/∂x₂ - ∂u₂/∂x₀
+  -- (curl u)₂ = ∂u₁/∂x₀ - ∂u₀/∂x₁
+
+  -- So div(curl u) = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
+
+  -- Using the symmetry of second derivatives from ContDiffAt.isSymmSndFDerivAt:
+  have symm0 : ∀ (i j : Fin 3),
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 0) y (fun k => if k = i then 1 else 0)) x
+      (fun k => if k = j then 1 else 0) =
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 0) y (fun k => if k = j then 1 else 0)) x
+      (fun k => if k = i then 1 else 0) := by
+    intro i j
+    -- Apply symmetry of second derivatives
+    have h0_diff : ContDiffAt ℝ 2 (fun x => u x 0) x := by
+      exact ContDiffAt.comp x h.contDiffAt (contDiff_apply 0).contDiffAt
+    have h0_symm : IsSymmSndFDerivAt ℝ (fun x => u x 0) x := by
+      apply ContDiffAt.isSymmSndFDerivAt h0_diff
+      simp [minSmoothness]
+    -- The symmetry means fderiv commutes
+    exact h0_symm (fun k => if k = i then 1 else 0) (fun k => if k = j then 1 else 0)
+
+  -- Similar for components 1 and 2
+  have symm1 : ∀ (i j : Fin 3),
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 1) y (fun k => if k = i then 1 else 0)) x
+      (fun k => if k = j then 1 else 0) =
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 1) y (fun k => if k = j then 1 else 0)) x
+      (fun k => if k = i then 1 else 0) := by
+    intro i j
+    have h1_diff : ContDiffAt ℝ 2 (fun x => u x 1) x := by
+      exact ContDiffAt.comp x h.contDiffAt (contDiff_apply 1).contDiffAt
+    have h1_symm : IsSymmSndFDerivAt ℝ (fun x => u x 1) x := by
+      apply ContDiffAt.isSymmSndFDerivAt h1_diff
+      simp [minSmoothness]
+    exact h1_symm (fun k => if k = i then 1 else 0) (fun k => if k = j then 1 else 0)
+
+  have symm2 : ∀ (i j : Fin 3),
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 2) y (fun k => if k = i then 1 else 0)) x
+      (fun k => if k = j then 1 else 0) =
+    fderiv ℝ (fun y => fderiv ℝ (fun z => u z 2) y (fun k => if k = j then 1 else 0)) x
+      (fun k => if k = i then 1 else 0) := by
+    intro i j
+    have h2_diff : ContDiffAt ℝ 2 (fun x => u x 2) x := by
+      exact ContDiffAt.comp x h.contDiffAt (contDiff_apply 2).contDiffAt
+    have h2_symm : IsSymmSndFDerivAt ℝ (fun x => u x 2) x := by
+      apply ContDiffAt.isSymmSndFDerivAt h2_diff
+      simp [minSmoothness]
+    exact h2_symm (fun k => if k = i then 1 else 0) (fun k => if k = j then 1 else 0)
+
+  -- Now we can show the terms cancel
+  simp only [Fin.sum_univ_three]
+  ring_nf
+
+  -- Each pair cancels by symmetry
+  rw [symm2 0 1, symm1 0 2, symm0 1 2]
+  ring
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
@@ -156,15 +215,44 @@ theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
   -- Since mixed partials commute: ∂²f/∂xⱼ∂xₖ = ∂²f/∂xₖ∂xⱼ
   -- And εᵢⱼₖ is antisymmetric in j,k, the sum vanishes
 
+  -- Get symmetry of second derivatives for f
+  have hf_diff : ContDiffAt ℝ 2 f x := h.contDiffAt
+  have hf_symm : IsSymmSndFDerivAt ℝ f x := by
+    apply ContDiffAt.isSymmSndFDerivAt hf_diff
+    simp [minSmoothness]
+
+  -- The symmetry theorem tells us that for any vectors v, w:
+  -- fderiv ℝ (fun y => fderiv ℝ f y v) x w = fderiv ℝ (fun y => fderiv ℝ f y w) x v
+
+  simp [partialDerivVec, partialDeriv]
+
   match i with
-  | 0 =>
+  | ⟨0, _⟩ =>
     -- curl(grad f)₀ = ∂²f/∂x₁∂x₂ - ∂²f/∂x₂∂x₁ = 0
-    sorry -- TODO: Apply symmetry of second derivatives
-  | 1 =>
+    have : fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 2 then 1 else 0)) x
+             (fun k => if k = 1 then 1 else 0) =
+           fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 1 then 1 else 0)) x
+             (fun k => if k = 2 then 1 else 0) := by
+      exact hf_symm (fun k => if k = 2 then 1 else 0) (fun k => if k = 1 then 1 else 0)
+    rw [this]
+    ring
+  | ⟨1, _⟩ =>
     -- curl(grad f)₁ = ∂²f/∂x₂∂x₀ - ∂²f/∂x₀∂x₂ = 0
-    sorry -- TODO: Apply symmetry of second derivatives
-  | 2 =>
+    have : fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 0 then 1 else 0)) x
+             (fun k => if k = 2 then 1 else 0) =
+           fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 2 then 1 else 0)) x
+             (fun k => if k = 0 then 1 else 0) := by
+      exact hf_symm (fun k => if k = 0 then 1 else 0) (fun k => if k = 2 then 1 else 0)
+    rw [this]
+    ring
+  | ⟨2, _⟩ =>
     -- curl(grad f)₂ = ∂²f/∂x₀∂x₁ - ∂²f/∂x₁∂x₀ = 0
-    sorry -- TODO: Apply symmetry of second derivatives
+    have : fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 1 then 1 else 0)) x
+             (fun k => if k = 0 then 1 else 0) =
+           fderiv ℝ (fun y => fderiv ℝ f y (fun k => if k = 0 then 1 else 0)) x
+             (fun k => if k = 1 then 1 else 0) := by
+      exact hf_symm (fun k => if k = 1 then 1 else 0) (fun k => if k = 0 then 1 else 0)
+    rw [this]
+    ring
 
 end NavierStokes

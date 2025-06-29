@@ -122,6 +122,22 @@ theorem aligned_vectors_close {a b : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0
     ‖b - a‖ ≤ 2 * Real.sin (π/12) * max ‖a‖ ‖b‖ := by
   -- This follows from the law of cosines and triangle inequality
   -- When vectors are nearly aligned (angle ≤ π/6), their difference is small
-  sorry -- TODO: Apply law of cosines in inner product spaces
+
+  -- Law of cosines: ‖b - a‖² = ‖a‖² + ‖b‖² - 2⟨a,b⟩
+  have h_law : ‖b - a‖^2 = ‖a‖^2 + ‖b‖^2 - 2 * ⟪a, b⟫_ℝ := by
+    rw [norm_sub_sq_real]
+
+  -- Since ⟨a,b⟩ ≥ ‖a‖‖b‖cos(π/6), we have
+  -- ‖b - a‖² ≤ ‖a‖² + ‖b‖² - 2‖a‖‖b‖cos(π/6)
+  have h_bound : ‖b - a‖^2 ≤ ‖a‖^2 + ‖b‖^2 - 2 * ‖a‖ * ‖b‖ * Real.cos (π/6) := by
+    rw [h_law]
+    gcongr
+    exact h_angle
+
+  -- Using cos(π/6) = √3/2 and algebraic manipulation
+  -- We can show ‖b - a‖² ≤ 4sin²(π/12) * max(‖a‖², ‖b‖²)
+  -- Taking square roots gives the result
+
+  sorry -- TODO: Complete the algebraic manipulation
 
 end NavierStokes.VectorCalc
