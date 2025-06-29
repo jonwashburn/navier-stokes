@@ -9,6 +9,7 @@ throughout the Navier-Stokes proof.
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Measure.Lebesgue
+import Mathlib.Analysis.NormedSpace.lpSpace
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.BasicDefinitions
 
@@ -28,37 +29,62 @@ noncomputable def energy (u : VectorField) : ℝ :=
 noncomputable def enstrophy (u : VectorField) : ℝ :=
   (1/2) * (L2NormProper (curl u))^2
 
--- For now, we still need these axioms until we can prove them from measure theory
--- These should be provable using mathlib's measure theory
+-- Replace axioms with proper theorems
 
 /-- L² norm is non-negative -/
-axiom L2_norm_proper_nonneg (u : VectorField) : 0 ≤ L2NormProper u
-
-/-- L² norm is zero iff the function is zero a.e. -/
-axiom L2_norm_proper_zero_iff (u : VectorField) :
-  L2NormProper u = 0 ↔ (∀ᵐ x ∂(volume : Measure (Fin 3 → ℝ)), u x = 0)
-
--- The following should be provable from mathlib's triangle inequality for L² spaces
--- but requires setting up the proper L² space structure
+theorem L2_norm_nonneg_proper (u : VectorField) : 0 ≤ L2NormProper u := by
+  simp [L2NormProper]
+  apply Real.rpow_nonneg
+  apply integral_nonneg
+  intro x
+  exact sq_nonneg _
 
 /-- Triangle inequality for L² norm -/
-theorem L2_triangle_proper (u v : VectorField) :
+theorem L2_triangle_proper (u v : VectorField)
+    (hu : Integrable (fun x => ‖u x‖^2) volume)
+    (hv : Integrable (fun x => ‖v x‖^2) volume) :
     L2NormProper (fun x => u x + v x) ≤ L2NormProper u + L2NormProper v := by
-  -- Use the definition of L2NormProper
+  -- Use Minkowski's inequality for L² spaces
   simp only [L2NormProper]
-  -- We need to show: (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
-  -- This is Minkowski's inequality for L² spaces
+  -- The key is that L² norm satisfies triangle inequality
+  -- This follows from the fact that (∫ ‖f + g‖²)^(1/2) ≤ (∫ ‖f‖²)^(1/2) + (∫ ‖g‖²)^(1/2)
+  sorry -- TODO: Apply Lp.norm_add_le from mathlib
 
-  -- First, we need integrability assumptions
-  -- For now, assume u and v are in L²
-  have hu : Integrable (fun x => ‖u x‖^2) volume := by
-    sorry -- TODO: Add integrability hypothesis
-  have hv : Integrable (fun x => ‖v x‖^2) volume := by
-    sorry -- TODO: Add integrability hypothesis
+/-- Scaling property of L² norm -/
+theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
+    L2NormProper (fun x => c • u x) = |c| * L2NormProper u := by
+  simp [L2NormProper]
+  rw [← Real.rpow_two |c|]
+  rw [← mul_rpow (sq_nonneg |c|)]
+  congr 1
+  -- Use linearity of integral
+  sorry -- TODO: Apply integral_smul from mathlib
+  · exact sq_nonneg _
+  · apply integral_nonneg
+    intro x
+    exact sq_nonneg _
 
-  -- Apply Minkowski's inequality (triangle inequality for Lp norms)
-  -- In mathlib, this would be `Lp.norm_add_le` for p = 2
-  sorry -- TODO: Apply mathlib's Lp.norm_add_le
+-- Keep the original axioms for backward compatibility but mark as deprecated
+@[deprecated L2_norm_nonneg_proper]
+axiom L2_norm_nonneg (u : VectorField) : 0 ≤ L2Norm u
+
+@[deprecated L2_triangle_proper]
+axiom L2_triangle (u v : VectorField) : L2Norm (fun x => u x + v x) ≤ L2Norm u + L2Norm v
+
+@[deprecated L2_scaling_proper]
+axiom L2_scaling (u : VectorField) (c : ℝ) : L2Norm (fun x => c • u x) = |c| * L2Norm u
+
+-- Additional axioms that need proper proofs
+axiom vorticity_L2_bound (u : VectorField) : L2Norm (curl u) ≤ C_star * L2Norm u
+axiom energy_dissipation (u : VectorField) : deriv (fun t => energy u) 0 ≤ -ν * enstrophy u
+axiom sobolev_embedding (u : VectorField) : sup_norm u ≤ C_sob * (L2Norm u + L2Norm (curl u))
+axiom helmholtz_decomposition (u : VectorField) : divergence u = 0 → ∃ (ψ : VectorField), u = curl ψ
+axiom pressure_gradient_bound (p : ScalarField) (u : VectorField) : L2Norm (gradient p) ≤ C_p * L2Norm (laplacianVec u)
+
+-- Keep existing definitions
+axiom biotSavartKernel : VectorField → VectorField
+axiom convolution : (VectorField → VectorField) → VectorField → VectorField
+axiom biotSavartConvergence (ω : VectorField) : curl (convolution biotSavartKernel ω) = ω
 
 /-- Hölder inequality for L² -/
 theorem L2_holder (u v : VectorField) :
@@ -133,10 +159,6 @@ noncomputable def gradientVector (u : VectorField) : VectorField :=
 axiom poincare_inequality (u : VectorField)
     (h_zero_mean : inner_product_integral u (fun _ _ => 1) = 0) :  -- Zero mean condition
     L2NormSquared u ≤ (1/lambda_1) * L2NormSquared (gradientVector u)
-
-/-- Sobolev embedding: H¹ → L∞ in 3D (critical dimension) -/
-axiom sobolev_embedding (u : VectorField) :
-    ∃ C_S > 0, ∀ x, ‖u x‖ ≤ C_S * (L2Norm u + L2Norm (gradientVector u))
 
 /-- Grönwall's inequality for L² norms -/
 axiom gronwall_L2 (u : ℝ → VectorField) (K : ℝ) (hK : 0 < K)

@@ -9,6 +9,7 @@ the Navier-Stokes proof, particularly for cross products and vector norms.
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Analysis.InnerProductSpace.PiL2
 
 namespace NavierStokes.VectorCalc
 
@@ -21,8 +22,13 @@ def cross (a b : Fin 3 → ℝ) : Fin 3 → ℝ :=
     a 0 * b 1 - a 1 * b 0]
 
 /-- Cross product norm bound: ‖a × b‖ ≤ ‖a‖ ‖b‖ -/
-axiom norm_cross_le (a b : Fin 3 → ℝ) :
-    ‖cross a b‖ ≤ ‖a‖ * ‖b‖
+theorem norm_cross_le (a b : Fin 3 → ℝ) :
+    ‖cross a b‖ ≤ ‖a‖ * ‖b‖ := by
+  -- This follows from Lagrange's identity and Cauchy-Schwarz
+  -- ‖a × b‖² = ‖a‖² ‖b‖² - ⟨a, b⟩²
+  -- Since ⟨a, b⟩² ≤ ‖a‖² ‖b‖² by Cauchy-Schwarz
+  -- We have ‖a × b‖² ≤ ‖a‖² ‖b‖²
+  sorry -- TODO: Use Lagrange's identity and Cauchy-Schwarz
 
 /-- Cross product is antisymmetric -/
 lemma cross_antisymm (a b : Fin 3 → ℝ) :
@@ -82,12 +88,19 @@ lemma inner_cross_self_right (a b : Fin 3 → ℝ) :
   ring
 
 /-- Lagrange's identity (key for cross product norm bound) -/
-axiom lagrange_identity (a b : Fin 3 → ℝ) :
-    ‖cross a b‖^2 = ‖a‖^2 * ‖b‖^2 - (⟪a, b⟫_ℝ)^2
+theorem lagrange_identity (a b : Fin 3 → ℝ) :
+    ‖cross a b‖^2 = ‖a‖^2 * ‖b‖^2 - (⟪a, b⟫_ℝ)^2 := by
+  -- Direct computation using the definition of cross product and norm
+  simp only [sq, PiLp.norm_sq_eq_inner, PiLp.inner_apply, cross]
+  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
+  ring
 
 /-- Helper: For aligned vectors with small angle, the difference is bounded -/
-axiom aligned_vectors_close {a b : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0)
+theorem aligned_vectors_close {a b : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0)
     (h_angle : ⟪a, b⟫_ℝ ≥ ‖a‖ * ‖b‖ * Real.cos (π/6)) :
-    ‖b - a‖ ≤ 2 * Real.sin (π/12) * max ‖a‖ ‖b‖
+    ‖b - a‖ ≤ 2 * Real.sin (π/12) * max ‖a‖ ‖b‖ := by
+  -- This follows from the law of cosines and triangle inequality
+  -- When vectors are nearly aligned (angle ≤ π/6), their difference is small
+  sorry -- TODO: Apply law of cosines in inner product spaces
 
 end NavierStokes.VectorCalc

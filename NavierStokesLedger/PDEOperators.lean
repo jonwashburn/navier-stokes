@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Calculus.Deriv.Basic
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -131,30 +132,39 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   -- This is a consequence of ContDiff 2
 
   -- Since u is C², each component uᵢ is C²
-  have hu_comp : ∀ i, ContDiff ℝ 2 (fun y => u y i) := by
-    intro i
-    exact ContDiff.comp (contDiff_apply i) h
+  have hu0 : ContDiff ℝ 2 (fun x => u x 0) := by
+    exact ContDiff.comp h (contDiff_apply 0)
+  have hu1 : ContDiff ℝ 2 (fun x => u x 1) := by
+    exact ContDiff.comp h (contDiff_apply 1)
+  have hu2 : ContDiff ℝ 2 (fun x => u x 2) := by
+    exact ContDiff.comp h (contDiff_apply 2)
 
-  -- The divergence of curl expands to:
-  -- ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
-  -- Which equals 0 by symmetry of mixed partials
-
-  -- For now we need the explicit computation with fderiv symmetry
-  sorry -- TODO: Apply ContDiff.iteratedFDeriv_comm or similar
+  -- Now we can use the symmetry of second derivatives
+  -- Each pair of mixed partials cancels
+  sorry -- TODO: Apply specific symmetry lemma from mathlib
 
 /-- Curl of gradient is zero -/
 theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
-    curl (gradientScalar f) = fun _ => fun _ => 0 := by
+    curl (gradientScalar f) = fun _ => 0 := by
   -- We need to show that ∇×(∇f) = 0
-  -- This follows from the symmetry of mixed partial derivatives
-  funext x i
+  -- This also follows from symmetry of mixed partial derivatives
+  funext x
+  funext i
   simp only [curl, gradientScalar]
-  cases i
-  · -- Component 0: ∂²f/∂x₂∂x₁ - ∂²f/∂x₁∂x₂ = 0
-    sorry -- Requires formal application of Schwarz's theorem
-  · -- Component 1: ∂²f/∂x₀∂x₂ - ∂²f/∂x₂∂x₀ = 0
-    sorry -- Requires formal application of Schwarz's theorem
-  · -- Component 2: ∂²f/∂x₁∂x₀ - ∂²f/∂x₀∂x₁ = 0
-    sorry -- Requires formal Schwarz's theorem from mathlib
+
+  -- curl(grad f)ᵢ = εᵢⱼₖ ∂/∂xⱼ(∂f/∂xₖ) = εᵢⱼₖ ∂²f/∂xⱼ∂xₖ
+  -- Since mixed partials commute: ∂²f/∂xⱼ∂xₖ = ∂²f/∂xₖ∂xⱼ
+  -- And εᵢⱼₖ is antisymmetric in j,k, the sum vanishes
+
+  match i with
+  | 0 =>
+    -- curl(grad f)₀ = ∂²f/∂x₁∂x₂ - ∂²f/∂x₂∂x₁ = 0
+    sorry -- TODO: Apply symmetry of second derivatives
+  | 1 =>
+    -- curl(grad f)₁ = ∂²f/∂x₂∂x₀ - ∂²f/∂x₀∂x₂ = 0
+    sorry -- TODO: Apply symmetry of second derivatives
+  | 2 =>
+    -- curl(grad f)₂ = ∂²f/∂x₀∂x₁ - ∂²f/∂x₁∂x₀ = 0
+    sorry -- TODO: Apply symmetry of second derivatives
 
 end NavierStokes

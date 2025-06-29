@@ -66,7 +66,7 @@ theorem vorticity_bound_implies_velocity_bound (u : VectorField)
     apply mul_pos
     · exact C_BS_pos
     · exact C_star_pos
-  · -- ∀ x, ‖u x‖ ≤ C_BS * C_star
+  · -- ∀ x, ‖u(x)‖ ≤ C_BS * C_star
     intro x
     -- Apply the Biot-Savart law for divergence-free fields
     -- u(x) = (1/4π) ∫ (curl u)(y) × (x-y)/|x-y|³ dy
@@ -281,7 +281,14 @@ theorem recognition_enhances_stability (ω : VorticityField) (t : ℝ) :
   -- where stabilityParameter = 0.618 (golden ratio conjugate) < 1
 
   -- This gives exponential control with a better constant than classical theory
-  sorry -- TODO: Apply norm_le_gronwallBound_of_norm_deriv_right_le
+  have h_gronwall : ∀ s ∈ Set.Icc 0 t, deriv (fun τ => L2Norm ω) s ≤ stabilityParameter * L2Norm ω := by
+    intro s hs
+    -- Recognition Science bounds the growth rate
+    sorry -- TODO: Apply recognition dynamics
+
+  -- Apply Grönwall's inequality from mathlib
+  -- norm_le_gronwallBound_of_norm_deriv_right_le gives us the bound
+  sorry -- TODO: Apply mathlib's Grönwall
 
 /-- Vorticity control through Recognition Science -/
 theorem vorticity_control_recognition (ω : VorticityField) :
