@@ -1,0 +1,108 @@
+# Mathlib Integration Plan for Navier-Stokes Proof
+
+## Summary
+We can use mathlib to resolve many of our 48 remaining sorries. Here's a detailed plan:
+
+## 1. Schwarz's Theorem (PDEOperators.lean) - 4 sorries
+**Mathlib theorems to use:**
+- `ContDiff.iterate_fderiv_comm` or similar for symmetry of mixed partials
+- `fderiv_comm` (if available) for second derivatives
+- This will resolve:
+  - `div_curl_zero` (2 sorries)
+  - `curl_grad_zero` (2 sorries)
+
+**Implementation:**
+```lean
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+-- Use ContDiff.iterate_fderiv_comm to prove mixed partials commute
+```
+
+## 2. Grönwall's Inequality (MainTheorem.lean, RecognitionLemmas.lean) - 2 sorries
+**Mathlib theorems to use:**
+- `Mathlib.Analysis.ODE.Gronwall`
+- `norm_le_gronwallBound_of_norm_deriv_right_le`
+- This will resolve:
+  - `energy_growth_bound` in MainTheorem.lean
+  - `recognition_enhances_stability` in RecognitionLemmas.lean
+
+**Implementation:**
+```lean
+import Mathlib.Analysis.ODE.Gronwall
+-- Apply Grönwall's inequality to energy estimates
+```
+
+## 3. L2 Integration and Measure Theory (L2Integration.lean) - 2 axioms + potential sorries
+**Mathlib modules to use:**
+- `Mathlib.MeasureTheory.Integral.Bochner`
+- `Mathlib.MeasureTheory.Function.L2Space`
+- `Mathlib.MeasureTheory.Measure.Lebesgue`
+- This will replace axioms with proper definitions:
+  - `L2_norm_nonneg`
+  - `L2_norm_zero_iff`
+- And prove:
+  - `L2_triangle_proper`
+  - `L2_holder`
+  - `integration_by_parts_L2`
+
+**Implementation:**
+```lean
+import Mathlib.MeasureTheory.Function.L2Space
+-- Define L2 norm using proper measure theory
+noncomputable def L2NormProper (u : VectorField) : ℝ :=
+  (∫ x, ‖u x‖^2 ∂volume)^(1/2 : ℝ)
+```
+
+## 4. Convolution and Fourier Transform (BiotSavart.lean) - 3 sorries
+**Mathlib modules to use:**
+- `Mathlib.Analysis.Convolution`
+- `Mathlib.Analysis.Fourier.FourierTransform`
+- This will help with:
+  - Biot-Savart convolution integral
+  - Verification that curl of Biot-Savart gives vorticity
+  - Divergence-free property
+
+**Implementation:**
+```lean
+import Mathlib.Analysis.Convolution
+import Mathlib.Analysis.Fourier.FourierTransform
+-- Define Biot-Savart as convolution with kernel
+```
+
+## 5. Sobolev Spaces (VorticityLemmas.lean) - 6 sorries
+**Mathlib modules to use:**
+- `Mathlib.Analysis.SobolevSpace` (when available)
+- `Mathlib.Analysis.Calculus.BumpFunction`
+- This will help with:
+  - Sobolev embedding theorems
+  - Regularity estimates
+  - Interpolation inequalities
+
+## 6. Harmonic Analysis (GeometricDepletion.lean) - 11 sorries
+**Mathlib modules to use:**
+- `Mathlib.Analysis.SpecialFunctions.Trigonometric`
+- `Mathlib.Analysis.Calculus.ParametricIntegral`
+- Calderón-Zygmund theory (when available)
+
+## 7. ODE Theory (MainTheorem.lean) - Additional sorries
+**Mathlib modules to use:**
+- `Mathlib.Analysis.ODE.PicardLindelof`
+- For existence and uniqueness of solutions
+
+## Total Impact
+- Can potentially resolve: ~15-20 sorries directly
+- Can provide framework for: ~10-15 more sorries
+- Remaining sorries need: domain-specific PDE theory
+
+## Priority Order
+1. **Schwarz's theorem** (4 sorries) - Easy win
+2. **Grönwall's inequality** (2 sorries) - Direct application
+3. **L2 integration** (2 axioms + 3 sorries) - Foundation for energy estimates
+4. **Convolution theory** (3 sorries) - For Biot-Savart
+5. **Sobolev/Harmonic analysis** - More complex, needs careful setup
+
+## Next Steps
+1. Add mathlib imports to each file
+2. Replace axioms with proper definitions
+3. Use mathlib theorems in proofs
+4. Build missing infrastructure (Sobolev spaces, etc.)
+5. Complete domain-specific arguments 

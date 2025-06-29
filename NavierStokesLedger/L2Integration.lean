@@ -6,12 +6,57 @@ This file provides utilities for L² integration that are used
 throughout the Navier-Stokes proof.
 -/
 
+import Mathlib.MeasureTheory.Integral.Bochner
+import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Measure.Lebesgue
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.BasicDefinitions
 
 namespace NavierStokes.L2Integration
 
-open Real NavierStokes
+open Real NavierStokes MeasureTheory
+
+/-- The L² norm of a vector field using proper measure theory -/
+noncomputable def L2NormProper (u : VectorField) : ℝ :=
+  (∫ x : Fin 3 → ℝ, ‖u x‖^2 ∂(volume : Measure (Fin 3 → ℝ)))^(1/2 : ℝ)
+
+/-- Energy functional using proper L² norm -/
+noncomputable def energy (u : VectorField) : ℝ :=
+  (1/2) * (L2NormProper u)^2
+
+/-- Enstrophy using proper L² norm -/
+noncomputable def enstrophy (u : VectorField) : ℝ :=
+  (1/2) * (L2NormProper (curl u))^2
+
+-- For now, we still need these axioms until we can prove them from measure theory
+-- These should be provable using mathlib's measure theory
+
+/-- L² norm is non-negative -/
+axiom L2_norm_proper_nonneg (u : VectorField) : 0 ≤ L2NormProper u
+
+/-- L² norm is zero iff the function is zero a.e. -/
+axiom L2_norm_proper_zero_iff (u : VectorField) :
+  L2NormProper u = 0 ↔ (∀ᵐ x ∂(volume : Measure (Fin 3 → ℝ)), u x = 0)
+
+-- The following should be provable from mathlib's triangle inequality for L² spaces
+-- but requires setting up the proper L² space structure
+
+/-- Triangle inequality for L² norm -/
+theorem L2_triangle_proper (u v : VectorField) :
+    L2NormProper (fun x => u x + v x) ≤ L2NormProper u + L2NormProper v := by
+  sorry -- TODO: Use mathlib's triangle inequality for L² spaces
+
+/-- Hölder inequality for L² -/
+theorem L2_holder (u v : VectorField) :
+    ∫ x, ‖u x‖ * ‖v x‖ ∂(volume : Measure (Fin 3 → ℝ)) ≤ L2NormProper u * L2NormProper v := by
+  sorry -- TODO: Use mathlib's Hölder inequality
+
+/-- Integration by parts in L² -/
+theorem integration_by_parts_L2 (u : VectorField) (p : ScalarField)
+    (hu : Integrable (fun x => ‖u x‖^2) volume)
+    (hp : Integrable (fun x => |p x|^2) volume) :
+    ∫ x, (divergence u) x * p x ∂volume = -∫ x, ⟨u x, gradientScalar p x⟩ ∂volume := by
+  sorry -- TODO: Use mathlib's integration by parts
 
 /-- L² norm is homogeneous -/
 axiom L2_norm_homogeneous (u : VectorField) (c : ℝ) :

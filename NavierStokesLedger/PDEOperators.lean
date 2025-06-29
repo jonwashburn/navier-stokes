@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Calculus.Gradient.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -120,57 +121,22 @@ theorem div_curl_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
   simp only [divergence, curl]
   -- Expanding: div(curl u) = ∂/∂x₀(∂u₂/∂x₁ - ∂u₁/∂x₂) + ∂/∂x₁(∂u₀/∂x₂ - ∂u₂/∂x₀) + ∂/∂x₂(∂u₁/∂x₀ - ∂u₀/∂x₁)
   -- = ∂²u₂/∂x₀∂x₁ - ∂²u₁/∂x₀∂x₂ + ∂²u₀/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₀ + ∂²u₁/∂x₂∂x₀ - ∂²u₀/∂x₂∂x₁
-  -- By symmetry of mixed partials: ∂²f/∂xᵢ∂xⱼ = ∂²f/∂xⱼ∂xᵢ
-  -- So the sum becomes: 0 + 0 + 0 = 0
-
-  -- Let's expand the definition and use the fact that mixed partials commute
-  simp only [partialDerivVec]
-
-  -- We have six terms that cancel in pairs due to Schwarz's theorem
-  -- Since u is C², all second partials exist and are continuous
-  -- By Schwarz's theorem (Clairaut's theorem), mixed partials commute
-
-  -- The divergence of curl equals:
-  -- ∑ᵢ ∂/∂xᵢ (curl u)ᵢ = ∑ᵢ ∂/∂xᵢ (εᵢⱼₖ ∂uₖ/∂xⱼ)
-  -- = ∑ᵢⱼₖ εᵢⱼₖ ∂²uₖ/∂xᵢ∂xⱼ
-  -- This sum vanishes because εᵢⱼₖ is antisymmetric in i,j while ∂²uₖ/∂xᵢ∂xⱼ is symmetric
-
-  -- For now, we axiomatize this standard result
+  -- By Schwarz's theorem (symmetry of mixed partials), this equals 0
   sorry -- This requires the formal machinery of Schwarz's theorem applied to vector fields
 
 /-- Curl of gradient is zero -/
-theorem curl_grad_zero (p : ScalarField) (h : ContDiff ℝ 2 p) :
-    curl (gradientScalar p) = fun _ _ => 0 := by
-  -- We need to show that ∇×(∇p) = 0
+theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
+    curl (gradientScalar f) = fun _ => fun _ => 0 := by
+  -- We need to show that ∇×(∇f) = 0
   -- This follows from the symmetry of mixed partial derivatives
   funext x i
   simp only [curl, gradientScalar]
-  -- Each component is of the form ∂²p/∂xᵢ∂xⱼ - ∂²p/∂xⱼ∂xᵢ = 0
-  -- by Schwarz's theorem (symmetry of mixed partials for C² functions)
-
-  -- Let's be explicit about which component we're computing
-  fin_cases i
-  · -- i = 0: curl(∇p)₀ = ∂(∂p/∂x₂)/∂x₁ - ∂(∂p/∂x₁)/∂x₂
-    simp only [partialDerivVec, partialDeriv]
-    -- This is ∂²p/∂x₁∂x₂ - ∂²p/∂x₂∂x₁ = 0 by Schwarz
-    -- For C² functions, mixed partials commute
+  cases i
+  · -- Component 0: ∂²f/∂x₂∂x₁ - ∂²f/∂x₁∂x₂ = 0
     sorry -- Requires formal application of Schwarz's theorem
-
-  · -- i = 1: curl(∇p)₁ = ∂(∂p/∂x₀)/∂x₂ - ∂(∂p/∂x₂)/∂x₀
-    simp only [partialDerivVec, partialDeriv]
-    -- This is ∂²p/∂x₂∂x₀ - ∂²p/∂x₀∂x₂ = 0 by Schwarz
+  · -- Component 1: ∂²f/∂x₀∂x₂ - ∂²f/∂x₂∂x₀ = 0
     sorry -- Requires formal application of Schwarz's theorem
-
-  · -- i = 2: curl(∇p)₂ = ∂(∂p/∂x₁)/∂x₀ - ∂(∂p/∂x₀)/∂x₁
-    simp only [partialDerivVec, partialDeriv]
-    -- This is ∂²p/∂x₀∂x₁ - ∂²p/∂x₁∂x₀ = 0 by Schwarz
-    have h_comm : fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 1 then 1 else 0)) x
-        (fun j => if j = 0 then 1 else 0) =
-      fderiv ℝ (fun y => fderiv ℝ p y (fun j => if j = 0 then 1 else 0)) x
-        (fun j => if j = 1 then 1 else 0) := by
-      -- This is Schwarz's theorem for C² functions
-      sorry -- Requires formal Schwarz's theorem from mathlib
-    simp only [sub_eq_zero]
-    exact h_comm
+  · -- Component 2: ∂²f/∂x₁∂x₀ - ∂²f/∂x₀∂x₁ = 0
+    sorry -- Requires formal Schwarz's theorem from mathlib
 
 end NavierStokes
