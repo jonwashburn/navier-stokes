@@ -12,6 +12,9 @@ import Mathlib.MeasureTheory.Measure.Lebesgue
 import Mathlib.Analysis.NormedSpace.lpSpace
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.MeanInequalities
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.FunctionalSpaces.SobolevInequality
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.BasicDefinitions
 
@@ -50,15 +53,22 @@ theorem L2_triangle_proper (u v : VectorField)
   simp only [L2NormProper]
   -- We need: (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
 
-  -- This is the triangle inequality for L² norm, which follows from
-  -- the fact that ‖·‖² is convex and the Minkowski inequality
-  -- For now, we'll use the classical proof via Cauchy-Schwarz
+  -- This is the triangle inequality for L² norm
+  -- In mathlib, this is eLpNorm_add_le for p = 2
+  have h := @eLpNorm_add_le _ _ _ _ _ _ u v volume
+    (aestronglyMeasurable_id.comp measurable_id)
+    (aestronglyMeasurable_id.comp measurable_id)
+    (by norm_num : (1 : ℝ) ≤ 2)
 
-  -- Step 1: ‖u + v‖² = ‖u‖² + 2⟨u,v⟩ + ‖v‖²
-  -- Step 2: Apply Cauchy-Schwarz to the cross term
-  -- Step 3: Take square roots
-
-  sorry -- TODO: Complete using mathlib's L² space theory
+  -- Convert from eLpNorm to our L2NormProper
+  simp [eLpNorm, eLpNorm'] at h
+  convert h
+  · simp [L2NormProper]
+    sorry -- TODO: Connect our definition to mathlib's eLpNorm
+  · simp [L2NormProper]
+    sorry -- TODO: Connect our definition to mathlib's eLpNorm
+  · simp [L2NormProper]
+    sorry -- TODO: Connect our definition to mathlib's eLpNorm
 
 /-- Scaling property of L² norm -/
 theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
@@ -99,9 +109,21 @@ axiom L2_scaling (u : VectorField) (c : ℝ) : L2Norm (fun x => c • u x) = |c|
 -- Additional axioms that need proper proofs
 axiom vorticity_L2_bound (u : VectorField) : L2Norm (curl u) ≤ C_star * L2Norm u
 axiom energy_dissipation (u : VectorField) : deriv (fun t => energy u) 0 ≤ -ν * enstrophy u
-axiom sobolev_embedding (u : VectorField) : sup_norm u ≤ C_sob * (L2Norm u + L2Norm (curl u))
-axiom helmholtz_decomposition (u : VectorField) : divergence u = 0 → ∃ (ψ : VectorField), u = curl ψ
-axiom pressure_gradient_bound (p : ScalarField) (u : VectorField) : L2Norm (gradient p) ≤ C_p * L2Norm (laplacianVec u)
+
+/-- Sobolev embedding constant -/
+def C_sob : ℝ := 1  -- Placeholder value
+
+-- Replace axiom with theorem
+theorem sobolev_embedding (u : VectorField) : sup_norm u ≤ C_sob * (L2Norm u + L2Norm (curl u)) := by
+  -- The Sobolev embedding theorem states that H¹(ℝ³) embeds into L∞(ℝ³)
+  -- For n = 3, we have H¹ ↪ L∞ when the Sobolev exponent s > n/2 = 3/2
+
+  -- This requires:
+  -- 1. u ∈ H¹(ℝ³), i.e., u and ∇u are in L²
+  -- 2. The embedding constant depends on the dimension
+
+  -- The mathlib version uses eLpNorm and fderiv, we need to adapt
+  sorry -- TODO: Apply MeasureTheory.eLpNorm_le_eLpNorm_fderiv once types align
 
 -- Keep existing definitions
 axiom biotSavartKernel : VectorField → VectorField
@@ -134,21 +156,31 @@ theorem L2_holder (u v : VectorField) :
   · simp only [sq]
   · simp only [sq]
 
-/-- Integration by parts in L² -/
-theorem integration_by_parts_L2 (u : VectorField) (p : ScalarField)
-    (hu : Integrable (fun x => ‖u x‖^2) volume)
-    (hp : Integrable (fun x => |p x|^2) volume) :
-    ∫ x, (divergence u) x * p x ∂volume = -∫ x, ⟨u x, gradientScalar p x⟩ ∂volume := by
-  sorry -- TODO: Use mathlib's integration by parts
+/-- Integration by parts for vector fields -/
+theorem integration_by_parts (u v : VectorField) (h_div_v : divergence v = 0) :
+    inner_product_integral u (laplacianVec v) = -inner_product_integral (gradient u) (gradient v) := by
+  -- Integration by parts: ∫ u·(Δv) dx = -∫ (∇u)·(∇v) dx when div v = 0
+  -- This follows from the vector identity: u·(Δv) = div(u·∇v) - (∇u)·(∇v)
+  -- When integrated and v vanishes at infinity, the divergence term vanishes
+
+  -- The mathlib version integral_mul_deriv_eq_deriv_mul works component-wise
+  -- We need the vector version for Laplacian
+  sorry -- TODO: Apply component-wise and sum
 
 /-- L² norm is homogeneous -/
 axiom L2_norm_homogeneous (u : VectorField) (c : ℝ) :
     L2NormSquared (fun x => c • u x) = c^2 * L2NormSquared u
 
 /-- L² norm satisfies parallelogram law -/
-axiom L2_parallelogram (u v : VectorField) :
+theorem L2_parallelogram (u v : VectorField) :
     L2NormSquared (fun x => u x + v x) + L2NormSquared (fun x => u x - v x) =
-    2 * (L2NormSquared u + L2NormSquared v)
+    2 * (L2NormSquared u + L2NormSquared v) := by
+  -- The parallelogram law states that for any inner product space:
+  -- ‖u + v‖² + ‖u - v‖² = 2(‖u‖² + ‖v‖²)
+
+  -- This is a fundamental property of L² spaces as Hilbert spaces
+  -- For now, we use the axiomatized L2NormSquared
+  sorry -- TODO: Prove once L2NormSquared is properly defined via integration
 
 /-- Placeholder for inner product integral -/
 noncomputable def inner_product_integral (u v : VectorField) : ℝ :=
@@ -277,5 +309,8 @@ noncomputable def laplacianVector_pow (s : ℝ) : VectorField → VectorField :=
 axiom bessel_potential_estimate (u : VectorField) (s : ℝ) (hs : 0 < s) :
     ∃ C_B > 0, L2Norm (laplacianVector_pow s u) ≥
     C_B * (L2Norm u + L2Norm (laplacianVector_pow (s/2) (gradientVector u)))
+
+axiom helmholtz_decomposition (u : VectorField) : divergence u = 0 → ∃ (ψ : VectorField), u = curl ψ
+axiom pressure_gradient_bound (p : ScalarField) (u : VectorField) : L2Norm (gradient p) ≤ C_p * L2Norm (laplacianVec u)
 
 end NavierStokes.L2Integration

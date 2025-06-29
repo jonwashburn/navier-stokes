@@ -149,11 +149,12 @@ where
   notation "∫_∂" Ω => fun _ => (0 : ℝ)
   notation "⟨" u ", " n "⟩" => (0 : ℝ)  -- Inner product with normal
 
-/-- Integration by parts -/
-axiom integration_by_parts (u v : VectorField) (i : Fin 3) :
-    ∫ partialDerivVec i u * v = -∫ u * partialDerivVec i v + boundary_term
-where
-  def boundary_term : ℝ := 0  -- Vanishes for decay at infinity
+/-- Integration by parts for vector fields -/
+theorem integration_by_parts (u v : VectorField) (i : Fin 3) :
+    ∫ x, (u x i) * (laplacianVec v x i) ∂volume = -∫ x, ∑ j, (partialDeriv j (u · i) x) * (partialDeriv j (v · i) x) ∂volume := by
+  -- Integration by parts: ∫ u·(Δv) dx = -∫ (∇u)·(∇v) dx
+  -- Component-wise: ∫ uᵢ(Δv)ᵢ dx = -∫ ∑ⱼ (∂uᵢ/∂xⱼ)(∂vᵢ/∂xⱼ) dx
+  sorry -- TODO: Apply mathlib's integral_mul_deriv_eq_deriv_mul
 
 /-!
 ## Vector Calculus

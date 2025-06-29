@@ -120,14 +120,13 @@ where
   def surface_integral (S : Set (Fin 3 → ℝ)) (u : VectorField) : ℝ := 0
   notation "∂" Ω => Ω  -- Boundary
 
-/-- Integration by parts -/
-axiom integration_by_parts : ∀ (u v : VectorField) (i : Fin 3),
-    has_sufficient_decay u → has_sufficient_decay v →
-    integral_product (partialDerivVec i u) v =
-    -integral_product u (partialDerivVec i v)
-where
-  def has_sufficient_decay (u : VectorField) : Prop := True
-  def integral_product (u v : VectorField) : ℝ := 0
+/-- Integration by parts for vector fields -/
+theorem integration_by_parts : ∀ (u v : VectorField) (i : Fin 3),
+    ∫ x, (u x i) * (laplacianVec v x i) ∂volume = -∫ x, ∑ j, (partialDeriv j (u · i) x) * (partialDeriv j (v · i) x) ∂volume := by
+  intro u v i
+  -- Integration by parts: ∫ u·(Δv) dx = -∫ (∇u)·(∇v) dx
+  -- Component-wise: ∫ uᵢ(Δv)ᵢ dx = -∫ ∑ⱼ (∂uᵢ/∂xⱼ)(∂vᵢ/∂xⱼ) dx
+  sorry -- TODO: Apply mathlib's integral_mul_deriv_eq_deriv_mul
 
 /-!
 ## Vector Calculus
