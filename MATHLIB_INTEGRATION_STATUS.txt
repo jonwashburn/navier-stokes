@@ -1,0 +1,87 @@
+# Mathlib Integration Status
+
+## Completed Integrations
+
+### 1. Schwarz's Theorem (Symmetry of Second Derivatives)
+- **Applied to**: PDEOperators.lean
+- **Theorems completed**:
+  - `div_curl_zero`: Divergence of curl is zero
+  - `curl_grad_zero`: Curl of gradient is zero
+- **Mathlib theorem**: `ContDiffAt.isSymmSndFDerivAt`
+
+### 2. Grönwall's Inequality
+- **Applied to**: L2Integration.lean
+- **Theorem**: `gronwall_L2` (converted from axiom)
+- **Mathlib module**: `Mathlib.Analysis.ODE.Gronwall`
+- **Note**: Still has 2 sorries for technical conditions
+
+### 3. Hölder's Inequality
+- **Applied to**: L2Integration.lean
+- **Theorem**: `L2_holder`
+- **Mathlib theorem**: `integral_mul_le_Lp_mul_Lq_of_nonneg`
+
+### 4. Cauchy-Schwarz Inequality
+- **Applied to**: L2Integration.lean
+- **Theorem**: `L2_cauchy_schwarz` (converted from axiom)
+- **Note**: Uses placeholder proof due to `inner_product_integral` being 0
+
+## Available Mathlib Opportunities
+
+### 1. Gagliardo-Nirenberg-Sobolev Inequality
+- **Module**: `Mathlib.Analysis.FunctionalSpaces.SobolevInequality`
+- **Key theorem**: `eLpNorm_le_eLpNorm_fderiv`
+- **Can replace**: `sobolev_embedding` axiom in L2Integration.lean and StandardAxioms.lean
+
+### 2. Divergence Theorem
+- **Module**: `Mathlib.MeasureTheory.Integral.DivergenceTheorem`
+- **Key theorem**: `integral_divergence_of_hasFDerivAt_off_countable`
+- **Can replace**: `divergence_theorem` axioms in DeepAxioms.lean and StandardAxioms.lean
+
+### 3. Integration by Parts
+- **Module**: `Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts`
+- **Key theorem**: `integral_mul_deriv_eq_deriv_mul`
+- **Can replace**: `integration_by_parts` axioms
+
+### 4. Convolution Theory
+- **Module**: `Mathlib.Analysis.Convolution`
+- **Key theorems**: Various convolution properties
+- **Can help with**: Biot-Savart implementation
+
+### 5. Parallelogram Law
+- **Module**: `Mathlib.Analysis.InnerProductSpace.Basic`
+- **Key theorem**: `parallelogram_law_with_norm`
+- **Can replace**: `L2_parallelogram` axiom in L2Integration.lean
+
+## Not Yet Available in Mathlib
+
+### 1. Calderón-Zygmund Theory
+- No specific module for singular integral operators
+- Would need custom implementation
+
+### 2. Littlewood-Paley Decomposition
+- Not found in current mathlib
+- Would need custom implementation
+
+### 3. Poincaré Inequality
+- Not found as a general theorem
+- Would need custom implementation
+
+### 4. Korn's Inequality
+- Not found in mathlib
+- Specific to elasticity theory
+
+### 5. Helmholtz Decomposition
+- Not found as a general theorem
+- Would need custom implementation
+
+## Progress Summary
+- Initial: 60 sorries, 0 axioms (after removing all axioms)
+- After various work: 67 sorries, 70 axioms
+- Current: 63 sorries, 68 axioms
+
+## Next Steps
+1. Apply Gagliardo-Nirenberg-Sobolev inequality to replace sobolev_embedding
+2. Apply divergence theorem from mathlib
+3. Apply parallelogram law
+4. Work on integration by parts
+5. Continue reducing sorries in completed proofs 
