@@ -54,15 +54,91 @@ theorem L2_triangle_proper (u v : VectorField)
   -- We need: (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
 
   -- This is Minkowski's inequality for L² spaces
-  -- For now, we'll use a sorry until we properly connect to mathlib's eLpNorm
-  sorry -- TODO: Apply Minkowski's inequality from mathlib
+  -- We'll use the triangle inequality for the L² norm
+
+  -- First show that u + v is square integrable
+  have huv : Integrable (fun x => ‖u x + v x‖^2) volume := by
+    -- Use ‖u + v‖² ≤ 2(‖u‖² + ‖v‖²)
+    apply Integrable.mono' (f := fun x => 2 * (‖u x‖^2 + ‖v x‖^2))
+    · exact (hu.const_mul 2).add (hv.const_mul 2)
+    · apply eventually_of_forall
+      intro x
+      calc ‖u x + v x‖^2 ≤ (‖u x‖ + ‖v x‖)^2 := sq_le_sq' (norm_nonneg _) (add_nonneg (norm_nonneg _) (norm_nonneg _)) (norm_add_le _ _)
+        _ = ‖u x‖^2 + 2 * ‖u x‖ * ‖v x‖ + ‖v x‖^2 := by ring
+        _ ≤ ‖u x‖^2 + ‖u x‖^2 + ‖v x‖^2 + ‖v x‖^2 := by linarith [two_mul_le_add_sq (‖u x‖) (‖v x‖)]
+        _ = 2 * (‖u x‖^2 + ‖v x‖^2) := by ring
+    · measurability
+
+  -- Apply Minkowski's inequality via direct computation
+  -- We need (∫ ‖u + v‖²)^(1/2) ≤ (∫ ‖u‖²)^(1/2) + (∫ ‖v‖²)^(1/2)
+  -- This follows from expanding the square and using Cauchy-Schwarz
+
+  -- Step 1: ‖u + v‖² ≤ (‖u‖ + ‖v‖)²
+  have h1 : ∫ x, ‖u x + v x‖^2 ∂volume ≤ ∫ x, (‖u x‖ + ‖v x‖)^2 ∂volume := by
+    apply integral_mono huv
+    · apply Integrable.pow_const
+      apply Integrable.norm
+      exact huv.norm
+    · intro x
+      exact sq_le_sq' (norm_nonneg _) (add_nonneg (norm_nonneg _) (norm_nonneg _)) (norm_add_le _ _)
+
+  -- Step 2: Apply the standard L² triangle inequality argument
+  -- (a + b)² = a² + 2ab + b² and use Cauchy-Schwarz on the cross term
+  calc Real.sqrt (∫ x, ‖u x + v x‖^2 ∂volume)
+      ≤ Real.sqrt (∫ x, (‖u x‖ + ‖v x‖)^2 ∂volume) := Real.sqrt_le_sqrt h1
+    _ = Real.sqrt (∫ x, (‖u x‖^2 + 2 * ‖u x‖ * ‖v x‖ + ‖v x‖^2) ∂volume) := by
+        congr 1
+        ext x
+        ring
+    _ ≤ Real.sqrt ((∫ x, ‖u x‖^2 ∂volume) + 2 * Real.sqrt (∫ x, ‖u x‖^2 ∂volume) * Real.sqrt (∫ x, ‖v x‖^2 ∂volume) + (∫ x, ‖v x‖^2 ∂volume)) := by
+        -- This uses Cauchy-Schwarz: ∫ fg ≤ √(∫ f²) √(∫ g²)
+        apply Real.sqrt_le_sqrt
+        rw [integral_add, integral_add]
+        · gcongr
+          · le_refl
+          · rw [integral_mul_left]
+            exact integral_mul_le_L2_mul_L2_of_square_integrable hu hv
+          · le_refl
+        · exact hu
+        · apply Integrable.const_mul
+          apply Integrable.mul_of_square_integrable hu hv
+        · apply Integrable.add
+          · apply Integrable.const_mul
+            apply Integrable.mul_of_square_integrable hu hv
+          · exact hv
+    _ = Real.sqrt ((Real.sqrt (∫ x, ‖u x‖^2 ∂volume) + Real.sqrt (∫ x, ‖v x‖^2 ∂volume))^2) := by
+        congr 1
+        rw [add_sq]
+        ring
+    _ = Real.sqrt (∫ x, ‖u x‖^2 ∂volume) + Real.sqrt (∫ x, ‖v x‖^2 ∂volume) := by
+        rw [Real.sqrt_sq]
+        exact add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
 
 /-- Scaling property of L² norm -/
 theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
     L2NormProper (fun x => c • u x) = |c| * L2NormProper u := by
   -- This follows from the homogeneity of the L² norm
   -- ‖c·u‖_L² = |c|·‖u‖_L²
-  sorry -- TODO: Apply integral_mul_left and properties of norms
+  simp only [L2NormProper]
+  -- We need to show: (∫ ‖c • u x‖²)^(1/2) = |c| * (∫ ‖u x‖²)^(1/2)
+  -- First, ‖c • u x‖ = |c| * ‖u x‖ for vector spaces
+  have h_norm : ∀ x, ‖c • u x‖ = |c| * ‖u x‖ := by
+    intro x
+    exact norm_smul c (u x)
+  -- So ‖c • u x‖² = |c|^2 * ‖u x‖²
+  have h_sq : ∀ x, ‖c • u x‖^2 = |c|^2 * ‖u x‖^2 := by
+    intro x
+    rw [h_norm x]
+    ring
+  -- Now the integral: ∫ ‖c • u x‖² = |c|² * ∫ ‖u x‖²
+  conv_lhs =>
+    arg 1
+    ext x
+    rw [h_sq x]
+  rw [integral_mul_left]
+  -- Taking square roots: (|c|² * ∫ ‖u x‖²)^(1/2) = |c| * (∫ ‖u x‖²)^(1/2)
+  rw [← Real.sqrt_sq (abs_nonneg c)]
+  rw [Real.sqrt_mul (sq_nonneg _)]
 
 -- Keep the original axioms for backward compatibility but mark as deprecated
 @[deprecated L2_norm_nonneg_proper]
@@ -119,11 +195,16 @@ theorem biotSavartConvergence (ω : VectorField)
 
   sorry -- TODO: Apply mathlib's convolution theory with proper kernel
 
-/-- Hölder inequality for L² -/
-theorem L2_holder (u v : VectorField) :
-    ∫ x, ‖u x‖ * ‖v x‖ ∂(volume : Measure (Fin 3 → ℝ)) ≤ L2NormProper u * L2NormProper v := by
-  -- This is Hölder's inequality for p = q = 2 (Cauchy-Schwarz)
-  sorry -- TODO: Apply integral_mul_le_Lp_mul_Lq from mathlib
+/-- Hölder inequality for L² (Cauchy–Schwarz).  Requires square‐integrability of both fields. -/
+theorem L2_holder (u v : VectorField)
+    (hu : Integrable (fun x => ‖u x‖^2) volume)
+    (hv : Integrable (fun x => ‖v x‖^2) volume) :
+    ∫ x, ‖u x‖ * ‖v x‖ ∂(volume : Measure (Fin 3 → ℝ)) ≤
+      L2NormProper u * L2NormProper v := by
+  -- Use Cauchy–Schwarz inequality for Bochner integrals
+  have h_cs := integral_mul_le_L2_mul_L2_of_square_integrable hu hv
+  -- Rewrite the right-hand side in terms of `L2NormProper`
+  simpa [L2NormProper] using h_cs
 
 /-- Integration by parts for vector fields -/
 theorem integration_by_parts (u v : VectorField) (h_div_v : divergence v = fun _ => (0 : ℝ)) :
@@ -148,8 +229,27 @@ theorem L2_parallelogram (u v : VectorField) :
   -- ‖u + v‖² + ‖u - v‖² = 2(‖u‖² + ‖v‖²)
 
   -- This is a fundamental property of L² spaces as Hilbert spaces
-  -- For now, we use the axiomatized L2NormSquared
-  sorry -- TODO: Prove once L2NormSquared is properly defined via integration
+  -- Expand using the definition of L2NormSquared
+  -- We use the fact that for Hilbert spaces: ‖x‖² = ⟨x, x⟩
+  -- And ‖x + y‖² = ‖x‖² + 2⟨x, y⟩ + ‖y‖²
+  -- And ‖x - y‖² = ‖x‖² - 2⟨x, y⟩ + ‖y‖²
+  -- Adding: ‖x + y‖² + ‖x - y‖² = 2‖x‖² + 2‖y‖²
+
+  -- For vector fields, this holds pointwise:
+  have h_pointwise : ∀ x, ‖u x + v x‖^2 + ‖u x - v x‖^2 = 2 * (‖u x‖^2 + ‖v x‖^2) := by
+    intro x
+    -- Use the parallelogram law for the finite-dimensional space ℝ³
+    have h1 : ‖u x + v x‖^2 = ‖u x‖^2 + 2 * inner (u x) (v x) + ‖v x‖^2 := by
+      rw [norm_add_sq_eq_norm_sq_add_norm_sq_add_two_mul_inner]
+    have h2 : ‖u x - v x‖^2 = ‖u x‖^2 - 2 * inner (u x) (v x) + ‖v x‖^2 := by
+      rw [norm_sub_sq_eq_norm_sq_add_norm_sq_sub_two_mul_inner]
+    rw [h1, h2]
+    ring
+
+  -- Now integrate both sides
+  -- Since we're using axiomatized L2NormSquared, we need to work with that
+  -- This requires showing that the axiomatized version satisfies parallelogram law
+  sorry -- Need to connect axiomatized L2NormSquared to actual integrals
 
 /-- Placeholder for inner product integral -/
 noncomputable def inner_product_integral (u v : VectorField) : ℝ :=
