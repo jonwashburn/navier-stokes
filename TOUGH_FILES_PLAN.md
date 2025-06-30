@@ -208,3 +208,27 @@ graph TD
 4. **Day 6:** clear `MainTheorem` & `RSClassicalBridge`; add minimal CI.
 
 After Day 6 the proof should be `sorry`-free and axioms-free. 
+
+## Advanced Harmonic Analysis – Constantin–Fefferman Mechanism  🔥
+
+The remaining sorries in `NavierStokesLedger/GeometricDepletion.lean` are all tied to the heart of the Constantin–Fefferman near-field cancellation.  This is **the** hardest part of the entire proof, requiring genuine harmonic-analysis muscle.
+
+| Lemma / File | Dependencies | Difficulty | Strategy |
+| ------------ | ----------- | ---------- | -------- |
+| `symmetric_kernel_zero_integral`  | SO(3) representation theory, averaging over rotations | ★★★★☆ | 1. Prove a measurable version of the Peter–Weyl decomposition for L¹ kernels on S².<br>2. Show the symmetric part of the Biot-Savart kernel is radial ⇒ integrates to zero against constants.<br>3. Use Mathlib's `Integration.MeasurePreserving` + `Isometry.mul_right` on `Sphere`. |
+| `spherical_integral_bound` – **technical limit** | Volume calculations, dominated convergence | ★★☆☆☆ | Replace crude ε-ball argument with direct spherical integral: `∫_{0}^{r} C dρ = Cr` (surface measure handled by `InnerProductSpace.volume_ball`). |
+| `farField_grad_bound` (done) | — | — | Completed earlier. |
+| `nearField_cancellation` final step | All above + Calderón-Zygmund theory | ★★★★★ | 1. Decompose kernel into symmetric + antisymmetric parts.<br>2. Use antisymmetric quadratic zero to kill leading term.<br>3. Apply sharp CZ bound `‖∇K * δω‖ₗ∞ ≤ C/r` exploiting ω-alignment (< π/6). |
+
+### Immediate To-Dos
+1. Create a small `SO3` helper file:
+   * definition of the Haar probability measure on `SO(3,ℝ)`
+   * `∫_G g·A·g⁻¹ dμ(g) = (tr A / 3) • I₃` for any matrix `A`
+2. Port Mathlib's Calderón–Zygmund machinery (currently in `Mathlib.Analysis.CalderonZygmund`).
+3. Prove dominated-convergence lemma used in `spherical_integral_bound` (can reuse `MeasureTheory.tendsto_integral_norm_sub`).
+4. Final constant bookkeeping: show effective constant ≤ `C_star / 2` with `C_star = 0.05` and alignment factor `2 sin(π/12) ≈ 0.518`.
+
+### References
+* A. Constantin & C. Foias, *Direction of vorticity and the problem of global regularity for the Navier–Stokes equations* (1993)
+* L. Grafakos, *Modern Fourier Analysis* – Chap. 7 (CZ operators on S²)
+* Mathlib docs: `MeasureTheory.MeasurePreserving`, `InnerProductSpace.volume_ball_fin_three`, `Analysis.CalderonZygmund`
