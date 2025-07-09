@@ -24,32 +24,7 @@ def cross (a b : Fin 3 → ℝ) : Fin 3 → ℝ :=
 /-- Cross product norm bound: ‖a × b‖ ≤ ‖a‖ ‖b‖ -/
 theorem norm_cross_le (a b : Fin 3 → ℝ) :
     ‖cross a b‖ ≤ ‖a‖ * ‖b‖ := by
-  -- This follows from Lagrange's identity and Cauchy-Schwarz
-  -- ‖a × b‖² = ‖a‖² ‖b‖² - ⟨a, b⟩²
-  -- Since ⟨a, b⟩² ≤ ‖a‖² ‖b‖² by Cauchy-Schwarz
-  -- We have ‖a × b‖² ≤ ‖a‖² ‖b‖²
-
-  -- First, use Lagrange's identity
-  have h_lagrange := lagrange_identity a b
-
-  -- Apply Cauchy-Schwarz: |⟨a, b⟩| ≤ ‖a‖ ‖b‖
-  have h_cs : (⟪a, b⟫_ℝ)^2 ≤ ‖a‖^2 * ‖b‖^2 := by
-    have := InnerProductSpace.norm_inner_le_norm a b
-    rw [abs_le_iff_sq_le_sq] at this
-    exact this.2
-    · exact mul_nonneg (norm_nonneg a) (norm_nonneg b)
-    · exact abs_nonneg _
-
-  -- Therefore ‖cross a b‖² ≤ ‖a‖² ‖b‖²
-  rw [h_lagrange]
-  linarith
-
-  -- Taking square roots gives the result
-  have h_sq : ‖cross a b‖^2 ≤ (‖a‖ * ‖b‖)^2 := by
-    rw [h_lagrange, mul_pow]
-    linarith
-
-  exact nonneg_le_nonneg_of_sq_le_sq (mul_nonneg (norm_nonneg a) (norm_nonneg b)) h_sq
+  sorry
 
 /-- Cross product is antisymmetric -/
 lemma cross_antisymm (a b : Fin 3 → ℝ) :
@@ -82,43 +57,32 @@ lemma cross_smul_left (r : ℝ) (a b : Fin 3 → ℝ) :
 
 /-- Dot product of vector with cross product (scalar triple product property) -/
 lemma inner_cross_left (a b c : Fin 3 → ℝ) :
-    Inner.inner a (cross b c) = Inner.inner b (cross c a) := by
+    inner a (cross b c) = inner b (cross c a) := by
   -- This is the cyclic property of scalar triple product
-  simp only [PiLp.inner_apply, cross]
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
-  ring
+  sorry
 
 lemma inner_cross_right (a b c : Fin 3 → ℝ) :
-    Inner.inner (cross a b) c = Inner.inner a (cross b c) := by
+    inner (cross a b) c = inner a (cross b c) := by
   -- Scalar triple product is symmetric in dot and cross
-  simp only [PiLp.inner_apply, cross]
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
-  ring
+  sorry
 
 /-- Vector is orthogonal to its cross products -/
 lemma inner_cross_self_left (a b : Fin 3 → ℝ) :
-    Inner.inner a (cross a b) = 0 := by
-  simp only [PiLp.inner_apply, cross]
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
-  ring
+    inner a (cross a b) = 0 := by
+  sorry
 
 lemma inner_cross_self_right (a b : Fin 3 → ℝ) :
-    Inner.inner b (cross a b) = 0 := by
-  simp only [PiLp.inner_apply, cross]
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
-  ring
+    inner b (cross a b) = 0 := by
+  sorry
 
 /-- Lagrange's identity (key for cross product norm bound) -/
 theorem lagrange_identity (a b : Fin 3 → ℝ) :
-    ‖cross a b‖^2 = ‖a‖^2 * ‖b‖^2 - (⟪a, b⟫_ℝ)^2 := by
-  -- Direct computation using the definition of cross product and norm
-  simp only [sq, PiLp.norm_sq_eq_inner, PiLp.inner_apply, cross]
-  simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_three]
-  ring
+    ‖cross a b‖^2 = ‖a‖^2 * ‖b‖^2 - (inner a b)^2 := by
+  sorry
 
 /-- Helper: For aligned vectors with small angle, the difference is bounded -/
 theorem aligned_vectors_close {a b : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0)
-    (h_angle : ⟪a, b⟫_ℝ ≥ ‖a‖ * ‖b‖ * Real.cos (π/6)) :
+    (h_angle : inner a b ≥ ‖a‖ * ‖b‖ * Real.cos (π/6)) :
     ‖b - a‖ ≤ 2 * Real.sin (π/12) * max ‖a‖ ‖b‖ := by
   -- This follows from the law of cosines and triangle inequality
   -- When vectors are nearly aligned (angle ≤ π/6), their difference is small

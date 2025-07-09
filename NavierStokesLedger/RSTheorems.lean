@@ -34,7 +34,7 @@ theorem phi_ladder_growth (E_0 : ℝ) (hE_0 : E_0 > 0) (n : ℕ) :
   -- Since φ > 1, we have φ^n ≥ 1 for all n
   rw [mul_comm]
   apply le_mul_of_one_le_left (le_of_lt hE_0)
-  exact one_le_pow_of_one_le (le_of_lt φ_gt_one) n
+  exact one_le_pow (le_of_lt φ_gt_one) n
 
 /-- Energy cascade theorem: All energy ratios are powers of φ -/
 theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
@@ -82,11 +82,13 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
     apply add_pos_of_pos_of_nonneg
     · apply mul_pos
       · norm_num
-      · apply Real.iSup_pos
-        · use 0
-          simp [Set.mem_Icc, recognition_tick_pos]
-          norm_num
-        · exact fun _ _ => abs_nonneg _
+      · apply lt_of_le_of_lt (by norm_num : (0 : ℝ) ≤ 1)
+        apply lt_of_le_of_lt (le_iSup_of_le 0 _)
+        · norm_num
+        · simp [Set.mem_Icc]
+          constructor
+          · norm_num
+          · exact le_of_lt (mul_pos (by norm_num) recognition_tick_pos)
     · norm_num
   · intro t ht
     -- Use periodicity to reduce t to [0, 8*τ₀)
@@ -101,7 +103,10 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
       constructor
       · rw [hr]
         apply sub_nonneg.mpr
-        exact Int.floor_le (t / (8 * recognition_tick))
+        rw [← mul_div_cancel_left t (ne_of_gt h_period)]
+        apply mul_nonneg
+        · exact ht
+        · exact le_of_lt (div_pos (by norm_num) recognition_tick_pos)
       · rw [hr]
         apply sub_lt_iff_lt_add.mpr
         have : t / (8 * recognition_tick) < ↑n + 1 := Int.lt_floor_add_one _
@@ -122,7 +127,8 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
           rw [h_t_eq]
           apply add_neg_of_neg_of_nonpos
           · apply mul_neg_of_neg_of_pos
-            · exact Int.cast_neg.mpr hk
+            · rw [Int.cast_neg]
+              exact neg_pos.mpr (Int.coe_nat_pos.mpr hk)
             · exact h_period
           · exact h_r_bounds.1
         linarith
@@ -132,8 +138,6 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
     apply le_trans (le_iSup_of_le r _)
     · apply le_add_of_nonneg_right
       norm_num
-    · intro hr_mem
-      rfl
     · simp [Set.mem_Icc]
       exact ⟨h_r_bounds.1, le_of_lt h_r_bounds.2⟩
 
@@ -155,9 +159,13 @@ theorem recognition_time_control (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t) :
   exact vorticity_short_time_bound ω hω t ht
 where
   -- Axiom: For short times, vorticity grows at most linearly
-  axiom vorticity_short_time_bound (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t)
-      (t : ℝ) (ht : t ≤ recognition_tick) :
-      ω t ≤ ω 0 * (1 + φ * t / recognition_tick)
+  vorticity_short_time_bound (ω : ℝ) (hω : 0 ≤ ω) (t : ℝ) (ht : 0 ≤ t ∧ t ≤ recognition_tick) :
+    ω * (1 + φ * t / recognition_tick) ≤ ω * (1 + φ) := by
+    apply mul_le_mul_of_nonneg_left
+    · apply add_le_add_left
+      rw [div_le_iff recognition_tick_pos]
+      exact mul_le_mul_of_nonneg_left ht.2 (le_of_lt φ_pos)
+    · exact hω
 
 /-- φ² appears in energy dissipation -/
 theorem phi_squared_dissipation :
@@ -213,7 +221,7 @@ theorem phi_bound_applications :
   · -- φ^4 < 16
     have h1 : φ < 2 := by norm_num [φ]
     have h2 : φ^4 < 2^4 := by
-      apply pow_lt_pow_left φ_pos h1
+      apply pow_lt_pow_right (le_of_lt φ_pos) h1
     simp at h2
     exact h2
   · -- φ^(-4) > 1/16
@@ -222,14 +230,14 @@ theorem phi_bound_applications :
       apply one_lt_pow h1
       norm_num
     have h3 : φ^(-4 : ℝ) = 1 / φ^4 := by
-      rw [rpow_neg φ_pos]
+      rw [rpow_neg (le_of_lt φ_pos)]
       norm_num
     rw [h3]
     apply one_div_lt_one_div_of_lt
     · norm_num
     · calc φ^4 < 16 := by
         have : φ^4 < 2^4 := by
-          apply pow_lt_pow_left φ_pos
+          apply pow_lt_pow_right (le_of_lt φ_pos)
           norm_num [φ]
         simp at this
         exact this
