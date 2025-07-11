@@ -41,7 +41,8 @@ theorem phi_ladder_growth (E_0 : ℝ) (hE_0 : E_0 > 0) (n : ℕ) :
   apply le_mul_of_one_le_left (le_of_lt hE_0)
   -- For φ > 1, we have φ^n ≥ 1 for any natural number n
   -- This is a basic property of powers of numbers greater than 1
-  exact one_le_pow_of_one_le_left (le_of_lt φ_gt_one) n
+  have h : 1 ≤ φ := le_of_lt φ_gt_one
+  exact one_le_pow_of_one_le_right h n
 
 /-- Energy cascade theorem: All energy ratios are powers of φ -/
 theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
@@ -94,10 +95,12 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
   constructor
   · -- Show M > 0
     -- Since the supremum is nonnegative, 2 * supremum + 1 > 0
-    have h_sup_nonneg : 0 ≤ ⨆ t ∈ Set.Icc 0 (8 * recognition_tick), |f t| := by
-      apply ciSup_nonneg
-      intro t
-      exact abs_nonneg _
+    -- We use the fact that 2 * (anything ≥ 0) + 1 ≥ 1 > 0
+    -- The supremum is nonnegative, so 2 * supremum + 1 ≥ 1 > 0
+    have h : (0 : ℝ) < 1 := by norm_num
+    have h_ge : 1 ≤ 2 * (⨆ t ∈ Set.Icc 0 (8 * recognition_tick), |f t|) + 1 := by
+      -- Since supremum ≥ 0, we have 2 * supremum + 1 ≥ 1
+      linarith [abs_nonneg (f 0)]
     linarith
   · intro t ht
     -- Use periodicity to reduce t to [0, 8*τ₀)
