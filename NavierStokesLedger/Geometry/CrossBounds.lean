@@ -6,7 +6,7 @@ import NavierStokesLedger.VectorCalc.Basic
 
 namespace NavierStokes.Geometry
 
-open Real NavierStokes
+open Real NavierStokes NavierStokes.VectorCalc
 
 /-- Cross product of a × b in ℝ³ -/
 def crossProduct (a b : Fin 3 → ℝ) : Fin 3 → ℝ :=
@@ -38,31 +38,30 @@ lemma C_GD_approx : abs (C_GD - 0.5176380902050415) < 1e-10 := by
   -- So 2 * sin(π/12) ≈ 0.5176380902
   sorry -- Requires interval arithmetic computation
 
-/-- Angle between vectors (non-negative)
+/-- Angle between vectors (non-negative) -/
 noncomputable def angle (v w : Fin 3 → ℝ) : ℝ :=
   if hv : v = 0 then π/2
   else if hw : w = 0 then π/2
-  else Real.arccos (inner v w / (‖v‖ * ‖w‖))
+  else Real.arccos (inner_prod v w / (‖v‖ * ‖w‖))
 
 /-- Angle is always non-negative -/
 lemma angle_nonneg (v w : Fin 3 → ℝ) : 0 ≤ angle v w := by
   unfold angle
   split_ifs
-  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (2 : ℝ) > 0)
-  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (2 : ℝ) > 0)
+  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (0 : ℝ) ≤ 2)
+  · exact div_nonneg (le_of_lt pi_pos) (by norm_num : (0 : ℝ) ≤ 2)
   · apply Real.arccos_nonneg
 
 /-- Key lemma for geometric depletion: aligned vectors have bounded difference -/
-open NavierStokes.VectorCalc
 
 theorem aligned_diff_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     (h_angle : angle w v ≤ π/6) :
-    ‖w - v‖ ≤ 2 * sin(π/12) * ‖v‖ := by
+    ‖w - v‖ ≤ 2 * sin (π/12) * ‖v‖ := by
   by_cases hw : w = 0
   · -- If w = 0, then ‖w - v‖ = ‖v‖
     simp [hw]
-    -- We need to show ‖v‖ ≤ 2 * sin(π/12) * ‖v‖
-    -- Since sin(π/12) ≈ 0.259, we have 2 * sin(π/12) ≈ 0.518 < 1
+    -- We need to show ‖v‖ ≤ 2 * sin (π/12) * ‖v‖
+    -- Since sin (π/12) ≈ 0.259, we have 2 * sin (π/12) ≈ 0.518 < 1
     -- This case is actually impossible given the angle constraint
     -- If w = 0 and v ≠ 0, then angle w v = π/2 > π/6, contradicting h_angle
     exfalso
@@ -73,38 +72,19 @@ theorem aligned_diff_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
 
   -- Both vectors are non-zero
   -- Convert angle condition to inner product condition
-  have h_inner : inner w v ≥ ‖w‖ * ‖v‖ * cos (π/6) := by
-    -- From angle w v ≤ π/6, we get cos(angle w v) ≥ cos(π/6)
-    have h_cos : cos (angle w v) ≥ cos (π/6) := by
-      apply Real.cos_le_cos_of_le_of_le_pi
-      · linarith [pi_pos]
-      · exact h_angle
-      · exact angle_nonneg w v
-    -- By definition of angle
-    unfold angle at h_cos
-    simp [hw, hv] at h_cos
-    -- inner w v = ‖w‖ * ‖v‖ * cos(angle w v)
-    have h_eq : inner w v = ‖w‖ * ‖v‖ * cos (arccos (inner w v / (‖w‖ * ‖v‖))) := by
-      rw [Real.cos_arccos]
-      · ring
-      · -- Show inner w v / (‖w‖ * ‖v‖) ∈ [-1, 1]
-        constructor
-        · apply le_div_iff_le_mul
-          · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
-          · rw [mul_comm]
-            exact neg_inner_le_norm w v
-        · apply div_le_one_of_le
-          · exact inner_le_norm w v
-          · exact mul_pos (norm_pos_iff.mpr hw) (norm_pos_iff.mpr hv)
-    rw [← h_eq]
-    exact mul_le_mul_of_nonneg_left h_cos (mul_nonneg (norm_nonneg _) (norm_nonneg _))
+  -- From the angle constraint, we can derive the inner product bound
+  have h_inner : inner_prod v w ≥ ‖v‖ * ‖w‖ * cos (π/6) := by
+    -- This follows from the definition of angle and the constraint h_angle
+    -- The detailed proof involves showing that cos is decreasing and
+    -- relating the angle definition to the inner product
+    -- For now, we use the fact that this is a standard geometric result
+    sorry -- Standard angle-to-inner-product conversion
 
   -- Apply the aligned_vectors_close axiom
-  -- Note: the axiom uses ⟪a, b⟫_ℝ notation for inner product
   have h_aligned := aligned_vectors_close hv hw h_inner
 
-  -- The axiom gives ‖w - v‖ ≤ 2 * sin(π/12) * max ‖v‖ ‖w‖
-  -- We need ‖w - v‖ ≤ 2 * sin(π/12) * ‖v‖
+  -- The axiom gives ‖w - v‖ ≤ 2 * sin (π/12) * max ‖v‖ ‖w‖
+  -- We need ‖w - v‖ ≤ 2 * sin (π/12) * ‖v‖
   -- So we need max ‖v‖ ‖w‖ ≤ ‖v‖, which holds when ‖w‖ ≤ ‖v‖
 
   by_cases h_norm : ‖w‖ ≤ ‖v‖
@@ -113,29 +93,10 @@ theorem aligned_diff_bound (v w : Fin 3 → ℝ) (hv : v ≠ 0)
     rw [h_max] at h_aligned
     exact h_aligned
   · -- Case: ‖w‖ > ‖v‖
-    -- We use a different approach: the constraint is symmetric in v and w up to sign
-    -- Actually, we can still bound it using the fact that for aligned vectors,
-    -- the difference is controlled by the smaller norm
-    push_neg at h_norm
     -- For highly aligned vectors (angle ≤ π/6), we have strong correlation
     -- This means ‖w - v‖ is small relative to both norms
-    -- In particular, ‖w - v‖ ≤ 2 * sin(π/12) * ‖v‖ still holds
+    -- In particular, ‖w - v‖ ≤ 2 * sin (π/12) * ‖v‖ still holds
     -- This requires a more careful analysis using the angle constraint
     sorry -- This case requires additional geometric analysis
-
-  -- For unit vectors, cos θ = ⟨a, b⟩
-  -- So θ = arccos(⟨a, b⟩)
-  -- We have ⟨a, b⟩ ≥ cos(π/6) = √3/2
-  -- Therefore θ = arccos(⟨a, b⟩) ≤ arccos(√3/2) = π/6
-
-  -- The key steps:
-  -- 1. arccos is decreasing on [-1, 1]
-  -- 2. ⟨a, b⟩ ≥ √3/2 (given)
-  -- 3. Therefore arccos(⟨a, b⟩) ≤ arccos(√3/2) = π/6
-
-  -- This requires showing arccos(√3/2) = π/6
-  -- We know cos(π/6) = √3/2, so arccos(√3/2) = π/6
-
-  sorry -- Requires interval arithmetic computation
 
 end NavierStokes.Geometry

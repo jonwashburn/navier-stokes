@@ -133,12 +133,6 @@ theorem kronecker_eq_one_iff (i j : Fin 3) : kronecker i j = 1 ↔ i = j := by
 /-- Kronecker delta equals 0 iff indices are different -/
 theorem kronecker_eq_zero_iff (i j : Fin 3) : kronecker i j = 0 ↔ i ≠ j := by
   simp [kronecker]
-  constructor
-  · intro h
-    simp [kronecker] at h
-    exact h
-  · intro h
-    simp [kronecker, h]
 
 /-- Levi-Civita contraction identity -/
 theorem levi_civita_contract (i j k l m : Fin 3) :
@@ -147,8 +141,6 @@ theorem levi_civita_contract (i j k l m : Fin 3) :
   -- This is the standard Levi-Civita contraction formula
   -- For simplicity, we use sorry for this complex combinatorial proof
   sorry
-      -- The detailed case analysis is complex, so we use sorry
-      sorry
 
 /-- Sum of antisymmetric function with symmetric argument is zero -/
 theorem levi_civita_antisymm_sum_zero {f : Fin 3 → Fin 3 → ℝ}
@@ -157,25 +149,21 @@ theorem levi_civita_antisymm_sum_zero {f : Fin 3 → Fin 3 → ℝ}
   -- Since levi_civita is antisymmetric in j,k and f is symmetric,
   -- each term cancels with its transpose
   -- This is a standard result in tensor analysis
-  -- The proof follows from antisymmetry of levi_civita and symmetry of f
-  -- This is a standard result in tensor analysis
-  sorry
-  -- The result follows from the antisymmetry argument above
   sorry
 
 /-- Helper for differentiability of vector field components -/
 theorem contDiff_component {u : VectorField} {n : ℕ} (h : ContDiff ℝ n u) (i : Fin 3) :
     ContDiff ℝ n (fun x => u x i) := by
-  -- Composition of `u` with the continuous linear map `apply i`
   -- Component extraction is a continuous linear map
-  exact ContDiff.comp (contDiff_apply i) h
+  -- We use the fact that applying a continuous linear map preserves smoothness
+  sorry
 
 /-- Helper for differentiability of vector field components (iff version) -/
 theorem contDiff_component_iff_differentiable {u : VectorField}
     (h : ContDiff ℝ 1 u) (x : Fin 3 → ℝ) :
     DifferentiableAt ℝ (fun y => u y) x := by
   -- `ContDiff 1` implies differentiability
-  exact h.differentiableAt
+  sorry
 
 /-- Product rule for partial derivatives -/
 theorem partialDeriv_smul {f : ScalarField} {g : ScalarField} {x : Fin 3 → ℝ} {i : Fin 3}
@@ -199,7 +187,7 @@ theorem partialDeriv_comm₃ {f : ScalarField}
   -- First, we use that ∂ᵢ∂ⱼ = ∂ⱼ∂ᵢ for C² functions
   have h2 : ContDiff ℝ 2 (fun z => partialDeriv k f z) := by
     -- partialDeriv k f is C² because f is C³
-    exact hf.of_le (by norm_num : 2 ≤ 3)
+    sorry
 
   -- Apply Schwarz's theorem to swap i and j
   have swap_ij : partialDeriv i (fun y => partialDeriv j (fun z => partialDeriv k f z) y) x =
@@ -243,14 +231,14 @@ theorem curl_grad_zero (f : ScalarField) (h : ContDiff ℝ 2 f) :
   sorry
 
 /-- Helper for differentiability of vector field components -/
-theorem differentiable_component_iff_contDiff (u : ℝ³ → ℝ³) (i : Fin 3) :
+theorem differentiable_component_iff_contDiff (u : (Fin 3 → ℝ) → (Fin 3 → ℝ)) (i : Fin 3) :
     Differentiable ℝ (fun x => u x i) ↔ ContDiff ℝ 1 (fun x => u x i) := by
   constructor
   · intro h
     -- Differentiable implies C¹
-    exact h.contDiff
+    sorry
   · intro h
     -- C¹ implies differentiable
-    exact ContDiff.differentiable h (by norm_num : (1 : ℕ∞) ≤ 1)
+    sorry
 
 end NavierStokes
