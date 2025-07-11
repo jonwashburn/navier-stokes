@@ -7,7 +7,7 @@ import NavierStokesLedger.RSImports
 import NavierStokesLedger.BiotSavart
 import Mathlib.Analysis.ODE.Gronwall
 
-open Real NavierStokes
+open Real NavierStokes RecognitionScience
 
 namespace NavierStokes
 
@@ -19,22 +19,16 @@ that are crucial for the Navier-Stokes proof.
 -/
 
 /-- The golden ratio appears in vortex dynamics -/
-theorem golden_ratio_properties : phi * phi_inv = 1 ∧ phi = 1 + phi_inv := by
+theorem golden_ratio_properties : φ * (1/φ) = 1 ∧ φ = 1 + (1/φ) := by
   constructor
-  · -- phi * phi_inv = 1
-    simp only [phi, phi_inv]
-    -- We need to show: ((1 + √5) / 2) * ((√5 - 1) / 2) = 1
-    field_simp
-    -- After clearing denominators: (1 + √5) * (√5 - 1) = 4
-    -- Expand: √5 - 1 + 5 - √5 = 4
-    -- Which simplifies to: 4 = 4
-    ring_nf
-    -- Use the fact that √5 * √5 = 5
-    rw [← sq_sqrt (by norm_num : (0 : ℝ) ≤ 5)]
-    norm_num
-  · -- phi = 1 + phi_inv
-    simp only [phi, phi_inv]
-    field_simp
+  · -- φ * (1/φ) = 1
+    have h_pos : 0 < φ := φ_pos
+    field_simp [ne_of_gt h_pos]
+  · -- φ = 1 + (1/φ)
+    have h_pos : 0 < φ := φ_pos
+    have h_eq : φ^2 = φ + 1 := φ_equation
+    field_simp [ne_of_gt h_pos]
+    rw [← h_eq]
     ring
 
 /-- The 8-beat cycle period in recognition ticks -/
@@ -228,7 +222,7 @@ theorem eight_beat_control (ω : VectorField) (t : ℝ) :
 
 /-- Golden ratio cascade limits energy transfer -/
 theorem golden_cascade_bound (ω : VectorField) (n : ℕ) :
-    energyAtScale ω n ≤ energyAtScale ω 0 * (goldenRatio ^ (-4 * n)) := by
+    energyAtScale ω n ≤ energyAtScale ω 0 * (φ ^ (-(4 * n : ℝ))) := by
   induction n with
   | zero => simp [energyAtScale]
   | succ n ih =>
