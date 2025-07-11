@@ -24,6 +24,11 @@ We use the following insights from RS:
 4. Cascade cutoff at φ⁻⁴ scale
 -/
 
+/-- Log of golden ratio is positive -/
+theorem log_φ_pos : 0 < log φ := by
+  apply log_pos
+  exact φ_gt_one
+
 /-- The φ-ladder: E_n = E_0 * φ^n -/
 noncomputable def phi_ladder (E_0 : ℝ) (n : ℕ) : ℝ := E_0 * φ^n
 

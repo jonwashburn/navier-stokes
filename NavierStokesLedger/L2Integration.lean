@@ -51,23 +51,58 @@ theorem L2_triangle_proper (u v : VectorField)
     (hu : Integrable (fun x => ‖u x‖^2) volume)
     (hv : Integrable (fun x => ‖v x‖^2) volume) :
     L2NormProper (fun x => u x + v x) ≤ L2NormProper u + L2NormProper v := by
-    simp only [L2NormProper]
-    apply Real.rpow_le_rpow_of_exponent_le (integral_nonneg (fun x => sq_nonneg _))
-    · norm_num
-    have h : ∫ x, ‖u x + v x‖ ^ 2 ∂volume ≤ (L2NormProper u + L2NormProper v) ^ 2 := sorry  -- Use Minkowski
-    exact h
-  -- Remove deprecated attributes or fix them with (since := "mathlib4") if needed
-  -- For L2_scaling_proper, use rw [integral_mul_left] and Real.rpow_mul
-  theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
+  -- Use the Minkowski inequality for L² norms
+  -- This is the correct approach for proving the triangle inequality
+  -- The key insight is that L² is a Hilbert space and has the triangle inequality
+  simp only [L2NormProper]
+  have h_integrable : Integrable (fun x => ‖u x + v x‖^2) volume := by
+    -- Use the fact that ‖u + v‖² ≤ 2(‖u‖² + ‖v‖²) by the triangle inequality
+    -- So if u and v are square-integrable, then u + v is square-integrable
+    apply Integrable.mono' (Integrable.add hu hv)
+    · intro x
+      have h_tri : ‖u x + v x‖^2 ≤ 2 * (‖u x‖^2 + ‖v x‖^2) := by
+        -- Use the triangle inequality: ‖u + v‖ ≤ ‖u‖ + ‖v‖
+        -- Squaring both sides: ‖u + v‖² ≤ (‖u‖ + ‖v‖)²
+        -- Expanding: ‖u + v‖² ≤ ‖u‖² + 2‖u‖‖v‖ + ‖v‖²
+        -- Using 2‖u‖‖v‖ ≤ ‖u‖² + ‖v‖²: ‖u + v‖² ≤ 2‖u‖² + 2‖v‖²
+        have h_norm : ‖u x + v x‖ ≤ ‖u x‖ + ‖v x‖ := norm_add_le (u x) (v x)
+        have h_sq : ‖u x + v x‖^2 ≤ (‖u x‖ + ‖v x‖)^2 := by
+          exact pow_le_pow_right (norm_nonneg _) h_norm 2
+        have h_expand : (‖u x‖ + ‖v x‖)^2 = ‖u x‖^2 + 2 * ‖u x‖ * ‖v x‖ + ‖v x‖^2 := by
+          ring
+        rw [h_expand] at h_sq
+        -- Use 2ab ≤ a² + b²
+        have h_am_gm : 2 * ‖u x‖ * ‖v x‖ ≤ ‖u x‖^2 + ‖v x‖^2 := by
+          have h := two_mul_le_add_sq (‖u x‖) (‖v x‖)
+          rwa [mul_comm] at h
+        linarith
+      exact h_tri
+  have h_minkowski : (∫ x, ‖u x + v x‖^2 ∂volume)^((1 : ℝ)/2) ≤
+                    (∫ x, ‖u x‖^2 ∂volume)^((1 : ℝ)/2) + (∫ x, ‖v x‖^2 ∂volume)^((1 : ℝ)/2) := by
+    -- This is the Minkowski inequality for L² norms
+    -- It follows from the triangle inequality in finite dimensions pointwise
+    -- and the convexity of the function x ↦ x^(1/2) for x ≥ 0
+    sorry  -- Use proper Minkowski inequality from mathlib
+  exact h_minkowski
+
+/-- L² scaling property -/
+theorem L2_scaling_proper (u : VectorField) (c : ℝ) :
     L2NormProper (fun x => c • u x) = |c| * L2NormProper u := by
-    simp only [L2NormProper]
-    conv_lhs => ext x; rw [norm_smul]
+  simp only [L2NormProper]
+  -- Use the fact that ‖c • u x‖ = |c| * ‖u x‖
+  have h_norm : ∀ x, ‖(c • u x)‖ = |c| * ‖u x‖ := fun x => norm_smul c (u x)
+  simp [h_norm]
+  -- Handle the integral and power separately
+  have h_integral : (∫ x, (|c| * ‖u x‖)^2 ∂volume) = |c|^2 * (∫ x, ‖u x‖^2 ∂volume) := by
     rw [integral_mul_left]
-    apply Real.rpow_inj'
-    · apply integral_nonneg (fun x => sq_nonneg _)
-    · norm_num
-    · simp [Real.rpow_mul]
-  -- Continue fixing other errors like unknown identifiers by using mathlib functions like norm_add_sq.
+    simp [mul_pow]
+  rw [h_integral]
+  -- Use the fact that (a * b)^(1/2) = a^(1/2) * b^(1/2) for nonnegative a, b
+  have h_rpow : (|c|^2 * (∫ x, ‖u x‖^2 ∂volume))^((1:ℝ)/2) = |c| * (∫ x, ‖u x‖^2 ∂volume)^((1:ℝ)/2) := by
+    rw [mul_rpow (sq_nonneg _) (integral_nonneg (fun x => sq_nonneg _))]
+    rw [Real.sq_abs]
+    simp
+  exact h_rpow
 
 -- Keep the original axioms for backward compatibility but mark as deprecated
 @[deprecated L2_norm_nonneg_proper]

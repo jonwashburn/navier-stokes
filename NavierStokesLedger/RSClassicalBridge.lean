@@ -26,6 +26,11 @@ open Real Filter Topology NavierStokes MeasureTheory RecognitionScience
 
 -- We use cascade_cutoff from RSImports
 
+/-- Log of golden ratio is positive -/
+theorem log_φ_pos : 0 < log φ := by
+  apply log_pos
+  exact φ_gt_one
+
 /-!
 ## Section 0: Geometric Depletion (Constantin-Fefferman Core)
 
