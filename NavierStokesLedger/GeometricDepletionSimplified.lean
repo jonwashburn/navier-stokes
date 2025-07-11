@@ -21,7 +21,11 @@ lemma biot_savart_kernel_bound_simple (x y : Fin 3 → ℝ) (hxy : x ≠ y) (v :
   calc (1 / (4 * π * ‖x - y‖^3)) * ‖crossProduct (x - y) v‖
     ≤ (1 / (4 * π * ‖x - y‖^3)) * (‖x - y‖ * ‖v‖) := mul_le_mul_of_nonneg_left h_cross (le_of_lt h_scalar_pos)
   _ = (1 / (4 * π * ‖x - y‖^2)) * ‖v‖ := by
-    sorry  -- Arithmetic equality
+    -- Simplify: (1 / (4 * π * ‖x - y‖^3)) * (‖x - y‖ * ‖v‖) = (1 / (4 * π * ‖x - y‖^2)) * ‖v‖
+    -- This follows from: (1 / a^3) * (a * b) = (1 / a^2) * b when a ≠ 0
+    have h_ne_zero : ‖x - y‖ ≠ 0 := norm_ne_zero_iff.mpr (sub_ne_zero.mpr hxy)
+    field_simp [h_ne_zero]
+    ring
 
 /-- Key theorem: Near-field aligned vorticity reduces kernel contribution -/
 theorem geometric_depletion_near_field (ω : (Fin 3 → ℝ) → (Fin 3 → ℝ)) (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r)

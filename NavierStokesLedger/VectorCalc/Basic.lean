@@ -46,7 +46,13 @@ theorem norm_cross_le (a b : Fin 3 → ℝ) :
   -- Use the fact that for nonnegative reals, x² ≤ y² implies x ≤ y
   have h_nonneg_left : 0 ≤ ‖cross a b‖ := norm_nonneg _
   have h_nonneg_right : 0 ≤ ‖a‖ * ‖b‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
-  exact Real.sqrt_le_sqrt_iff.mp (by simpa [Real.sqrt_sq h_nonneg_left, Real.sqrt_sq h_nonneg_right] using h_lagrange)
+  -- Apply sqrt_le_sqrt to both sides
+  have h_sqrt : Real.sqrt (‖cross a b‖^2) ≤ Real.sqrt (‖a‖^2 * ‖b‖^2) := by
+    apply Real.sqrt_le_sqrt h_lagrange
+  -- Simplify using sqrt(x²) = |x| = x for x ≥ 0
+  rw [Real.sqrt_sq h_nonneg_left, Real.sqrt_mul (sq_nonneg _) (sq_nonneg _)] at h_sqrt
+  rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at h_sqrt
+  exact h_sqrt
 
 /-- Cross product is antisymmetric -/
 lemma cross_antisymm (a b : Fin 3 → ℝ) :
