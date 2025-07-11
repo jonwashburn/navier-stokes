@@ -115,52 +115,18 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
     have h_pos_C : 0 < C_star := C_star_pos
     -- For 0 < x < 1, we have (1-x)^n ≤ exp(-nx)
     -- This follows from log(1-x) ≤ -x for 0 < x < 1
-    have h_log : ∀ x ∈ Set.Ioo 0 1, Real.log (1 - x) ≤ -x := by
-      intro x ⟨hx_pos, hx_lt_one⟩
-      -- This is the standard inequality log(1-x) ≤ -x for x ∈ (0,1)
-      -- It follows from concavity of log: the graph lies below its tangent at x=0
-      -- The tangent line to log(1-x) at x=0 is y = -x
-
-      -- We can prove this by showing f(x) = log(1-x) + x ≤ 0 for x ∈ (0,1)
-      -- Note that f(0) = 0 and f'(x) = -1/(1-x) + 1 = -x/(1-x) < 0 for x ∈ (0,1)
-      -- So f is decreasing on (0,1), hence f(x) < f(0) = 0
-
-      -- Alternatively, use the Taylor series: log(1-x) = -x - x²/2 - x³/3 - ... for |x| < 1
-      -- All terms are negative for x > 0, so log(1-x) < -x
-
-      -- For now, we'll use the fact that this is a standard inequality
-      have h_standard : ∀ y ∈ Set.Ioo 0 1, Real.log (1 - y) ≤ -y := by
-        intro y ⟨hy_pos, hy_lt_one⟩
-        -- This is Real.log_one_sub_le from mathlib
-        exact Real.log_one_sub_le hy_pos hy_lt_one
-      exact h_standard x ⟨hx_pos, hx_lt_one⟩
+    have h_log : ∀ x ∈ Set.Ioo 0 1, log (1 - x) ≤ -x := by
+      intro x hx
+      apply Real.log_one_sub_le_neg hx.1 (sub_pos.mpr hx.2)
     -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
-    have h_exp : (1 - C_star)^n = Real.exp (n * Real.log (1 - C_star)) := by
-      -- Use the fact that a^n = exp(n * log a) for a > 0
-      have h_pos : 0 < 1 - C_star := by
-        simp only [C_star]
-        norm_num
-      -- Apply the identity a^n = exp(n * log a)
-      rw [← Real.exp_nat_mul]
-      rw [Real.exp_log h_pos]
+    have h_exp : (1 - C_star)^n = rexp (n * log (1 - C_star)) := by
+      rw [Real.rpow_def_of_pos h_pos]
     rw [h_exp]
-    apply Real.exp_le_exp_of_le
-    -- Need to show n * log(1 - C_star) ≤ -C_star * n
-    -- This follows from log(1-x) ≤ -x for x ∈ (0,1)
-    have h_ineq : Real.log (1 - C_star) ≤ -C_star := h_log C_star ⟨h_pos_C, h_small⟩
-    -- Multiply both sides by n ≥ 0
-    have h_mul : n * Real.log (1 - C_star) ≤ n * (-C_star) := by
-      apply mul_le_mul_of_nonneg_left h_ineq
-      exact Nat.cast_nonneg n
-    -- Simplify the right side
-    rw [mul_neg] at h_mul
-    -- Need to show n * log(1 - C_star) ≤ -C_star * n
-    -- We have n * log(1 - C_star) ≤ -n * C_star
-    -- Which is the same as n * log(1 - C_star) ≤ -C_star * n since multiplication commutes
-    have h_comm : -(n : ℝ) * C_star = -C_star * (n : ℝ) := by ring
-    rw [← h_comm]
-    exact h_mul
-  · exact le_of_lt h_pos
+    apply Real.exp_le_exp
+    apply mul_le_mul_of_nonneg_left (h_log C_star ⟨C_star_pos, h_small⟩) (Nat.cast_nonneg n)
+  -- For L2Norm, change VorticityField to VectorField in theorem statements
+  -- For -n, use - (n : ℝ)
+  exact le_of_lt h_pos
 
 /-- Phase coherence maintained by 8-beat cycle -/
 theorem phase_coherence_preserved (ω : ℝ → VectorField) (t : ℝ)
@@ -208,11 +174,11 @@ namespace RecognitionScienceLemmas
 open Real
 
 /-- Recognition Science energy functional -/
-noncomputable def recognitionEnergy (ω : VorticityField) : ℝ :=
+noncomputable def recognitionEnergy (ω : VectorField) : ℝ :=
   L2Norm ω + recognitionFunctional ω
 
 /-- Recognition Science dissipation rate -/
-noncomputable def recognitionDissipation (ω : VorticityField) : ℝ :=
+noncomputable def recognitionDissipation (ω : VectorField) : ℝ :=
   dissipationFunctional (biotSavartLaw ω)
 
 /-- Recognition Science stability parameter -/
@@ -234,13 +200,13 @@ def phaseCoherenceThreshold : ℝ := 0.05  -- 5% phase deviation
 def cascadeRate : ℝ := goldenRatio ^ (-4)
 
 /-- Recognition Science constraint on vorticity evolution -/
-theorem recognition_constraint (ω : VorticityField) (t : ℝ) :
+theorem recognition_constraint (ω : VectorField) (t : ℝ) :
     recognitionEnergy ω ≤ recognitionEnergy ω * exp (cascadeRate * t) := by
   -- The Recognition Science framework bounds energy growth
   sorry -- Requires energy evolution analysis
 
 /-- Eight-beat cycle controls vorticity amplification -/
-theorem eight_beat_control (ω : VorticityField) (t : ℝ) :
+theorem eight_beat_control (ω : VectorField) (t : ℝ) :
     t ∈ Set.Icc 0 eightBeatPeriod →
     L2Norm ω ≤ L2Norm ω * (1 + phaseCoherenceThreshold) := by
   intro ht
@@ -249,7 +215,7 @@ theorem eight_beat_control (ω : VorticityField) (t : ℝ) :
   sorry -- TODO: Model the phase-locked dynamics
 
 /-- Golden ratio cascade limits energy transfer -/
-theorem golden_cascade_bound (ω : VorticityField) (n : ℕ) :
+theorem golden_cascade_bound (ω : VectorField) (n : ℕ) :
     energyAtScale ω n ≤ energyAtScale ω 0 * (goldenRatio ^ (-4 * n)) := by
   induction n with
   | zero => simp [energyAtScale]
@@ -258,14 +224,14 @@ theorem golden_cascade_bound (ω : VorticityField) (n : ℕ) :
     sorry -- TODO: Formalize scale decomposition
 
 /-- Phase coherence improves stability -/
-theorem phase_coherence_stability (ω : VorticityField) :
+theorem phase_coherence_stability (ω : VectorField) :
     phaseCoherent ω → recognitionDissipation ω ≥ 2 * standardDissipation ω := by
   intro h_coherent
   -- Phase-locked states have enhanced dissipation
   sorry -- TODO: Requires Biot-Savart integral theory from BiotSavart.lean
 
 /-- Recognition Science enhances Grönwall estimates -/
-theorem recognition_enhances_stability (ω : VorticityField) (t : ℝ) :
+theorem recognition_enhances_stability (ω : VectorField) (t : ℝ) :
     recognitionActive ω →
     L2Norm ω ≤ L2Norm ω * exp (stabilityParameter * t) := by
   intro h_active
@@ -291,7 +257,7 @@ theorem recognition_enhances_stability (ω : VorticityField) (t : ℝ) :
   sorry -- TODO: Apply mathlib's Grönwall
 
 /-- Vorticity control through Recognition Science -/
-theorem vorticity_control_recognition (ω : VorticityField) :
+theorem vorticity_control_recognition (ω : VectorField) :
     recognitionActive ω →
     ∃ (C : ℝ), C > 0 ∧ ∀ t ≥ 0, enstrophyReal ω ≤ C * (1 + t) := by
   intro h_active
@@ -303,7 +269,7 @@ theorem vorticity_control_recognition (ω : VorticityField) :
     sorry -- TODO: Formalize once dissipationFunctional is properly defined
 
 /-- Recognition Science bootstrap improvement -/
-theorem recognition_bootstrap (ω : VorticityField) (ε : ℝ) :
+theorem recognition_bootstrap (ω : VectorField) (ε : ℝ) :
     0 < ε → ε < 1 →
     L∞Norm ω ≤ ε →
     recognitionActive ω →
@@ -314,7 +280,7 @@ theorem recognition_bootstrap (ω : VorticityField) (ε : ℝ) :
   sorry -- TODO: Requires Real.one_sub_le_exp_neg_of_pos from Mathlib
 
 /-- Recognition Science prevents finite-time blowup -/
-theorem no_blowup_recognition (ω : VorticityField) (T : ℝ) :
+theorem no_blowup_recognition (ω : VectorField) (T : ℝ) :
     T > 0 →
     recognitionActive ω →
     ∀ t ∈ Set.Icc 0 T, L∞Norm ω < ∞ := by

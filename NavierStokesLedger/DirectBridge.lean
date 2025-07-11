@@ -80,7 +80,7 @@ lemma vorticity_max_principle (ν : ℝ) (hν : 0 < ν) (nse : NSE ν) (t : ℝ)
     -- This is a fundamental result combining classical PDE theory
     -- with Recognition Science geometric constraints
     have h_max_principle : (deriv (fun τ => supNorm (vorticity (nse.u τ))) s) ≤
-                          C * (supNorm (vorticity (nse.u s)))^2 - ν * supNorm (vorticity (nse.u s)) := by
+                          C_star * (supNorm (vorticity (nse.u s)))^2 - ν * supNorm (vorticity (nse.u s)) := by
       -- Apply the maximum principle to the vorticity equation
       -- The geometric depletion provides the improved constant C = C_star
       sorry -- Maximum principle with geometric depletion
@@ -197,7 +197,7 @@ theorem vorticity_bootstrap_direct (ν : ℝ) (hν : 0 < ν) (nse : NSE ν)
   -- Therefore:
   calc supNorm (vorticity (nse.u t))
       ≤ C_star / Real.sqrt ν := h_ω
-    _ = 2 * K_star / Real.sqrt ν := by rw [← h_K]; ring
+    _ = 2 * K_star / Real.sqrt ν := by rw [h_K]; ring
     _ = K_star / Real.sqrt ν + K_star / Real.sqrt ν := by ring
     _ ≤ K_star / Real.sqrt ν := by
         -- The phase-locking mechanism ensures the second term vanishes

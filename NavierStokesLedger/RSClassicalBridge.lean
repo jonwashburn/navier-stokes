@@ -207,8 +207,8 @@ theorem enstrophy_production_bound
     -- Apply our Grönwall integration
     cases' eq_or_lt_of_le ht with heq hlt
     · -- Case t = 0
-      rw [heq]
-      simp [Real.exp_zero, mul_one]
+      rw [← heq]
+      simp [Real.exp_zero, mul_one, one_mul]
     · -- Case t > 0
       have hZ_cont_t := hZ_cont t hlt
       have hZ_deriv_t : ∀ s ∈ Set.Ico 0 t, HasDerivWithinAt Z ((deriv Z) s) (Set.Ici s) s := by

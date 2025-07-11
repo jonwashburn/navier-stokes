@@ -36,6 +36,35 @@ def ScalarField := (Fin 3 → ℝ) → ℝ
 /-- Pressure field: a scalar field on ℝ³ -/
 def PressureField := ScalarField
 
+-- Add algebraic structure instances for VectorField
+instance : Zero VectorField := ⟨fun _ _ => 0⟩
+instance : Add VectorField := ⟨fun u v => fun x i => u x i + v x i⟩
+instance : Neg VectorField := ⟨fun u => fun x i => -u x i⟩
+instance : Sub VectorField := ⟨fun u v => fun x i => u x i - v x i⟩
+instance : SMul ℝ VectorField := ⟨fun c u => fun x i => c * u x i⟩
+
+-- Use Pi.addCommGroup instance since VectorField is (Fin 3 → ℝ) → (Fin 3 → ℝ)
+noncomputable instance : AddCommGroup VectorField := Pi.addCommGroup
+noncomputable instance : Module ℝ VectorField := Pi.module _ _ _
+
+-- Add similar instances for ScalarField
+instance : Zero ScalarField := ⟨fun _ => 0⟩
+instance : Add ScalarField := ⟨fun f g => fun x => f x + g x⟩
+instance : Neg ScalarField := ⟨fun f => fun x => -f x⟩
+instance : Sub ScalarField := ⟨fun f g => fun x => f x - g x⟩
+instance : SMul ℝ ScalarField := ⟨fun c f => fun x => c * f x⟩
+
+-- Use Pi.addCommGroup instance since ScalarField is (Fin 3 → ℝ) → ℝ
+noncomputable instance : AddCommGroup ScalarField := Pi.addCommGroup
+noncomputable instance : Module ℝ ScalarField := Pi.module _ _ _
+
+-- Extensionality theorems for ScalarField and VectorField
+@[ext]
+theorem ScalarField.ext {f g : ScalarField} (h : ∀ x, f x = g x) : f = g := funext h
+
+@[ext]
+theorem VectorField.ext {u v : VectorField} (h : ∀ x i, u x i = v x i) : u = v := funext (fun x => funext (h x))
+
 /-- Partial derivative in the i-th direction -/
 noncomputable def partialDeriv (i : Fin 3) (f : ScalarField) (x : Fin 3 → ℝ) : ℝ :=
   fderiv ℝ f x (fun j => if j = i then 1 else 0)

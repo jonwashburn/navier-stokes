@@ -23,7 +23,7 @@ structure NSE (ν : ℝ) where
   /-- Incompressibility -/
   h_div_free : ∀ t, divergence (u t) = fun _ => 0
   /-- Navier-Stokes equation (simplified) -/
-  h_nse : ∀ t, deriv u t = fun x => fun i => -convectiveDerivative (u t) (u t) x i + ν * laplacianVector (u t) x i
+  h_nse : ∀ t x i, deriv (fun s => u s x i) t = -convectiveDerivative (u t) (u t) x i + ν * laplacianVector (u t) x i
 
 /-- Vorticity of a vector field -/
 noncomputable def vorticity (u : VectorField) : VectorField := curl u
