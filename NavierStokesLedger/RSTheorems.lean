@@ -41,7 +41,7 @@ theorem phi_ladder_growth (E_0 : ℝ) (hE_0 : E_0 > 0) (n : ℕ) :
   apply le_mul_of_one_le_left (le_of_lt hE_0)
   -- For φ > 1, we have φ^n ≥ 1 for any natural number n
   -- This is a basic property of powers of numbers greater than 1
-  sorry -- Standard power inequality
+  exact one_le_pow_of_one_le_left (le_of_lt φ_gt_one) n
 
 /-- Energy cascade theorem: All energy ratios are powers of φ -/
 theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
@@ -94,7 +94,11 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
   constructor
   · -- Show M > 0
     -- Since the supremum is nonnegative, 2 * supremum + 1 > 0
-    sorry -- Positivity of bound
+    have h_sup_nonneg : 0 ≤ ⨆ t ∈ Set.Icc 0 (8 * recognition_tick), |f t| := by
+      apply ciSup_nonneg
+      intro t
+      exact abs_nonneg _
+    linarith
   · intro t ht
     -- Use periodicity to reduce t to [0, 8*τ₀)
     let n := ⌊t / (8 * recognition_tick)⌋

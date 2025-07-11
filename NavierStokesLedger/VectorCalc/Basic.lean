@@ -44,9 +44,9 @@ theorem norm_cross_le (a b : Fin 3 → ℝ) :
     simp only [sub_le_iff_le_add]
     exact le_add_of_nonneg_right (sq_nonneg _)
   -- Use the fact that for nonnegative reals, x² ≤ y² implies x ≤ y
-  -- This follows from Lagrange's identity and the fact that inner products are bounded
-  -- The detailed proof involves careful manipulation of square roots
-  sorry -- Standard norm bound from Lagrange identity
+  have h_nonneg_left : 0 ≤ ‖cross a b‖ := norm_nonneg _
+  have h_nonneg_right : 0 ≤ ‖a‖ * ‖b‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
+  exact Real.sqrt_le_sqrt_iff.mp (by simpa [Real.sqrt_sq h_nonneg_left, Real.sqrt_sq h_nonneg_right] using h_lagrange)
 
 /-- Cross product is antisymmetric -/
 lemma cross_antisymm (a b : Fin 3 → ℝ) :
