@@ -16,72 +16,17 @@ Navier-Stokes proof.
 
 /-- Vorticity is divergence-free -/
 theorem div_vorticity_zero (u : VectorField) (h : ContDiff ℝ 2 u) :
-    divergence (curl u) = fun _ => 0 := by
-  -- This is just div_curl_zero from PDEOperators
-  exact div_curl_zero u h
+    divergence (curl u) = fun _ => 0 := div_curl_zero u h
 
 /-- Vorticity evolution equation -/
 theorem vorticity_evolution_equation {ν : ℝ} (sys : NSSystem ν)
     (h_smooth : ∀ t, ContDiff ℝ ⊤ (sys.u t)) :
     ∀ t, deriv (fun s => L2NormSquared (curl (sys.u s))) t ≤
          2 * ν * dissipationFunctional (curl (sys.u t)) +
-         C_stretch * (L2NormSquared (curl (sys.u t)))^(3/2) := by
+         C_stretch * (L2NormSquared (curl (sys.u t))) ^ (3/2) := by
   intro t
-  -- The momentum equation is: ∂u/∂t + (u·∇)u = -∇p + ν∆u
-  -- Taking curl: ∂ω/∂t + (u·∇)ω = (ω·∇)u + ν∆ω where ω = curl u
-
-  -- Step 1: Time derivative of L² norm squared
-  -- d/dt ‖ω‖² = 2⟨ω, ∂ω/∂t⟩
-
-  -- Step 2: From vorticity equation
-  -- ⟨ω, ∂ω/∂t⟩ = -⟨ω, (u·∇)ω⟩ + ⟨ω, (ω·∇)u⟩ + ν⟨ω, ∆ω⟩
-
-  -- Step 3: Key bounds
-  -- -⟨ω, (u·∇)ω⟩ = 0 (by divergence-free property and integration by parts)
-  -- ⟨ω, (ω·∇)u⟩ ≤ C‖ω‖₂³ (vorticity stretching using Hölder and Sobolev)
-  -- ν⟨ω, ∆ω⟩ = -ν‖∇ω‖₂² (integration by parts)
-
-  -- The dissipation functional is exactly ‖∇ω‖₂²
-  -- Combining gives the desired energy estimate
-  -- The vorticity evolution equation gives us:
-  -- d/dt ‖ω‖₂² = 2⟨ω, ∂ω/∂t⟩
-  -- From the Navier-Stokes equations: ∂ω/∂t = (ω·∇)u - (u·∇)ω + ν∆ω
-
-  -- Key estimates:
-  -- 1. Transport term: ⟨ω, (u·∇)ω⟩ = 0 (by divergence-free property)
-  -- 2. Stretching term: ⟨ω, (ω·∇)u⟩ ≤ C‖ω‖₂³ (by Hölder and Sobolev embedding)
-  -- 3. Dissipation term: ν⟨ω, ∆ω⟩ = -ν‖∇ω‖₂² (by integration by parts)
-
-  -- The stretching bound uses the fact that in 3D:
-  -- ‖(ω·∇)u‖₂ ≤ ‖ω‖₆ ‖∇u‖₃ ≤ C‖ω‖₂^{3/2} ‖∇u‖₂
-  -- Combined with ‖∇u‖₂ ≤ C‖ω‖₂ (from Biot-Savart), we get the cubic bound
-
-  -- The dissipation functional is ‖∇ω‖₂², which provides the damping
-  -- The balance between cubic growth and quadratic dissipation
-  -- gives the energy estimate with the 3/2 power
-
-  -- This is a standard result in the theory of the Navier-Stokes equations
-  -- The detailed proof requires Sobolev embeddings and interpolation inequalities
-
-  -- Apply the energy method to the vorticity equation
-  -- The calculation involves integration by parts and Hölder's inequality
-  -- The key is that the stretching term has the right scaling to balance dissipation
-
-  -- For a complete proof, we would need:
-  -- 1. Sobolev embedding H¹ ↪ L⁶ in 3D
-  -- 2. Hölder's inequality for the stretching term
-  -- 3. Integration by parts for the Laplacian term
-  -- 4. Careful tracking of constants
-
-  -- The result follows from standard energy methods in fluid dynamics
-  have h_energy_method : deriv (fun s => L2NormSquared (curl (sys.u s))) t ≤
-                         2 * ν * dissipationFunctional (curl (sys.u t)) +
-                         C_stretch * (L2NormSquared (curl (sys.u t)))^(3/2) := by
-    -- This is the standard vorticity energy estimate
-    -- The proof uses the vorticity equation and energy methods
-    sorry -- Standard energy estimate for vorticity equation
-
-  exact h_energy_method
+  -- Use RS positive cost for the bound
+  sorry
 
 /-- Vorticity stretching term: (ω·∇)u represents vortex stretching/tilting -/
 noncomputable def vorticityStretching (ω u : VectorField) : VectorField :=
