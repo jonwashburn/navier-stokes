@@ -20,12 +20,12 @@ namespace NavierStokes.StandardTheorems
 variable {VectorField : Type*} [NormedAddCommGroup VectorField] [NormedSpace ℝ VectorField]
 variable {ScalarField : Type*} [NormedAddCommGroup ScalarField] [NormedSpace ℝ ScalarField]
 
-/-- Grönwall's lemma (proven version using mathlib) -/
-theorem gronwall_inequality (u : ℝ → ℝ) (K : ℝ) (h_K : 0 ≤ K)
-    (h_deriv : ∀ t ≥ 0, deriv u t ≤ K * u t) (h_cont : Continuous u) :
-    ∀ t ≥ 0, u t ≤ u 0 * Real.exp (K * t) := by
-  -- This uses mathlib's Grönwall inequality
-  sorry -- TODO: Apply Mathlib.Analysis.ODE.Gronwall when types align
+/-- Grönwall inequality with mathlib -/
+theorem gronwall_inequality (f g : ℝ → ℝ) (t₀ t : ℝ) (h : t₀ ≤ t)
+    (hf : Continuous f) (hg : Continuous g) (h_nonneg : ∀ s, t₀ ≤ s → s ≤ t → 0 ≤ g s)
+    (h_ineq : ∀ s, t₀ ≤ s → s ≤ t → deriv f s ≤ g s * f s) :
+    f t ≤ f t₀ * Real.exp (∫ s in Set.Icc t₀ t, g s) := by
+  apply ODE.gronwall_bound hf hg h_nonneg h_ineq h
 
 /-- Banach fixed point theorem (proven version) -/
 theorem banach_fixed_point {X : Type*} [MetricSpace X] [CompleteSpace X]
@@ -35,17 +35,16 @@ theorem banach_fixed_point {X : Type*} [MetricSpace X] [CompleteSpace X]
   apply exists_unique_fixedPoint_of_contractionMapping
   exact h_contract
 
-/-- Sobolev embedding (proven version) -/
-theorem sobolev_embedding_3d {p : ℝ} (hp : 1 ≤ p) (hp_bound : p < 3) :
-    ∃ C > 0, ∀ u : VectorField,
-    ‖u‖ ≤ C * ‖u‖ := by -- TODO: Add proper Sobolev norms
-  sorry -- TODO: Use Mathlib.Analysis.Sobolev when types align
+/-- Sobolev embedding in 3D -/
+theorem sobolev_embedding_3d : ∃ C > 0, ∀ u : Sobolev (Fin 3 → ℝ) 1 2, ‖u‖_∞ ≤ C * ‖u‖_W1_2 := by
+  -- Use mathlib Sobolev embedding
+  sorry -- TODO: Adjust types to use Mathlib.Analysis.Sobolev.Embedding
 
-/-- Poincaré inequality (proven version) -/
-theorem poincare_inequality {Ω : Set (Fin 3 → ℝ)} (h_bounded : IsBounded Ω) :
-    ∃ C > 0, ∀ u : VectorField,
-    ‖u‖ ≤ C * ‖∇u‖ := by -- TODO: Add proper gradient norm
-  sorry -- TODO: Use mathlib's Poincaré inequality
+/-- Poincaré inequality -/
+theorem poincare_inequality {Ω : Set (Fin 3 → ℝ)} (h_compact : IsCompact Ω) (u : Sobolev (Fin 3 → ℝ) 1 2) (h_mean_zero : ∫Ω u = 0) :
+  ∃ C > 0, L2Norm u ≤ C * L2Norm (gradient u) := by
+  -- Use mathlib Poincaré
+  sorry -- TODO: Use Mathlib.Analysis.PoincareInequality
 
 /-- Fubini's theorem (proven version) -/
 theorem fubini_theorem {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]

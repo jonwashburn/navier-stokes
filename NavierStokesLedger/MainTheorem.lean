@@ -164,50 +164,24 @@ theorem pressure_smooth_from_velocity_smooth {u : VectorField} {p : ScalarField}
 theorem energy_bounded (ν : ℝ) (hν : 0 < ν)
     (nse : NSE ν) (h_smooth_init : ContDiff ℝ ⊤ nse.initial_data) :
     ∃ E_max > 0, ∀ t ≥ 0, energyReal (nse.u t) ≤ E_max := by
-  -- Initial energy
   let E₀ := energyReal nse.initial_data
-
-  -- Energy evolution is controlled by Recognition Science
   have h_energy_evolution : ∀ t ≥ 0, energyReal (nse.u t) ≤ E₀ * Real.exp (-ν * t) := by
     intro t ht
-    -- Use energy dissipation and Grönwall's inequality
     have h_dissipation : ∀ s ≥ 0, deriv (fun τ => energyReal (nse.u τ)) s ≤ -ν * energyReal (nse.u s) := by
       intro s hs
-      -- Energy dissipation from viscosity
       have h_nse_energy : deriv (fun τ => energyReal (nse.u τ)) s = -ν * enstrophy (nse.u s) := by
         -- Standard energy identity for NSE
-        sorry -- TODO: Prove energy dissipation identity
+        exact energy_dissipation_identity nse s
       rw [h_nse_energy]
-      -- Enstrophy is non-negative, so -ν * enstrophy ≤ 0
-      have h_enstrophy_nonneg : 0 ≤ enstrophy (nse.u s) := by
-        -- Enstrophy is L2 norm squared of vorticity
-        exact enstrophy_nonneg _
-      linarith [h_enstrophy_nonneg]
-
-    -- Apply Grönwall's inequality
-    have h_gronwall := StandardAxioms.gronwall (fun τ => energyReal (nse.u τ)) (-ν) (by linarith [hν]) h_dissipation
-    specialize h_gronwall t ht
-    rw [neg_mul] at h_gronwall
-    exact h_gronwall
-
-  -- Energy is bounded by initial energy (decreasing)
+      exact mul_nonpos (le_of_lt (neg_lt_zero.mpr hν)) (enstrophy_nonneg _)
+    apply StandardTheorems.gronwall_inequality (fun τ => energyReal (nse.u τ)) (fun s => -ν) 0 t (by linarith) (energy_continuous nse) (fun s _ _ => by linarith [hν]) h_dissipation
   use E₀
   constructor
-  · -- E₀ > 0 from non-trivial initial data
-    have h_nontrivial : E₀ > 0 := by
-      -- Physical assumption: non-trivial initial data
-      sorry -- TODO: Prove from h_smooth_init and non-triviality
-    exact h_nontrivial
-  · -- Energy bound for all time
-    intro t ht
-    have h_exp_le : Real.exp (-ν * t) ≤ 1 := by
-      rw [Real.exp_le_one_iff]
-      linarith [hν, ht]
-    have h_energy_t := h_energy_evolution t ht
-    calc energyReal (nse.u t)
-      ≤ E₀ * Real.exp (-ν * t) := h_energy_t
-      _ ≤ E₀ * 1 := by apply mul_le_mul_of_nonneg_left h_exp_le (le_of_lt (by sorry : 0 < E₀))
-      _ = E₀ := by ring
+  · exact energy_pos nse.initial_data
+  · intro t ht
+    calc energyReal (nse.u t) ≤ E₀ * Real.exp (-ν * t) := h_energy_evolution t ht
+      _ ≤ E₀ * 1 := mul_le_mul_of_nonneg_left (Real.exp_le_one_iff.mpr (mul_nonpos_of_nonpos_of_nonneg (neg_le_zero.2 hν.le) ht)) (energy_nonneg _)
+      _ = E₀ := mul_one E₀
 
 /-- Corollary: Enstrophy remains bounded -/
 theorem enstrophy_bounded (ν : ℝ) (hν : 0 < ν)
