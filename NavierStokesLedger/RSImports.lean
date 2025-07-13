@@ -211,12 +211,13 @@ theorem cascade_cutoff_small : cascade_cutoff < 1 := by
   have h_phi4_gt_1 : 1 < φ ^ (4 : ℝ) := by
     -- Direct numerical computation: φ ≈ 1.618, φ^4 ≈ 6.854
     -- Since φ > 1, we have φ^4 > 1^4 = 1
-    -- This is a straightforward calculation from φ > 1
+    -- This is a straightforward consequence of φ > 1
     sorry -- TODO: Complete this numerical proof
   rw [rpow_neg φ_pos.le]
   -- Since φ^4 > 1, we have (φ^4)^(-1) < 1
   have h_inv_lt : (φ ^ (4 : ℝ))⁻¹ < 1 := by
-    sorry -- TODO: Fix inv_lt_one proof
+    -- Since φ^4 > 1, we have (φ^4)^(-1) < 1
+    sorry -- TODO: Complete this inverse inequality proof
   exact h_inv_lt
 
 end NavierStokes

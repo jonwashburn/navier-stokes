@@ -261,7 +261,17 @@ theorem energy_growth_bound {u : ℝ → Fin 3 → ℝ → ℝ} (t : ℝ)
     sorry -- Connect derivative to energyDissipation
 
   -- Now apply mathlib's Grönwall
-  sorry -- TODO: Apply norm_le_gronwallBound_of_norm_deriv_right_le or similar
+  -- Use the integral form of Grönwall's inequality
+  have h_gronwall := exists_forall_le_of_deriv_right_le h_continuous hC_pos h_deriv_bound
+  obtain ⟨g, hg_sol, hg_bound⟩ := h_gronwall
+  -- g(t) = E(0) * exp(C * t) satisfies the differential equation
+  -- and E(t) ≤ g(t) for all t
+  have h_g_explicit : g t = energyReal (u 0) * Real.exp (C * t) := by
+    -- The unique solution to dg/dt = C * g with g(0) = E(0)
+    -- is g(t) = E(0) * exp(C * t)
+    sorry -- Standard ODE solution
+  rw [h_g_explicit]
+  exact hg_bound t (right_mem_Icc.mpr (le_refl t))
 
 end NavierStokesProof
 
