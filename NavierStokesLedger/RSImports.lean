@@ -13,6 +13,7 @@ Integration approach: Direct import of axiom-free modules.
 -/
 
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Real.Basic
 
 namespace RecognitionScience
 
@@ -166,14 +167,11 @@ theorem cascade_cutoff_bound : cascade_cutoff = φ^(-4 : ℝ) := by
 
 /-- Cascade cutoff is small (< 1) -/
 theorem cascade_cutoff_small : cascade_cutoff < 1 := by
-  -- φ^(-4) = 1/φ^4, and since φ > 1, we have φ^4 > 1, so 1/φ^4 < 1
-  -- This is true since φ ≈ 1.618, so φ^4 ≈ 6.85, so φ^(-4) ≈ 0.146 < 1
   unfold cascade_cutoff
-  have h_gt_one : 1 < φ := φ_gt_one
-  have h_pow_gt_one : 1 < φ^4 := one_lt_pow h_gt_one (by norm_num)
-  rw [rpow_neg, rpow_natCast]
-  simp only [one_div]
-  exact inv_lt_one h_pow_gt_one
+  have h_phi_gt_1 : 1 < φ := φ_gt_one
+  have h_phi4_gt_1 : 1 < φ ^ (4 : ℝ) := by norm_num [φ, h_phi_gt_1]
+  rw [rpow_neg φ_pos.le]
+  exact (inv_lt_one h_phi4_gt_1)
 
 end NavierStokes
 

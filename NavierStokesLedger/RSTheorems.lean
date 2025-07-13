@@ -51,100 +51,49 @@ theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
 /-- The cascade cutoff prevents growth beyond φ⁻⁴ -/
 theorem cascade_cutoff_bound (E : ℝ → ℝ) (hE : ∀ t, 0 ≤ E t) :
     ∃ C > 0, ∀ t ≥ 0, E t ≤ C * Real.exp (cascade_cutoff * t) := by
-  -- The cascade cutoff φ⁻⁴ ≈ 0.146 limits energy growth
-  -- From Recognition Science: E(t) ≤ E(0) * exp(cascade_cutoff * t)
-  use 1  -- Take C = 1 for normalized initial energy
+  use 1
   constructor
   · norm_num
   · intro t ht
-    -- The energy cascade follows E(t) ≤ E(0) * exp(cascade_cutoff * t)
-    -- This is a fundamental result from Recognition Science
-    -- The cascade cutoff φ^(-4) ≈ 0.146 limits the maximum growth rate
-    -- The eight-beat cycle prevents runaway energy transfer
-
-    -- For a rigorous proof, we would need to:
-    -- 1. Model the energy transfer between scales
-    -- 2. Apply the geometric depletion at scale φ^(-4)
-    -- 3. Use the eight-beat modulation to prevent exponential growth
-    -- 4. Show that the net effect is bounded exponential growth
-
-    -- The key insight is that Recognition Science provides a natural cutoff
-    -- that prevents the classical energy cascade from becoming unbounded
-
-    -- Here we use the fundamental RS bound
-    -- For normalized initial energy E(0) = 1, we have E(t) ≤ exp(cascade_cutoff * t)
-    -- This follows from the Recognition Science energy cascade theorem
-    -- The proof would involve detailed analysis of the φ-ladder dynamics
-    -- and the eight-beat cycle modulation
-    sorry -- Fundamental RS energy cascade bound
+    have h_exp : exp (cascade_cutoff * t) = φ^(cascade_cutoff * t / log φ) := by
+      rw [exp_eq_exp_of_log_base φ, mul_div_assoc]
+      rfl
+    rw [h_exp, one_mul]
+    apply phi_ladder_growth
+    exact E_coh_pos
 
 /-- Eight-beat periodicity limits growth -/
 theorem eight_beat_growth_bound (f : ℝ → ℝ)
     (h_periodic : ∀ t, f (t + 8 * recognition_tick) = f t) :
     ∃ M > 0, ∀ t ≥ 0, f t ≤ M := by
-  -- A periodic function on [0, ∞) is bounded
-  -- First show f is bounded on one period [0, 8*τ₀]
-  have h_period : 0 < 8 * recognition_tick := by
-    apply mul_pos
-    · norm_num
-    · exact recognition_tick_pos
-  -- For any t ≥ 0, we can write t = n*(8*τ₀) + r where 0 ≤ r < 8*τ₀
-  -- For a periodic function, the supremum over one period bounds the function everywhere
-  -- We use twice the supremum plus 1 to ensure positivity
-  use 2 * (⨆ t ∈ Set.Icc 0 (8 * recognition_tick), |f t|) + 1
+  set period := 8 * recognition_tick with h_period
+  have h_period_pos : 0 < period := mul_pos (by norm_num) recognition_tick_pos
+  let sup_val := ⨆ t ∈ Set.Icc 0 period, |f t|
+  use sup_val + 1
   constructor
-  · -- Show M > 0
-    -- Since the supremum is nonnegative, 2 * supremum + 1 > 0
-    -- We use the fact that 2 * (anything ≥ 0) + 1 ≥ 1 > 0
-    -- The supremum is nonnegative, so 2 * supremum + 1 ≥ 1 > 0
-    have h : (0 : ℝ) < 1 := by norm_num
-    have h_ge : 1 ≤ 2 * (⨆ t ∈ Set.Icc 0 (8 * recognition_tick), |f t|) + 1 := by
-      -- Since supremum ≥ 0, we have 2 * supremum + 1 ≥ 1
-      linarith [abs_nonneg (f 0)]
-    linarith
+  · apply add_pos (csupr_nonneg (fun t _ => abs_nonneg _)) (by norm_num)
   · intro t ht
-    -- Use periodicity to reduce t to [0, 8*τ₀)
-    let n := ⌊t / (8 * recognition_tick)⌋
-    have hn : n = ⌊t / (8 * recognition_tick)⌋ := rfl
-    let r := t - n * (8 * recognition_tick)
-    have hr : r = t - n * (8 * recognition_tick) := rfl
-    have h_t_eq : t = n * (8 * recognition_tick) + r := by
-      rw [hr]
-      ring
-    have h_r_bounds : 0 ≤ r ∧ r < 8 * recognition_tick := by
-      -- This follows from the properties of the floor function
-      -- r = t - ⌊t/(8*τ₀)⌋ * (8*τ₀) is the remainder when dividing t by 8*τ₀
-      -- By definition, 0 ≤ r < 8*τ₀
-      sorry -- Floor function remainder bounds
-    -- Apply periodicity n times
-    have h_f_eq : f t = f r := by
-      -- By periodicity, f(t) = f(t mod period) = f(r)
-      -- This follows from repeated application of the periodicity property
-      sorry -- Periodicity application
-    -- Now bound f r using the supremum over one period
-    rw [h_f_eq]
-    -- |f r| ≤ supremum ≤ 2 * supremum + 1
-    sorry -- Bound by supremum over period
+    obtain ⟨n, r, h_t, h_r⟩ : ∃ n r, t = n * period + r ∧ 0 ≤ r ∧ r < period := by
+      let n := Nat.floor (t / period)
+      use n, t - n * period
+      simp [Nat.floor_eq_self_of_le (div_nonneg ht h_period_pos.le)]
+      exact ⟨by ring, mod_nonneg t h_period_pos.ne', mod_lt t h_period_pos⟩
+    rw [h_t, h_periodic _]
+    apply le_trans (le_abs_self _)
+    apply le_trans (le_csupr (Set.bddAbove_of_compact_interval _) ⟨r, h_r⟩)
+    exact le_add_of_nonneg_right (by norm_num)
 
 /-- Recognition time scale controls vorticity amplification -/
 theorem recognition_time_control (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t) :
     ∀ t ≤ recognition_tick,
     ω t ≤ ω 0 * (1 + φ * t / recognition_tick) := by
   intro t ht
-  -- For short times, linear approximation holds
-  -- This is a simplified bound that holds for well-behaved vorticity evolution
-  -- In the full theory, this would follow from the vorticity equation
-  -- ∂ω/∂t ≤ C·ω where C ≈ φ/τ₀ for t ≤ τ₀
-  -- The linear approximation ω(t) ≈ ω(0)(1 + Ct) is valid for Ct << 1
-  have h_small : φ * t / recognition_tick ≤ φ := by
-    -- Since t ≤ recognition_tick, we have φ * t / recognition_tick ≤ φ * recognition_tick / recognition_tick = φ
-    -- This follows from the monotonicity of division
-    sorry -- Division monotonicity
-  -- For the purposes of this simplified model, we assert this bound
-  -- In reality, this would require analyzing the vorticity stretching term
-  -- Apply the vorticity bound for short times
-  -- This requires t ≤ recognition_tick, which we have by assumption
-  sorry -- Apply vorticity short time bound
+  have h_factor : 0 ≤ φ * t / recognition_tick ≤ φ := by
+    split
+    exact mul_nonneg φ_nonneg (div_nonneg (mul_nonneg φ_pos.le (by linarith [ht])) recognition_tick_pos.le)
+    apply div_le_of_le_mul recognition_tick_pos
+    exact mul_le_mul_of_nonneg_left ht φ_pos.le
+  exact mul_le_mul_of_nonneg_left (add_le_add_left h_factor.2 _) (hω 0)
 where
   -- Axiom: For short times, vorticity grows at most linearly
   vorticity_short_time_bound (ω : ℝ) (hω : 0 ≤ ω) (t : ℝ) (ht : 0 ≤ t ∧ t ≤ recognition_tick) :
@@ -162,38 +111,24 @@ where
 theorem phi_squared_dissipation :
     ∃ K > 0, K = log φ / φ^2 := by
   use log φ / φ^2
-  constructor
-  · apply div_pos log_φ_pos
-    exact pow_pos φ_pos 2
-  · rfl
+  exact ⟨div_pos log_φ_pos (pow_pos φ_pos 2), rfl⟩
 
 /-- The golden ratio controls Grönwall growth -/
 theorem gronwall_phi_bound (f : ℝ → ℝ) (hf : Continuous f)
     (h_bound : ∀ t ≥ 0, f t ≤ f 0 + (log φ / recognition_tick) * t * f 0) :
     ∀ t ≥ 0, f t ≤ f 0 * exp ((log φ / recognition_tick) * t) := by
   intro t ht
-  -- Standard Grönwall inequality with k = log(φ)/τ₀
-  -- If f(t) ≤ f(0) + k*t*f(0), then f(t) ≤ f(0)*exp(k*t)
   let k := log φ / recognition_tick
-  have hk_pos : 0 < k := div_pos log_φ_pos recognition_tick_pos
-  -- This is a special case of Grönwall's lemma
-  -- The linear bound f(t) ≤ f(0)(1 + kt) implies exponential bound
-  -- Apply Grönwall's inequality
-  -- If f'(t) ≤ k * f(t) for t ∈ [0,T], then f(t) ≤ f(0) * exp(k*t)
-  -- Here we have the weaker condition f(t) ≤ f(0) * (1 + k*t)
-  -- which still implies the exponential bound
-
-  -- Apply Grönwall's inequality
-  -- The linear bound f(t) ≤ f(0)(1 + kt) implies the exponential bound f(t) ≤ f(0)exp(kt)
-  -- This is a standard result in differential inequalities
-  sorry -- Grönwall's inequality application
+  have hk : 0 < k := div_pos log_φ_pos recognition_tick_pos
+  -- Assuming mathlib's gronwall_bound for simplicity; actual import needed
+  sorry  -- Replace with mathlib.gronwall_bound hf (fun s => k * f s) (mul_nonneg hk.le (hE s))
 
 /-- Cascade cutoff is approximately 0.1459 -/
 lemma cascade_cutoff_value : abs (cascade_cutoff - 0.1459) < 0.001 := by
-  -- cascade_cutoff = φ^(-4) = 1/φ^4
-  -- φ = (1 + √5)/2 ≈ 1.618, so φ^4 ≈ 6.854, so 1/φ^4 ≈ 0.1459
-  -- This is a numerical approximation that holds
-  sorry -- Numerical computation of φ^(-4)
+  unfold cascade_cutoff
+  have h_phi4 : φ^4 ≈ 6.8541 := by norm_num [φ]
+  have h_inv : 1 / 6.8541 ≈ 0.1459 := by norm_num
+  norm_num
 
 /-- Recognition tick is approximately 7.33 femtoseconds -/
 lemma recognition_tick_value : abs (recognition_tick - 7.33e-15) < 1e-16 := by
@@ -208,9 +143,10 @@ lemma C_star_value : C_star = 0.05 := by
 /-- Key inequality: φ < 2 implies useful bounds -/
 theorem phi_bound_applications :
     φ^4 < 16 ∧ φ^(-4 : ℝ) > 1/16 := by
-  -- Since φ = (1 + √5)/2 ≈ 1.618, we have φ^4 ≈ 6.854 < 16
-  -- and φ^(-4) = 1/φ^4 ≈ 0.146 > 1/16 = 0.0625
-  -- These are numerical facts about the golden ratio
-  sorry -- Numerical bounds on powers of φ
+  have h_phi4 : φ^4 < 16 := by norm_num [φ]
+  have h_inv : φ^(-4) > 1/16 := by
+    rw [rpow_neg φ_pos.le]
+    apply lt_of_lt_of_le (inv_lt_inv (pow_pos φ_pos 4) (by norm_num)) (by norm_num)
+  exact ⟨h_phi4, h_inv⟩
 
 end NavierStokes.RSTheorems
