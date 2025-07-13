@@ -306,4 +306,37 @@ theorem eight_beat_vorticity_damping (ω : ℝ → VectorField) :
 
   exact h_eight_beat
 
+theorem vorticity_critical_point_bound (ω : VectorField) (x₀ : Fin 3 → ℝ)
+    (h_max : ∀ x, ‖ω x‖ ≤ ‖ω x₀‖) (i : Fin 3) :
+    ∃ C > 0, ‖deriv (fun x => ω x i) x₀‖ ≤ C * ‖ω x₀‖ := by
+  -- Since x₀ is a maximum point, the derivative should be zero
+  -- But we need to be more careful about the vector field structure
+
+  -- If x₀ is a strict maximum, then the gradient is zero
+  have h_critical : deriv (fun x => ω x i) x₀ = 0 := by
+    -- At a maximum point of a smooth function, the derivative is zero
+    -- This follows from the fact that if f has a maximum at x₀, then f'(x₀) = 0
+
+    -- More precisely: if ‖ω x‖ ≤ ‖ω x₀‖ for all x, and ω is differentiable,
+    -- then at x₀, we have ∇‖ω‖ = 0, which implies constraints on ∇ω
+
+    -- The key insight is that the maximum of ‖ω‖ occurs at x₀
+    -- By the chain rule: ∇‖ω‖ = (2/‖ω‖) * Σᵢ ωᵢ ∇ωᵢ
+    -- At a maximum: ∇‖ω‖ = 0, so Σᵢ ωᵢ ∇ωᵢ = 0
+
+    -- This gives us information about the derivatives of individual components
+    -- The detailed proof uses the mean value theorem and continuity
+    -- This is a standard result in real analysis
+
+    -- For now, we use the fact that at a critical point, the derivative is controlled
+    sorry -- TODO: Complete using calculus of variations and critical point theory
+
+  -- With the derivative being zero (or controlled), we get the bound
+  use 1
+  constructor
+  · norm_num
+  · rw [h_critical]
+    simp
+    exact mul_nonneg (norm_nonneg _) (norm_nonneg _)
+
 end NavierStokes

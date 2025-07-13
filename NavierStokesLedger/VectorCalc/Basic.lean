@@ -157,4 +157,22 @@ theorem aligned_vectors_close {a b : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0
   -- Here we use the fact that this is a standard result in vector analysis
   sorry -- Standard bound for nearly aligned vectors
 
+theorem cross_lagrange_inequality (a b : Fin 3 → ℝ) :
+    ‖cross a b‖ ≤ ‖a‖ * ‖b‖ := by
+  have h_lagrange : ‖cross a b‖^2 ≤ ‖a‖^2 * ‖b‖^2 := by sorry -- Lagrange identity
+  have h_nonneg_left : 0 ≤ ‖cross a b‖ := norm_nonneg _
+  have h_nonneg_right : 0 ≤ ‖a‖ * ‖b‖ := by
+    apply mul_nonneg <;> exact norm_nonneg _
+  -- Use sqrt monotonicity
+  have h_sqrt_le : ‖cross a b‖ ≤ Real.sqrt (‖a‖^2 * ‖b‖^2) := by
+    rw [← Real.sqrt_sq h_nonneg_left]
+    exact Real.sqrt_le_sqrt h_lagrange
+  -- Simplify sqrt(a² * b²) = |a| * |b| = a * b for a,b ≥ 0
+  have h_sqrt_eq : Real.sqrt (‖a‖^2 * ‖b‖^2) = ‖a‖ * ‖b‖ := by
+    rw [← Real.sqrt_mul (sq_nonneg ‖a‖) (sq_nonneg ‖b‖)]
+    rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)]
+    rw [Real.sqrt_mul (norm_nonneg _) (norm_nonneg _)]
+  rw [h_sqrt_eq] at h_sqrt_le
+  exact h_sqrt_le
+
 end NavierStokes.VectorCalc

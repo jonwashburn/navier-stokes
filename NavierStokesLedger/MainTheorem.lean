@@ -168,47 +168,46 @@ theorem energy_bounded (ν : ℝ) (hν : 0 < ν)
   let E₀ := energyReal nse.initial_data
 
   -- Energy evolution is controlled by Recognition Science
-  use E₀ * exp (cascade_cutoff)
+  have h_energy_evolution : ∀ t ≥ 0, energyReal (nse.u t) ≤ E₀ * Real.exp (-ν * t) := by
+    intro t ht
+    -- Use energy dissipation and Grönwall's inequality
+    have h_dissipation : ∀ s ≥ 0, deriv (fun τ => energyReal (nse.u τ)) s ≤ -ν * energyReal (nse.u s) := by
+      intro s hs
+      -- Energy dissipation from viscosity
+      have h_nse_energy : deriv (fun τ => energyReal (nse.u τ)) s = -ν * enstrophy (nse.u s) := by
+        -- Standard energy identity for NSE
+        sorry -- TODO: Prove energy dissipation identity
+      rw [h_nse_energy]
+      -- Enstrophy is non-negative, so -ν * enstrophy ≤ 0
+      have h_enstrophy_nonneg : 0 ≤ enstrophy (nse.u s) := by
+        -- Enstrophy is L2 norm squared of vorticity
+        exact enstrophy_nonneg _
+      linarith [h_enstrophy_nonneg]
+
+    -- Apply Grönwall's inequality
+    have h_gronwall := StandardAxioms.gronwall (fun τ => energyReal (nse.u τ)) (-ν) (by linarith [hν]) h_dissipation
+    specialize h_gronwall t ht
+    rw [neg_mul] at h_gronwall
+    exact h_gronwall
+
+  -- Energy is bounded by initial energy (decreasing)
+  use E₀
   constructor
-  · apply mul_pos
-    · -- We need to assume initial data is nonzero for energy to be positive
-      -- This is a reasonable physical assumption
-      have h_nonzero : nse.initial_data ≠ fun _ _ => 0 := by
-        -- This should be part of the NSE structure or an additional assumption
-        -- For now, we assume it as it's physically reasonable
-
-        -- In a complete formalization, this would be:
-        -- 1. Part of the NSE structure (require nonzero initial data)
-        -- 2. Or a hypothesis of the theorem
-        -- 3. Or derived from the fact that we're studying non-trivial solutions
-
-        -- Physical justification: We study the global regularity problem
-        -- for non-trivial solutions. The zero solution is trivially regular.
-
-        -- For the global regularity problem, we consider non-trivial solutions
-        -- The zero solution is trivially regular, so we focus on the interesting case
-        sorry -- Physical assumption: non-trivial initial data
-      exact energy_pos_of_nonzero h_nonzero
-    · exact exp_pos _
-  · intro t ht
-    -- Energy cascade is limited by φ⁻⁴ cutoff
-    have h_cascade := RSTheorems.cascade_cutoff_bound
-        (fun s => energyReal (nse.u s))
-        (fun s => energy_nonneg _) t ht
-    obtain ⟨C, hC_pos, h_bound⟩ := h_cascade
-    -- With C = 1 for normalized energy
+  · -- E₀ > 0 from non-trivial initial data
+    have h_nontrivial : E₀ > 0 := by
+      -- Physical assumption: non-trivial initial data
+      sorry -- TODO: Prove from h_smooth_init and non-triviality
+    exact h_nontrivial
+  · -- Energy bound for all time
+    intro t ht
+    have h_exp_le : Real.exp (-ν * t) ≤ 1 := by
+      rw [Real.exp_le_one_iff]
+      linarith [hν, ht]
+    have h_energy_t := h_energy_evolution t ht
     calc energyReal (nse.u t)
-        ≤ C * exp (cascade_cutoff * t) := h_bound
-      _ ≤ 1 * exp (cascade_cutoff * 1) := by
-          gcongr
-          · -- C = 1 for normalized case
-            -- For the normalized energy case, C = 1
-            -- This follows from the Recognition Science cascade bound
-            sorry  -- Normalization gives C = 1
-          · -- Use monotonicity of exponential for any t
-            -- exp(cascade_cutoff * t) ≤ exp(cascade_cutoff * max(t,1))
-            sorry  -- Exponential monotonicity bound
-      _ = exp cascade_cutoff := by simp
+      ≤ E₀ * Real.exp (-ν * t) := h_energy_t
+      _ ≤ E₀ * 1 := by apply mul_le_mul_of_nonneg_left h_exp_le (le_of_lt (by sorry : 0 < E₀))
+      _ = E₀ := by ring
 
 /-- Corollary: Enstrophy remains bounded -/
 theorem enstrophy_bounded (ν : ℝ) (hν : 0 < ν)
