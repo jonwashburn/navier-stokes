@@ -1,0 +1,3 @@
+[submodule "ledger-foundation"]
+	path = ledger-foundation
+	url = https://github.com/jonwashburn/ledger-foundation.git
