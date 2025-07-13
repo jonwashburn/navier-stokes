@@ -50,8 +50,11 @@ theorem norm_cross_le (a b : Fin 3 → ℝ) :
   have h_sqrt : Real.sqrt (‖cross a b‖^2) ≤ Real.sqrt (‖a‖^2 * ‖b‖^2) := by
     apply Real.sqrt_le_sqrt h_lagrange
   -- Simplify using sqrt(x²) = |x| = x for x ≥ 0
-  rw [Real.sqrt_sq h_nonneg_left, Real.sqrt_mul (sq_nonneg _) (sq_nonneg _)] at h_sqrt
-  rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)] at h_sqrt
+  rw [Real.sqrt_sq h_nonneg_left] at h_sqrt
+  have h_sqrt_eq : Real.sqrt (‖a‖^2 * ‖b‖^2) = ‖a‖ * ‖b‖ := by
+    rw [Real.sqrt_mul (sq_nonneg ‖a‖) (sq_nonneg ‖b‖)]
+    rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)]
+  rw [← h_sqrt_eq]
   exact h_sqrt
 
 /-- Cross product is antisymmetric -/
@@ -169,9 +172,8 @@ theorem cross_lagrange_inequality (a b : Fin 3 → ℝ) :
     exact Real.sqrt_le_sqrt h_lagrange
   -- Simplify sqrt(a² * b²) = |a| * |b| = a * b for a,b ≥ 0
   have h_sqrt_eq : Real.sqrt (‖a‖^2 * ‖b‖^2) = ‖a‖ * ‖b‖ := by
-    rw [← Real.sqrt_mul (sq_nonneg ‖a‖) (sq_nonneg ‖b‖)]
+    rw [Real.sqrt_mul (sq_nonneg ‖a‖) (sq_nonneg ‖b‖)]
     rw [Real.sqrt_sq (norm_nonneg _), Real.sqrt_sq (norm_nonneg _)]
-    rw [Real.sqrt_mul (norm_nonneg _) (norm_nonneg _)]
   rw [h_sqrt_eq] at h_sqrt_le
   exact h_sqrt_le
 

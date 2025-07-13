@@ -1,5 +1,6 @@
 -- Main library file for NavierStokesLedger
 import NavierStokesLedger.BasicDefinitions
+import NavierStokesLedger.StandardTheorems
 import NavierStokesLedger.PDEOperators
 import NavierStokesLedger.VectorCalculus
 import NavierStokesLedger.BiotSavart
@@ -14,3 +15,8 @@ import NavierStokesLedger.GeometricDepletion
 import NavierStokesLedger.SupNorm
 import NavierStokesLedger.Geometry.CrossBounds
 import NavierStokesLedger.GeometricDepletionSimplified
+import NavierStokesLedger.LedgerFoundation
+import NavierStokesLedger.GronwallIntegration
+import NavierStokesLedger.EnergyEstimates
+import NavierStokesLedger.GlobalRegularity
+import NavierStokesLedger.MainTheorem

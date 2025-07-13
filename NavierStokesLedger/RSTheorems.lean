@@ -9,6 +9,9 @@ to prove results needed for our Navier-Stokes global regularity proof.
 import NavierStokesLedger.RSImports
 import NavierStokesLedger.BasicDefinitions
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Data.Real.Sqrt
+import Mathlib.Topology.Basic
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 namespace NavierStokes.RSTheorems
 
@@ -42,7 +45,7 @@ theorem phi_ladder_growth (E_0 : ℝ) (hE_0 : E_0 > 0) (n : ℕ) :
   -- For φ > 1, we have φ^n ≥ 1 for any natural number n
   -- This is a basic property of powers of numbers greater than 1
   have h : 1 ≤ φ := le_of_lt φ_gt_one
-  exact one_le_pow_of_one_le_right h n
+  exact one_le_pow_of_one_le_left h n
 
 /-- Energy cascade theorem: All energy ratios are powers of φ -/
 theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
@@ -56,7 +59,7 @@ theorem cascade_cutoff_bound (E : ℝ → ℝ) (hE : ∀ t, 0 ≤ E t) :
   · norm_num
   · intro t ht
     have h_exp : exp (cascade_cutoff * t) = φ^(cascade_cutoff * t / log φ) := by
-      rw [exp_eq_exp_of_log_base φ, mul_div_assoc]
+      rw [exp_eq_pow_of_log φ_pos, mul_div_assoc]
       rfl
     rw [h_exp, one_mul]
     apply phi_ladder_growth
@@ -71,13 +74,16 @@ theorem eight_beat_growth_bound (f : ℝ → ℝ)
   let sup_val := ⨆ t ∈ Set.Icc 0 period, |f t|
   use sup_val + 1
   constructor
-  · apply add_pos (csupr_nonneg (fun t _ => abs_nonneg _)) (by norm_num)
+  · apply add_pos (ciSup_nonneg (fun t _ => abs_nonneg _)) (by norm_num)
   · intro t ht
-    obtain ⟨n, r, h_t, h_r⟩ : ∃ n r, t = n * period + r ∧ 0 ≤ r ∧ r < period := by
-      let n := Nat.floor (t / period)
-      use n, t - n * period
-      simp [Nat.floor_eq_self_of_le (div_nonneg ht h_period_pos.le)]
-      exact ⟨by ring, mod_nonneg t h_period_pos.ne', mod_lt t h_period_pos⟩
+          obtain ⟨n, r, h_t, h_r⟩ : ∃ n r, t = n * period + r ∧ 0 ≤ r ∧ r < period := by
+        let n := Nat.floor (t / period)
+        use n, t - n * period
+        have h_div : t / period = n + (t - n * period) / period := by
+          rw [add_div, mul_div_cancel_left]
+          exact ne_of_gt h_period_pos
+        exact ⟨by ring, sub_nonneg.mpr (Nat.floor_mul_le _ h_period_pos.le),
+              by simp [Nat.floor_frac_def, frac_lt_one]⟩
     rw [h_t, h_periodic _]
     apply le_trans (le_abs_self _)
     apply le_trans (le_csupr (Set.bddAbove_of_compact_interval _) ⟨r, h_r⟩)

@@ -8,7 +8,7 @@ replacing axioms with actual mathlib proofs where possible.
 
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.Analysis.Calculus.FDeriv.Basic
-import Mathlib.Analysis.Sobolev.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.Convolution
 import Mathlib.MeasureTheory.Integral.Bochner
 import Mathlib.Topology.MetricSpace.Basic

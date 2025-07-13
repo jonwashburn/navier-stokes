@@ -3,6 +3,9 @@ import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.LinearAlgebra.TensorProduct.Basic
+import Mathlib.LinearAlgebra.Alternating.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import NavierStokesLedger.BasicDefinitions
 
 open Real
@@ -180,21 +183,26 @@ theorem levi_civita_contract (i j k l m : Fin 3) :
 theorem levi_civita_antisymm_sum_zero {f : Fin 3 → Fin 3 → ℝ}
     (h_symm : ∀ j k, f j k = f k j) (x : Fin 3) :
     ∑ j : Fin 3, ∑ k : Fin 3, levi_civita x j k * f j k = 0 := by
-  simp [levi_civita]
   rw [Finset.sum_eq_zero]
   intro j _
   rw [Finset.sum_eq_zero]
   intro k _
   by_cases h : j = k
-  · simp [h]
-  · have h_anti : levi_civita x k j = -levi_civita x j k := by sorry  -- Antisymmetry of levi_civita
-    rw [h_symm j k, ← h_anti]
+    · simp [h, levi_civita]
+    -- When j = k, levi_civita x j k = 0 by definition
     ring
+  · -- When j ≠ k, use antisymmetry and symmetry
+    have h_anti : levi_civita x k j = -levi_civita x j k := by
+      -- Use the antisymmetry property of levi_civita
+      sorry
+    -- f j k = f k j by symmetry, so we get cancellation
+    rw [h_symm j k, ← h_anti, neg_mul, neg_zero]
 
 /-- Helper for differentiability of vector field components -/
 theorem contDiff_component {u : VectorField} {n : ℕ} (h : ContDiff ℝ n u) (i : Fin 3) :
     ContDiff ℝ n (fun x => u x i) := by
   -- Apply component extraction for continuous differentiability
+  -- Component extraction from Fin 3 → ℝ is smooth
   apply ContDiff.comp h
   exact contDiff_apply
 
