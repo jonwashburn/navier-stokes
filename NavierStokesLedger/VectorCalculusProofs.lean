@@ -71,22 +71,43 @@ theorem laplacian_const_proof (c : ℝ) :
 /-- Proof: Divergence of curl is always zero -/
 theorem div_curl_zero_proof (u : VectorField) (h : ContDiff ℝ 2 u) :
     divergence (curl u) = fun _ => 0 := by
+  -- The divergence of curl is zero due to the antisymmetry of mixed partials
+  -- For C² functions, mixed partials commute: ∂²u/∂x∂y = ∂²u/∂y∂x
+  -- This is a fundamental theorem in vector calculus
   unfold divergence curl
   ext x
   simp only [Finset.sum_fin_eq_sum_range]
-  -- The divergence of curl is zero due to the antisymmetry of mixed partials
-  -- ∂/∂x₁(∂u₃/∂x₂ - ∂u₂/∂x₃) + ∂/∂x₂(∂u₁/∂x₃ - ∂u₃/∂x₁) + ∂/∂x₃(∂u₂/∂x₁ - ∂u₁/∂x₂) = 0
-  -- This follows from the fact that mixed partials commute for C² functions
-  sorry -- TODO: Complete using mixed partial symmetry
+  -- Expand the curl components and then take divergence
+  -- curl u = (∂u₃/∂x₂ - ∂u₂/∂x₃, ∂u₁/∂x₃ - ∂u₃/∂x₁, ∂u₂/∂x₁ - ∂u₁/∂x₂)
+  -- div(curl u) = ∂/∂x₁(∂u₃/∂x₂ - ∂u₂/∂x₃) + ∂/∂x₂(∂u₁/∂x₃ - ∂u₃/∂x₁) + ∂/∂x₃(∂u₂/∂x₁ - ∂u₁/∂x₂)
+  -- = (∂²u₃/∂x₁∂x₂ - ∂²u₂/∂x₁∂x₃) + (∂²u₁/∂x₂∂x₃ - ∂²u₃/∂x₂∂x₁) + (∂²u₂/∂x₃∂x₁ - ∂²u₁/∂x₃∂x₂)
+  -- By Clairaut's theorem: ∂²u/∂xᵢ∂xⱼ = ∂²u/∂xⱼ∂xᵢ, so all terms cancel
+  simp only [partialDerivVec]
+  -- The detailed proof requires careful manipulation of the mixed partials
+  -- and application of Clairaut's theorem from mathlib
+  sorry
 
 /-- Proof: Curl of gradient is always zero -/
 theorem curl_grad_zero_proof (p : ScalarField) (h : ContDiff ℝ 2 p) :
     curl (gradientScalar p) = fun _ _ => 0 := by
+  -- The curl of a gradient is zero due to the symmetry of mixed partials
+  -- For each component: ∂²p/∂xⱼ∂xₖ - ∂²p/∂xₖ∂xⱼ = 0 (Clairaut's theorem)
   unfold curl gradientScalar
   ext x i
-  -- The curl of a gradient is zero due to the symmetry of mixed partials
-  -- For each component: ∂²p/∂xⱼ∂xₖ - ∂²p/∂xₖ∂xⱼ = 0
-  sorry -- TODO: Complete using mixed partial symmetry
+  fin_cases i
+  -- Component 0: ∂(∂p/∂x₂)/∂x₁ - ∂(∂p/∂x₁)/∂x₂ = ∂²p/∂x₁∂x₂ - ∂²p/∂x₂∂x₁ = 0
+  · simp only [partialDeriv, partialDerivVec]
+    -- Use the fact that mixed partials are equal for C² functions
+    -- This follows from Clairaut's theorem: ∂²p/∂x₁∂x₂ = ∂²p/∂x₂∂x₁
+    sorry
+  -- Component 1: ∂(∂p/∂x₃)/∂x₂ - ∂(∂p/∂x₂)/∂x₃ = ∂²p/∂x₂∂x₃ - ∂²p/∂x₃∂x₂ = 0
+  · simp only [partialDeriv, partialDerivVec]
+    -- Use Clairaut's theorem: ∂²p/∂x₂∂x₃ = ∂²p/∂x₃∂x₂
+    sorry
+  -- Component 2: ∂(∂p/∂x₁)/∂x₃ - ∂(∂p/∂x₃)/∂x₁ = ∂²p/∂x₃∂x₁ - ∂²p/∂x₁∂x₃ = 0
+  · simp only [partialDeriv, partialDerivVec]
+    -- Use Clairaut's theorem: ∂²p/∂x₃∂x₁ = ∂²p/∂x₁∂x₃
+    sorry
 
 /-- Proof: Divergence product rule -/
 theorem div_product_rule_proof (f : ScalarField) (u : VectorField)
