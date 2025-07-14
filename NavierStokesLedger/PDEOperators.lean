@@ -159,15 +159,15 @@ theorem levi_civita_self1 (i j : Fin 3) : levi_civita i i j = 0 := by
 theorem kronecker_eq_one_iff (i j : Fin 3) : kronecker i j = 1 ↔ i = j := by
   unfold kronecker
   split_ifs with h
-  · exact iff.intro (fun _ => h) (fun _ => rfl)
-  · exact iff.intro (fun h1 => absurd h1.symm (ne_of_gt one_pos)) (fun h2 => absurd h2 h)
+  · exact ⟨fun _ => h, fun _ => rfl⟩
+  · exact ⟨fun h1 => absurd h1.symm (ne_of_gt one_pos), fun h2 => absurd h2 h⟩
 
 /-- Kronecker delta equals 0 iff indices are different -/
 theorem kronecker_eq_zero_iff (i j : Fin 3) : kronecker i j = 0 ↔ i ≠ j := by
   unfold kronecker
   split_ifs with h
-  · exact iff.intro (fun h0 => absurd h0 (ne_of_gt one_pos)) (fun hneq => absurd h hneq)
-  · exact iff.intro (fun _ => h) (fun _ => rfl)
+  · exact ⟨fun h0 => absurd h0 (ne_of_gt one_pos), fun hneq => absurd h hneq⟩
+  · exact ⟨fun _ => h, fun _ => rfl⟩
 
 /-- Levi-Civita contraction identity -/
 theorem levi_civita_contract (i j k l m : Fin 3) :
@@ -181,10 +181,10 @@ theorem levi_civita_antisymm_sum_zero {f : Fin 3 → Fin 3 → ℝ}
     (h_symm : ∀ j k, f j k = f k j) (x : Fin 3) :
     ∑ j : Fin 3, ∑ k : Fin 3, levi_civita x j k * f j k = 0 := by
   simp [levi_civita]
-  apply sum_congr
-  intro j _
-  apply sum_congr
-  intro k _
+  congr 1
+  ext j
+  congr 1
+  ext k
   by_cases h : j = k
   · simp [h]
   · have h_anti : levi_civita x k j = -levi_civita x j k := by sorry  -- Antisymmetry of levi_civita
@@ -194,7 +194,7 @@ theorem levi_civita_antisymm_sum_zero {f : Fin 3 → Fin 3 → ℝ}
 /-- Helper for differentiability of vector field components -/
 theorem contDiff_component {u : VectorField} {n : ℕ} (h : ContDiff ℝ n u) (i : Fin 3) :
     ContDiff ℝ n (fun x => u x i) := by
-  exact h.apply
+  exact ContDiff.comp h (contDiff_apply i)
 
 /-- Helper for differentiability of vector field components (iff version) -/
 theorem contDiff_component_iff_differentiable {u : VectorField}
