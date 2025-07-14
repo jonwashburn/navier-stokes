@@ -27,13 +27,13 @@ open NavierStokes (C_star)
 /-- The Biot-Savart kernel K(x,y) = (x-y) × I / (4π|x-y|³) -/
 noncomputable def biotSavartKernel (x y : Fin 3 → ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   if x = y then 0 else
-  let r := x - y
-  let norm_r := ‖r‖
-  (1 / (4 * π * norm_r^3)) • ![
-    r 1 * v 2 - r 2 * v 1,
-    r 2 * v 0 - r 0 * v 2,
-    r 0 * v 1 - r 1 * v 0
-  ]
+      let r := x - y
+      let norm_r := ‖r‖
+      (1 / (4 * π * norm_r^3)) • ![
+        r 1 * v 2 - r 2 * v 1,
+        r 2 * v 0 - r 0 * v 2,
+        r 0 * v 1 - r 1 * v 0
+      ]
 
 /-- The Biot-Savart kernel has the expected L¹ bound outside balls -/
 lemma biotSavartKernel_bound (x : Fin 3 → ℝ) (r : ℝ) (hr : 0 < r) (y : Fin 3 → ℝ)
