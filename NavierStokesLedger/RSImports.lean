@@ -169,9 +169,12 @@ theorem cascade_cutoff_bound : cascade_cutoff = φ^(-4 : ℝ) := by
 theorem cascade_cutoff_small : cascade_cutoff < 1 := by
   unfold cascade_cutoff
   have h_phi_gt_1 : 1 < φ := φ_gt_one
-  have h_phi4_gt_1 : 1 < φ ^ (4 : ℝ) := by norm_num [φ, h_phi_gt_1]
+  have h_phi4_gt_1 : 1 < φ ^ (4 : ℝ) := by
+    rw [φ]
+    -- (1 + √5)/2 ≈ 1.618, so φ^4 ≈ 6.854 > 1
+    norm_num
   rw [rpow_neg φ_pos.le]
-  exact (inv_lt_one h_phi4_gt_1)
+  exact one_div_lt_one_iff.mp h_phi4_gt_1
 
 end NavierStokes
 
