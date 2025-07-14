@@ -187,7 +187,7 @@ Recognition Science insights provide the key bounds
 needed for the classical Navier-Stokes proof. -/
 theorem main_rs_bridge (u : VectorField) (ω : VectorField) :
     ω = curl u →
-    divergence u = fun _ => 0 →
+    divergence u = (fun _ => (0 : ℝ)) →
     (∃ r, r > 0 ∧ r * L2Integration.L2NormProper ω ≤ 1) →
     ∃ C > 0, ∀ t ≥ 0, L2Integration.energy u ≤ C * exp (-t / τ₀) := by
   -- RS provides the key ingredients:
