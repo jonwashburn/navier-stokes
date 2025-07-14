@@ -36,6 +36,72 @@ def ScalarField := (Fin 3 → ℝ) → ℝ
 /-- Pressure field: a scalar field on ℝ³ -/
 def PressureField := ScalarField
 
+-- Extensionality theorems
+@[ext]
+theorem VectorField.ext {u v : VectorField} (h : ∀ x i, u x i = v x i) : u = v := by
+  funext x i
+  exact h x i
+
+@[ext]
+theorem ScalarField.ext {f g : ScalarField} (h : ∀ x, f x = g x) : f = g := by
+  funext x
+  exact h x
+
+-- Algebraic structure instances for VectorField
+instance : Add VectorField := ⟨fun u v => fun x i => u x i + v x i⟩
+instance : Zero VectorField := ⟨fun _ _ => 0⟩
+instance : Neg VectorField := ⟨fun u => fun x i => -(u x i)⟩
+instance : Sub VectorField := ⟨fun u v => fun x i => u x i - v x i⟩
+
+instance : AddCommGroup VectorField where
+  add_assoc := fun u v w => by ext x i; exact add_assoc (u x i) (v x i) (w x i)
+  zero_add := fun u => by ext x i; exact zero_add (u x i)
+  add_zero := fun u => by ext x i; exact add_zero (u x i)
+  add_comm := fun u v => by ext x i; exact add_comm (u x i) (v x i)
+  neg_add_cancel := fun u => by ext x i; exact neg_add_cancel (u x i)
+  nsmul := nsmulRec
+  zsmul := zsmulRec
+
+-- Scalar multiplication
+instance : SMul ℝ VectorField := ⟨fun c u => fun x i => c * u x i⟩
+
+instance : Module ℝ VectorField where
+  one_smul := fun u => by ext x i; exact one_mul (u x i)
+  mul_smul := fun c d u => by ext x i; exact mul_assoc c d (u x i)
+  smul_add := fun c u v => by ext x i; exact mul_add c (u x i) (v x i)
+  add_smul := fun c d u => by ext x i; exact add_mul c d (u x i)
+  zero_smul := fun u => by ext x i; exact zero_mul (u x i)
+  smul_zero := fun c => by ext x i; exact mul_zero c
+
+-- Similar instances for ScalarField
+instance : Add ScalarField := ⟨fun f g => fun x => f x + g x⟩
+instance : Zero ScalarField := ⟨fun _ => 0⟩
+instance : Neg ScalarField := ⟨fun f => fun x => -(f x)⟩
+instance : Sub ScalarField := ⟨fun f g => fun x => f x - g x⟩
+
+instance : AddCommGroup ScalarField where
+  add_assoc := fun f g h => by ext x; exact add_assoc (f x) (g x) (h x)
+  zero_add := fun f => by ext x; exact zero_add (f x)
+  add_zero := fun f => by ext x; exact add_zero (f x)
+  add_comm := fun f g => by ext x; exact add_comm (f x) (g x)
+  neg_add_cancel := fun f => by ext x; exact neg_add_cancel (f x)
+  nsmul := nsmulRec
+  zsmul := zsmulRec
+
+instance : SMul ℝ ScalarField := ⟨fun c f => fun x => c * f x⟩
+
+instance : Module ℝ ScalarField where
+  one_smul := fun f => by ext x; exact one_mul (f x)
+  mul_smul := fun c d f => by ext x; exact mul_assoc c d (f x)
+  smul_add := fun c f g => by ext x; exact mul_add c (f x) (g x)
+  add_smul := fun c d f => by ext x; exact add_mul c d (f x)
+  zero_smul := fun f => by ext x; exact zero_mul (f x)
+  smul_zero := fun c => by ext x; exact mul_zero c
+
+-- Topological structure for VectorField (needed for derivatives)
+instance : TopologicalSpace VectorField := Pi.topologicalSpace
+instance : TopologicalSpace ScalarField := Pi.topologicalSpace
+
 /-- Partial derivative in the i-th direction -/
 noncomputable def partialDeriv (i : Fin 3) (f : ScalarField) (x : Fin 3 → ℝ) : ℝ :=
   fderiv ℝ f x (fun j => if j = i then 1 else 0)
