@@ -38,23 +38,10 @@ lemma at_maximum_grad_vanishes (ω : VectorField) (x₀ : Fin 3 → ℝ)
   -- Define f(x) = ‖ω x‖²
   let f := fun x => ‖ω x‖^2
 
-  -- Since x₀ is a global maximum of f, it's also a local maximum
-  have h_local_max : IsLocalMax f x₀ := by
-    -- Global maximum implies local maximum
-    rw [IsLocalMax]
-    -- For all x in a neighborhood of x₀, f(x) ≤ f(x₀)
-    -- Since h_max gives us the global maximum property, we can use it directly
-    apply eventually_of_forall
-    intro x
-    -- From h_max: ‖ω x‖ ≤ ‖ω x₀‖
-    have h_norm_le : ‖ω x‖ ≤ ‖ω x₀‖ := h_max x
-    -- Therefore ‖ω x‖² ≤ ‖ω x₀‖²
-    exact sq_le_sq' (neg_neg_iff_pos.mp (neg_nonpos_of_nonneg (norm_nonneg _))) h_norm_le
-
-  -- At a local maximum, the derivative vanishes (standard result)
+  -- At a maximum, the derivative vanishes (standard result from real analysis)
   -- This requires the first derivative test from real analysis
   -- For now, we axiomatize this standard result
-  sorry -- Apply first derivative test: at local maximum, ∇f = 0
+  sorry -- Apply first derivative test: at global maximum, ∇f = 0
 
 /-- Vorticity controls gradient: This is the key lemma connecting vorticity to velocity gradients -/
 theorem vorticity_controls_gradient (ω : VectorField)
@@ -211,52 +198,7 @@ theorem biot_savart_velocity_bound (ω : VectorField)
 
 /-- Eight-beat vorticity damping: Recognition Science provides additional control -/
 theorem eight_beat_vorticity_damping (ω : VectorField) (t : ℝ) :
-    ∃ C > 0, ∀ x, ‖ω x‖ ≤ C * exp(-t / ((8 : ℝ) * recognition_tick)) * ‖ω x‖ := by
-  -- The eight-beat mechanism provides exponential damping of vorticity
-  -- This is the Recognition Science enhancement to classical fluid dynamics
-
-  -- The eight-beat cycle operates on the fundamental timescale τ₀ = 7.33 fs
-  -- Each cycle provides a damping factor related to the golden ratio
-  -- The total damping over time t is exp(-t/(8τ₀))
-
-  -- This additional damping helps prevent vorticity blowup
-  -- and is crucial for the global regularity result
-
-  use 1 -- The damping constant
-  constructor
-  · norm_num
-  · intro x
-    -- The eight-beat damping is modeled as an exponential decay
-    -- with rate determined by the fundamental Recognition Science timescale
-
-    -- In the continuous limit, the eight-beat mechanism acts as
-    -- an additional dissipative term in the vorticity evolution equation
-    -- This provides the extra control needed for global regularity
-
-    -- For any positive damping rate, we have exp(-t/τ) ≤ 1 for t ≥ 0
-    -- So the bound trivially holds with C = 1
-    have h_exp_le_one : exp(-t / ((8 : ℝ) * recognition_tick)) ≤ 1 := by
-      apply exp_nonpos
-                             -- Show that -t / ((8 : ℝ) * recognition_tick) ≤ 0
-      by_cases h : t ≥ 0
-      · -- If t ≥ 0, then -t ≤ 0, so -t / (8τ₀) ≤ 0
-        apply div_nonpos_of_nonpos_of_pos
-        · linarith
-        · -- (8 : ℝ) * recognition_tick > 0
-          apply mul_pos
-          norm_num
-          exact recognition_tick_pos
-      · -- If t < 0, the exponential could be > 1, but we can still bound it
-        -- The damping model is only physically meaningful for t ≥ 0
-        sorry -- Handle negative time case
-
-    -- Apply the exponential bound
-    calc ‖ω x‖
-      = 1 * ‖ω x‖ := by ring
-      _ ≤ 1 * exp(-t / ((8 : ℝ) * recognition_tick)) * ‖ω x‖ := by
-        rw [← mul_assoc]
-        apply mul_le_mul_of_nonneg_right
-        · exact h_exp_le_one
-        · exact norm_nonneg _
+    ∃ C > 0, ∀ x, ‖ω x‖ ≤ C * exp(-t / (8.0 * recognition_tick)) * ‖ω x‖ := by
+  sorry
 
 end NavierStokes
