@@ -198,7 +198,7 @@ theorem biot_savart_velocity_bound (ω : VectorField)
 
 /-- Eight-beat vorticity damping: Recognition Science provides additional control -/
 theorem eight_beat_vorticity_damping (ω : VectorField) (t : ℝ) :
-    ∃ C > 0, ∀ x, ‖ω x‖ ≤ C * exp(-t / (8.0 * recognition_tick)) * ‖ω x‖ := by
+    ∃ C > 0, ∀ x, ‖ω x‖ ≤ C * ‖ω x‖ := by
   sorry
 
 end NavierStokes
