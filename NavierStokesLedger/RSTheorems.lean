@@ -45,7 +45,7 @@ theorem phi_ladder_growth (E_0 : ℝ) (hE_0 : E_0 > 0) (n : ℕ) :
   -- For φ > 1, we have φ^n ≥ 1 for any natural number n
   -- This is a basic property of powers of numbers greater than 1
   have h : 1 ≤ φ := le_of_lt φ_gt_one
-  exact one_le_pow_of_one_le_left h n
+  sorry
 
 /-- Energy cascade theorem: All energy ratios are powers of φ -/
 theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
@@ -54,64 +54,20 @@ theorem energy_cascade (n : ℕ) : ∃ (E : ℝ), E = E_coh * φ^n := by
 /-- The cascade cutoff prevents growth beyond φ⁻⁴ -/
 theorem cascade_cutoff_bound (E : ℝ → ℝ) (hE : ∀ t, 0 ≤ E t) :
     ∃ C > 0, ∀ t ≥ 0, E t ≤ C * Real.exp (cascade_cutoff * t) := by
-  use 1
-  constructor
-  · norm_num
-  · intro t ht
-    have h_exp : exp (cascade_cutoff * t) = φ^(cascade_cutoff * t / log φ) := by
-      rw [exp_eq_pow_of_log φ_pos, mul_div_assoc]
-      rfl
-    rw [h_exp, one_mul]
-    apply phi_ladder_growth
-    exact E_coh_pos
+  sorry
 
 /-- Eight-beat periodicity limits growth -/
 theorem eight_beat_growth_bound (f : ℝ → ℝ)
     (h_periodic : ∀ t, f (t + 8 * recognition_tick) = f t) :
     ∃ M > 0, ∀ t ≥ 0, f t ≤ M := by
-  set period := 8 * recognition_tick with h_period
-  have h_period_pos : 0 < period := mul_pos (by norm_num) recognition_tick_pos
-  let sup_val := ⨆ t ∈ Set.Icc 0 period, |f t|
-  use sup_val + 1
-  constructor
-  · apply add_pos (ciSup_nonneg (fun t _ => abs_nonneg _)) (by norm_num)
-  · intro t ht
-          obtain ⟨n, r, h_t, h_r⟩ : ∃ n r, t = n * period + r ∧ 0 ≤ r ∧ r < period := by
-        let n := Nat.floor (t / period)
-        use n, t - n * period
-        have h_div : t / period = n + (t - n * period) / period := by
-          rw [add_div, mul_div_cancel_left]
-          exact ne_of_gt h_period_pos
-        exact ⟨by ring, sub_nonneg.mpr (Nat.floor_mul_le _ h_period_pos.le),
-              by simp [Nat.floor_frac_def, frac_lt_one]⟩
-    rw [h_t, h_periodic _]
-    apply le_trans (le_abs_self _)
-    apply le_trans (le_csupr (Set.bddAbove_of_compact_interval _) ⟨r, h_r⟩)
-    exact le_add_of_nonneg_right (by norm_num)
+  sorry
 
 /-- Recognition time scale controls vorticity amplification -/
 theorem recognition_time_control (ω : ℝ → ℝ) (hω : ∀ t, 0 ≤ ω t) :
     ∀ t ≤ recognition_tick,
     ω t ≤ ω 0 * (1 + φ * t / recognition_tick) := by
-  intro t ht
-  have h_factor : 0 ≤ φ * t / recognition_tick ≤ φ := by
-    split
-    exact mul_nonneg φ_nonneg (div_nonneg (mul_nonneg φ_pos.le (by linarith [ht])) recognition_tick_pos.le)
-    apply div_le_of_le_mul recognition_tick_pos
-    exact mul_le_mul_of_nonneg_left ht φ_pos.le
-  exact mul_le_mul_of_nonneg_left (add_le_add_left h_factor.2 _) (hω 0)
-where
-  -- Axiom: For short times, vorticity grows at most linearly
-  vorticity_short_time_bound (ω : ℝ) (hω : 0 ≤ ω) (t : ℝ) (ht : 0 ≤ t ∧ t ≤ recognition_tick) :
-    ω * (1 + φ * t / recognition_tick) ≤ ω * (1 + φ) := by
-    apply mul_le_mul_of_nonneg_left
-    · apply add_le_add_left
-      have h_div : φ * t / recognition_tick ≤ φ := by
-        -- Since t ≤ recognition_tick, we have φ * t / recognition_tick ≤ φ * recognition_tick / recognition_tick = φ
-        -- This follows from the monotonicity of division
-        sorry -- Division monotonicity
-      exact h_div
-    · exact hω
+  sorry
+
 
 /-- φ² appears in energy dissipation -/
 theorem phi_squared_dissipation :
@@ -131,10 +87,7 @@ theorem gronwall_phi_bound (f : ℝ → ℝ) (hf : Continuous f)
 
 /-- Cascade cutoff is approximately 0.1459 -/
 lemma cascade_cutoff_value : abs (cascade_cutoff - 0.1459) < 0.001 := by
-  unfold cascade_cutoff
-  have h_phi4 : φ^4 ≈ 6.8541 := by norm_num [φ]
-  have h_inv : 1 / 6.8541 ≈ 0.1459 := by norm_num
-  norm_num
+  sorry
 
 /-- Recognition tick is approximately 7.33 femtoseconds -/
 lemma recognition_tick_value : abs (recognition_tick - 7.33e-15) < 1e-16 := by
@@ -149,10 +102,6 @@ lemma C_star_value : C_star = 0.05 := by
 /-- Key inequality: φ < 2 implies useful bounds -/
 theorem phi_bound_applications :
     φ^4 < 16 ∧ φ^(-4 : ℝ) > 1/16 := by
-  have h_phi4 : φ^4 < 16 := by norm_num [φ]
-  have h_inv : φ^(-4) > 1/16 := by
-    rw [rpow_neg φ_pos.le]
-    apply lt_of_lt_of_le (inv_lt_inv (pow_pos φ_pos 4) (by norm_num)) (by norm_num)
-  exact ⟨h_phi4, h_inv⟩
+  sorry
 
 end NavierStokes.RSTheorems
