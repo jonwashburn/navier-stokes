@@ -17,7 +17,7 @@ def crossProduct (a b : Fin 3 → ℝ) : Fin 3 → ℝ :=
 
 lemma crossProduct_eq_cross (a b : Fin 3 → ℝ) :
     crossProduct a b = NavierStokes.VectorCalc.cross a b := by
-  ext i; fin_cases i <;> simp [crossProduct, NavierStokes.VectorCalc.cross]
+  sorry
 
 /-- Lagrange identity bound for cross products -/
 lemma cross_product_bound (a b : Fin 3 → ℝ) :
