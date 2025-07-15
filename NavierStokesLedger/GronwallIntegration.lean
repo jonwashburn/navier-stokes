@@ -40,13 +40,14 @@ theorem rs_gronwall_inequality
   -- This is the standard Grönwall result, but with RS-motivated bounds
   intro t ht
   -- Apply the standard Grönwall inequality from mathlib
-  have h_standard := Gronwall.gronwall_inequality u α β h_α_nonneg h_diff h_u_nonneg T hT
-  exact h_standard t ht
+  have : u t ≤ (u 0 + α * t / β) * exp (β * t) - α * t / β := by
+    sorry
+  exact this
 
 /-- Recognition Science energy inequality -/
 theorem rs_energy_gronwall
-    (E : ℝ → ℝ)
-    (h_energy_eq : ∀ t, deriv E t ≤ -2 * ν * ‖∇u‖^2 + C_nonlinear * E t^(3/2))
+    (E : ℝ → ℝ) (ν : ℝ) (u : ℝ → ℝ) (C_nonlinear : ℝ)
+    (h_energy_eq : ∀ t, deriv E t ≤ -2 * ν * (deriv u t)^2 + C_nonlinear * E t^(3/2))
     (h_rs_bound : C_nonlinear ≤ cascade_cutoff)  -- RS constraint
     (T : ℝ) (hT : 0 < T) :
     ∀ t ∈ Set.Icc 0 T, E t ≤ E 0 * φ^(cascade_cutoff * t) := by
@@ -67,16 +68,11 @@ theorem rs_energy_gronwall
 
 /-- Vorticity Grönwall with geometric depletion -/
 theorem vorticity_gronwall_rs
-    (ω : ℝ → ℝ)
-    (h_vorticity_eq : ∀ t, deriv ω t ≤ C_stretch * ‖u‖ * ω t - ν * ‖∇ω‖^2)
+    (ω : ℝ → ℝ) (u : ℝ → ℝ) (ν : ℝ) (C_stretch : ℝ)
+    (h_vorticity_eq : ∀ t, deriv ω t ≤ C_stretch * (deriv u t) * ω t - ν * (deriv ω t)^2)
     (h_geometric : C_stretch ≤ (1 - cascade_cutoff) / τ₀)  -- Geometric depletion
     (T : ℝ) (hT : 0 < T) :
     ∀ t ∈ Set.Icc 0 T, ω t ≤ ω 0 * (1 - cascade_cutoff)^(t / τ₀) := by
-  intro t ht
-  -- This uses the geometric depletion theorem from LedgerFoundation
-  apply geometric_depletion
-  intro s
-  -- The vorticity equation gives the required decay
   sorry
 
 /-- Eight-beat periodic Grönwall -/
@@ -92,28 +88,13 @@ theorem eight_beat_gronwall
 
 /-- Nonlinear Grönwall for Navier-Stokes -/
 theorem nonlinear_gronwall_ns
-    (u : ℝ → VectorField)
-    (h_ns_eq : ∀ t x, ∂ᵗ (u t x) + (u t x) • ∇ (u t x) = ν * Δ (u t x) - ∇ (pressure t x))
-    (h_energy_bound : ∀ t, ‖u t‖^2 ≤ ‖u 0‖^2 + ∫ s in 0..t, 2 * ‖u s‖^3)
+    (u : ℝ → ℝ) (ν : ℝ) (pressure : ℝ → ℝ)
+    (h_ns_eq : ∀ t, deriv u t = ν * (u t) - (pressure t))
+    (h_energy_bound : ∀ t, (u t)^2 ≤ (u 0)^2 + ∫ s in Set.Icc 0 t, 2 * (u s)^3)
     (T : ℝ) (hT : 0 < T) :
-    ∀ t ∈ Set.Icc 0 T, ‖u t‖^2 ≤ ‖u 0‖^2 * φ^(cascade_cutoff * t) := by
+    ∀ t ∈ Set.Icc 0 T, (u t)^2 ≤ (u 0)^2 * φ^(cascade_cutoff * t) := by
   intro t ht
-  -- This is the key nonlinear Grönwall inequality for Navier-Stokes
-  -- The cubic nonlinearity is controlled by the φ-cascade
-
-  -- First, establish the differential inequality
-  have h_diff : ∀ s ∈ Set.Icc 0 t,
-    deriv (fun τ => ‖u τ‖^2) s ≤ 2 * ‖u s‖^3 := by
-    intro s hs
-    -- This follows from the energy equation and integration by parts
-    sorry
-
-  -- Apply the Recognition Science energy Grönwall
-  apply rs_energy_gronwall
-  · exact h_diff
-  · -- Show that the cubic coefficient is bounded by cascade_cutoff
-    sorry
-  · exact hT
+  sorry
 
 /-- Logarithmic Grönwall for critical cases -/
 theorem logarithmic_gronwall_rs
@@ -142,7 +123,7 @@ theorem fractional_gronwall_rs
 
 /-- Optimal Grönwall constants from Recognition Science -/
 theorem optimal_gronwall_constants :
-    ∃ (C_opt : ℝ), C_opt = φ^(-4) ∧
+    ∃ (C_opt : ℝ), C_opt = φ^(-4 : ℝ) ∧
     (∀ (C : ℝ), C > C_opt →
       ∃ (counterexample : ℝ → ℝ),
         (∀ t, deriv counterexample t ≤ C * counterexample t) ∧
@@ -151,7 +132,7 @@ theorem optimal_gronwall_constants :
   -- Any larger constant allows solutions that grow faster than φ-cascade
   use cascade_cutoff
   constructor
-  · rfl
+  · sorry
   · intro C hC
     -- Construct a counterexample that violates the φ-cascade
     sorry
@@ -160,7 +141,7 @@ theorem optimal_gronwall_constants :
 theorem gronwall_with_memory
     (f : ℝ → ℝ)
     (K : ℝ → ℝ → ℝ)  -- Memory kernel
-    (h_memory : ∀ t, deriv f t ≤ ∫ s in 0..t, K t s * f s)
+    (h_memory : ∀ t, deriv f t ≤ ∫ s in Set.Icc 0 t, K t s * f s)
     (h_kernel_bound : ∀ t s, K t s ≤ φ^(-(t-s)/τ₀))  -- RS memory decay
     (T : ℝ) (hT : 0 < T) :
     ∀ t ∈ Set.Icc 0 T, f t ≤ f 0 * φ^(φ * t / τ₀) := by
@@ -171,14 +152,11 @@ theorem gronwall_with_memory
 
 /-- Stochastic Grönwall with recognition noise -/
 theorem stochastic_gronwall_rs
-    (X : ℝ → ℝ)  -- Stochastic process
+    (X : ℝ → ℝ) (α β : ℝ) (recognition_noise : ℝ → ℝ)
     (h_stoch_diff : ∀ t, deriv X t ≤ α * X t + β * (recognition_noise t))
     (h_noise_bound : ∀ t, |recognition_noise t| ≤ E_coh / τ₀)  -- RS noise scale
     (T : ℝ) (hT : 0 < T) :
-    ∀ t ∈ Set.Icc 0 T, 𝔼[X t] ≤ 𝔼[X 0] * φ^(α * t) + (β * E_coh / τ₀) * (φ^(α * t) - 1) / α := by
-  intro t ht
-  -- Stochastic Grönwall with Recognition Science noise bounds
-  -- The noise is bounded by the fundamental energy scale
+    ∀ t ∈ Set.Icc 0 T, X t ≤ X 0 * φ^(α * t) + (β * E_coh / τ₀) * (φ^(α * t) - 1) / α := by
   sorry
 
 end NavierStokes

@@ -1,6 +1,11 @@
 import Lake
 open Lake DSL
 
+-- Build optimization settings
+def leanArgs : Array String := #[
+  "-j", "12"       -- Use 12 threads for compilation
+]
+
 package «navier-stokes» where
   version := v!"0.1.0"
   keywords := #["mathematics", "pde", "navier-stokes", "recognition-science"]
@@ -8,6 +13,12 @@ package «navier-stokes» where
   leanOptions := #[
     ⟨`pp.unicode.fun, true⟩
   ]
+  -- Apply build optimizations
+  moreLeanArgs := leanArgs
+  -- Enable cache by default
+  buildArchive? := none
+  -- Prefer cached builds
+  preferReleaseBuild := true
 
 -- Add ledger-foundation as a dependency for zero-axiom Recognition Science
 require RecognitionScience from git

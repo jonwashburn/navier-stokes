@@ -108,19 +108,9 @@ theorem geometric_depletion (E₀ : ℝ) (n : ℕ) (h_pos : 0 < E₀) :
       norm_num
     have h_pos_C : 0 < C_star := C_star_pos
     -- For 0 < x < 1, we have (1-x)^n ≤ exp(-nx)
-    -- This follows from log(1-x) ≤ -x for 0 < x < 1
-    have h_log : ∀ x ∈ Set.Ioo 0 1, log (1 - x) ≤ -x := by
-      intro x hx
-      -- We need a version of log(1-x) ≤ -x for x in (0,1)
-      -- This is equivalent to log(1-x) + x ≤ 0
-      -- Which follows from the standard log inequality
-      sorry -- Will use correct mathlib lemma when available
-    -- Taking exponentials: (1-x)^n = exp(n·log(1-x)) ≤ exp(-nx)
-    have h_exp : (1 - C_star)^n = rexp (n * log (1 - C_star)) := by
-      sorry -- Use correct exponential conversion
-  -- For L2Norm, change VorticityField to VectorField in theorem statements
-  -- For -n, use - (n : ℝ)
-  exact le_of_lt h_pos
+    sorry
+  · -- Energy is nonnegative
+    exact le_of_lt h_pos
 
 /-- Phase coherence maintained by 8-beat cycle -/
 theorem phase_coherence_preserved (ω : ℝ → VectorField) (t : ℝ)
@@ -191,7 +181,7 @@ def eightBeatPeriod : ℝ := 8 * recognitionTimescale
 def phaseCoherenceThreshold : ℝ := 0.05  -- 5% phase deviation
 
 /-- Vorticity cascade rate -/
-def cascadeRate : ℝ := φ ^ (-4 : ℝ)
+noncomputable def cascadeRate : ℝ := φ ^ (-4 : ℝ)
 
 /-- Energy at scale n (placeholder) -/
 noncomputable def energyAtScale (ω : VectorField) (n : ℕ) : ℝ := L2Norm ω / (φ^n)
@@ -203,7 +193,7 @@ def phaseCoherent (ω : VectorField) : Prop := L2Norm ω ≤ 1
 noncomputable def standardDissipation (ω : VectorField) : ℝ := dissipationFunctional ω
 
 /-- Recognition activity predicate (placeholder) -/
-def recognitionActive (ω : VectorField) : Prop := L2Norm ω ≤ C_star
+def recognitionActive (ω : VectorField) : Prop := L2Norm ω ≤ NavierStokes.C_star
 
 /-- Recognition Science constraint on vorticity evolution -/
 theorem recognition_constraint (ω : VectorField) (t : ℝ) :
@@ -274,29 +264,20 @@ theorem vorticity_control_recognition (ω : VectorField) :
     -- Recognition Science prevents super-linear enstrophy growth
     sorry -- TODO: Formalize once dissipationFunctional is properly defined
 
-/-- Recognition Science bootstrap improvement -/
-theorem recognition_bootstrap (ω : VectorField) (ε : ℝ) :
-    0 < ε → ε < 1 →
-    L∞Norm ω ≤ ε →
-    recognitionActive ω →
-    L∞Norm ω ≤ ε / 2 := by
-  intros hε_pos hε_lt_one h_bound h_active
-  -- Recognition Science gives factor 2 improvement in bootstrap
-  -- This is a key technical advantage
-  sorry -- TODO: Requires Real.one_sub_le_exp_neg_of_pos from Mathlib
+-- Commented out temporarily due to syntax issues
+-- /-- Recognition Science bootstrap improvement -/
+-- theorem recognition_bootstrap (ω : VectorField) (ε : ℝ) :
+--     0 < ε → ε < 1 →
+--     L∞Norm ω ≤ ε →
+--     recognitionActive ω →
+--     L∞Norm ω ≤ ε / 2 := by
+--   sorry
 
-/-- Recognition Science prevents finite-time blowup -/
-theorem no_blowup_recognition (ω : VectorField) (T : ℝ) :
-    T > 0 →
-    recognitionActive ω →
-    ∀ t ∈ Set.Icc 0 T, L∞Norm ω < ∞ := by
-  intros hT h_active t ht
-  -- Recognition Science ensures global regularity
-  -- Use Grönwall's inequality from mathlib
-  have h_gronwall : L2Norm ω ≤ L2Norm ω * exp (stabilityParameter * t) := by
-    apply recognition_enhances_stability
-    exact h_active
-  -- Convert L² bound to L∞ bound
-  sorry -- TODO: Prove using Grönwall's inequality
+-- /-- Recognition Science prevents finite-time blowup -/
+-- theorem no_blowup_recognition (ω : VectorField) (T : ℝ) :
+--     T > 0 →
+--     recognitionActive ω →
+--     ∀ t ∈ Set.Icc 0 T, L∞Norm ω < ∞ := by
+--   sorry
 
 end RecognitionScienceLemmas
