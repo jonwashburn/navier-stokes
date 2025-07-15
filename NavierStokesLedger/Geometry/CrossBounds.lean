@@ -40,8 +40,8 @@ lemma C_GD_approx : abs (C_GD - 0.5176380902050415) < 1e-10 := by
 
 /-- Angle between vectors (non-negative) -/
 noncomputable def angle (v w : Fin 3 → ℝ) : ℝ :=
-  if hv : v = 0 then π/2
-  else if hw : w = 0 then π/2
+  if _ : v = 0 then π/2
+  else if _ : w = 0 then π/2
   else Real.arccos (inner_prod v w / (‖v‖ * ‖w‖))
 
 /-- Angle is always non-negative -/

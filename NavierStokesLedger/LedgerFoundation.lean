@@ -130,7 +130,7 @@ theorem eight_beat_constraint (E : ℝ → ℝ) (h_periodic : ∀ t, E (t + 8 * 
   sorry -- Complete proof requires more setup
 
 /-- Energy cascade bound from Recognition Science -/
-theorem energy_cascade_bound (E₀ : ℝ) (hE₀ : 0 < E₀) (t : ℝ) (ht : 0 ≤ t) :
+theorem energy_cascade_bound (E₀ : ℝ) (_ : 0 < E₀) (t : ℝ) (_ : 0 ≤ t) :
     E₀ * φ^(cascade_cutoff * t) ≤ E₀ * φ^(cascade_cutoff * t) := by
   -- This is tautological by definition of cascade_cutoff
   rfl

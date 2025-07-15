@@ -10,7 +10,7 @@ exponential bounds needed for global regularity.
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.MeasureTheory.Integral.IntervalIntegral
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import NavierStokesLedger.BasicDefinitions
 import NavierStokesLedger.LedgerFoundation
 
@@ -83,8 +83,8 @@ theorem vorticity_gronwall_rs
 theorem eight_beat_gronwall
     (f : ℝ → ℝ)
     (h_periodic : ∀ t, f (t + 8 * τ₀) = f t)
-    (h_diff : ∀ t, deriv f t ≤ α * f t)
-    (α : ℝ) (h_α_bound : α ≤ log φ / (8 * τ₀)) :  -- Eight-beat constraint
+    (_ : ∀ t, deriv f t ≤ α * f t)
+    (α : ℝ) (_ : α ≤ log φ / (8 * τ₀)) :  -- Eight-beat constraint
     ∃ M > 0, ∀ t ≥ 0, f t ≤ M := by
   -- Periodic functions with controlled growth are bounded
   apply eight_beat_constraint
